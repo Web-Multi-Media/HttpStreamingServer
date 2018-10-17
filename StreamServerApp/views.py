@@ -10,7 +10,7 @@ def index(request):
     mypath = settings.SERVER_VIDEO_DIR
     files = []
     for f in listdir(mypath):
-        if isfile(join(mypath, f)):
+        if isfile(join(mypath, f)) and f.endswith(".mp4"):
             files.append(settings.REMOTE_VIDEO_DIR + "/" + f)
     context = {
         'files': files,
