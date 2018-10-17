@@ -1,9 +1,31 @@
+<head>
+    <link href="https://vjs.zencdn.net/7.2.3/video-js.css" rel="stylesheet">
+    <!-- If you'd like to support IE8 (for Video.js versions prior to v7) -->
+    <script src="https://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script>
+</head>
+
+<body>
+
 {% if files %}
-    <ul>
+<ul>
     {% for file in files %}
-        <li>{{ file }}</li>
+    <li>{{ file }}</li>
+    <video id="my-video" class="video-js" controls preload="auto" width="640" height="264"
+       poster="MY_VIDEO_POSTER.jpg" data-setup="{}">
+    <source src={{ file }}>
+    <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a web browser that
+        <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+    </p>
+</video>
     {% endfor %}
-    </ul>
+</ul>
+
+<script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
 {% else %}
-    <p>No files are available.</p>
+<p>No files are available.</p>
 {% endif %}
+
+</body>
+
+
