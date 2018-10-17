@@ -14,6 +14,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
             crossorigin="anonymous"></script>
+    {% load static %}
+    <script src="{% static " HttpStreamingClient.js
+    " %}" ></script>
     <title>HTTP Streaming Server</title>
 </head>
 
@@ -22,30 +25,28 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs">
-            <button type="button" onclick=loadVideo(1) class="btn btn-default btn-sm">
+            <button type="button" onclick=loadPreviousVideo() class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-step-backward"></span> Previous Movie
             </button>
         </div>
         <div class="col-xs">
             <div id="ShowVideo"></div>
             <script>
-            function loadVideo(id) {
-                 $( "#ShowVideo").load("rendervideo/?VideoNumber="+id);
-            }
-            loadVideo(2)
+            loadVideo({{ file }})
+
             </script>
-        </div>
-        <div class="col-xs-2">
-            <button type="button" onclick=loadVideo(3) class="btn btn-default btn-sm">
-                <span class="glyphicon glyphicon-step-backward"></span> Next Movie
-            </button>
-        </div>
     </div>
-</div>
+    <div class="col-xs-2">
+        <button type="button" onclick=loadNextVideo() class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-step-backward"></span> Next Movie
+        </button>
+    </div>
+    </div>
+    </div>
 
 
-<script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
+    <script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
 
-</body>
+    </body>
 
 

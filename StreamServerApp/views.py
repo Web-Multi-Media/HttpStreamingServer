@@ -16,7 +16,7 @@ def index(request):
             files.append(settings.REMOTE_VIDEO_DIR + "/" + f)
 
     context = {
-        'file': files[1],
+        'file': 2,
     }
     return HttpResponse(template.render(context, request))
 
