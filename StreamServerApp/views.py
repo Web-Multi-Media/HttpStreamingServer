@@ -16,7 +16,8 @@ def index(request):
             files.append(settings.REMOTE_VIDEO_DIR + "/" + f)
 
     context = {
-        'file': 2,
+        'fileid': 1,
+        'numids': len(files),
     }
     return HttpResponse(template.render(context, request))
 
@@ -32,7 +33,8 @@ def rendervideo(request):
         if isfile(join(mypath, f)) and f.endswith(".mp4"):
             files.append(settings.REMOTE_VIDEO_DIR + "/" + f)
 
-    context = {
-        'file': files[videoNumber],
-    }
-    return HttpResponse(template.render(context, request))
+    if (videoNumber > 0 and videoNumber <= len(files)):
+        context = {
+            'file': files[videoNumber],
+        }
+        return HttpResponse(template.render(context, request))
