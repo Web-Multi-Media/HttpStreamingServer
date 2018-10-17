@@ -15,8 +15,7 @@
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
             crossorigin="anonymous"></script>
     {% load static %}
-    <script src="{% static " HttpStreamingClient.js
-    " %}" ></script>
+     <script src="{% static "HttpStreamingClient.js" %}" ></script>
     <title>HTTP Streaming Server</title>
 </head>
 
@@ -35,18 +34,18 @@
             loadVideo({{ file }})
 
             </script>
+        </div>
+        <div class="col-xs-2">
+            <button type="button" onclick=loadNextVideo() class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-step-backward"></span> Next Movie
+            </button>
+        </div>
     </div>
-    <div class="col-xs-2">
-        <button type="button" onclick=loadNextVideo() class="btn btn-default btn-sm">
-            <span class="glyphicon glyphicon-step-backward"></span> Next Movie
-        </button>
-    </div>
-    </div>
-    </div>
+</div>
 
 
-    <script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
+<script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
 
-    </body>
+</body>
 
 
