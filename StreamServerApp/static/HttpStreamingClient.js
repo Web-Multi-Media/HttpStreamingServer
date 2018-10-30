@@ -1,27 +1,24 @@
 var currentid=0;
-var numids;
+var previousid=0;
+var nextid=0;
 
 function loadPreviousVideo() {
-    newid=currentid-1;
-    if(newid>=1){
-      $( "#ShowVideo").load("rendervideo/?VideoNumber="+newid);
-      currentid=newid;
-    }
+      $( "#ShowVideo").load("rendervideo/?VideoNumber="+previousid);
 }
 
 function loadNextVideo() {
-    newid=currentid+1;
-    if(newid<=numids){
-      $( "#ShowVideo").load("rendervideo/?VideoNumber="+newid);
-      currentid=newid;
-    }
+      $( "#ShowVideo").load("rendervideo/?VideoNumber="+nextid);
 }
 
 function loadVideo(id) {
     $( "#ShowVideo").load("rendervideo/?VideoNumber="+id);
-    currentid=id;
 }
 
-function setNumberIds(numberofids){
-    numids=numberofids;
+function loadFirstVideo(id) {
+    $( "#ShowVideo").load("rendervideo/");
+}
+
+function updateIds(newpreviousid, newnextid){
+    previousid=newpreviousid;
+    nextid=newnextid;
 }

@@ -3,38 +3,29 @@ from django.template import loader
 from os import listdir
 from os.path import isfile, join
 from django.conf import settings
+from StreamServerApp.models import Video
 
 
 def index(request):
     template = loader.get_template('StreamServerApp/index.html')
     mypath = settings.SERVER_VIDEO_DIR
 
-    files = []
-
     for f in listdir(mypath):
         if isfile(join(mypath, f)) and f.endswith(".mp4"):
-            files.append(settings.REMOTE_VIDEO_DIR + "/" + f)
+            v = Video(name="f", baseurl=settings.REMOTE_VIDEO_DIR + "/" + f)
+            v.save()
 
-    context = {
-        'fileid': 1,
-        'numids': len(files),
-    }
-    return HttpResponse(template.render(context, request))
-
+    return HttpResponse(template.render({}, request))
 
 def rendervideo(request):
     template = loader.get_template('StreamServerApp/ShowVideo.html')
-    videoNumber = int(request.GET.get('VideoNumber'))
-    mypath = settings.SERVER_VIDEO_DIR
-
-    files = []
-
-    for f in listdir(mypath):
-        if isfile(join(mypath, f)) and f.endswith(".mp4"):
-            files.append(settings.REMOTE_VIDEO_DIR + "/" + f)
-
-    if (videoNumber > 0 and videoNumber <= len(files)):
-        context = {
-            'file': files[videoNumber],
-        }
-        return HttpResponse(template.render(context, request))
+    VidNumberStr = request.GET.get('VideoNumber')
+    if not VidNumberStr:
+    #Return first video urls with the two neighboors id
+      url=Video.objects.first().baseurl
+      context = {
+             'url': url,
+             'prevId': 0,
+             'nextId': 1
+      }
+    return HttpResponse(template.render(context, request))

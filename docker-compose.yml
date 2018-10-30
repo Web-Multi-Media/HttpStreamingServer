@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  web:
+    build: .
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate --run-syncdb && python3 manage.py runserver 0.0.0.0:8002"
+    volumes:
+      - .:/code
+    ports:
+      - "8002:8002"
+    environment:
+      - MyURLSaverProdKey=1111111
