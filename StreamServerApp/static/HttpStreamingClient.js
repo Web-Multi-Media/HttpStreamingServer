@@ -14,7 +14,7 @@ function loadVideo(id) {
     $( "#ShowVideo").load("rendervideo/?VideoNumber="+id);
 }
 
-function loadFirstVideo(id) {
+function loadFirstVideo() {
     $( "#ShowVideo").load("rendervideo/");
 }
 

@@ -17,15 +17,37 @@ def index(request):
 
     return HttpResponse(template.render({}, request))
 
+
 def rendervideo(request):
     template = loader.get_template('StreamServerApp/ShowVideo.html')
     VidNumberStr = request.GET.get('VideoNumber')
+    context = {}
+    pks = list(Video.objects.values_list('pk', flat=True))
     if not VidNumberStr:
-    #Return first video urls with the two neighboors id
-      url=Video.objects.first().baseurl
-      context = {
-             'url': url,
-             'prevId': 0,
-             'nextId': 1
-      }
+        # Return first video urls with the "neighboors" primary key
+        url = Video.objects.get(pk=pks[0]).baseurl
+        previd = pks[len(pks) - 1]
+        nextid = pks[1]
+        context = {
+            'url': url,
+            'prevId': previd,
+            'nextId': nextid
+        }
+    else:
+        # Return requested video urls with the two neighboors primary keys
+        Vidpk = int(VidNumberStr)
+        url = Video.objects.get(pk=Vidpk).baseurl
+        if pks.index(Vidpk) == len(pks) - 1:
+            nextid = pks[0]
+        else:
+            nextid = pks[pks.index(Vidpk) + 1]
+        if pks.index(Vidpk) == 0:
+            previd = pks[len(pks) - 1]
+        else:
+            previd = pks[pks.index(Vidpk) - 1]
+        context = {
+            'url': url,
+            'prevId': previd,
+            'nextId': nextid
+        }
     return HttpResponse(template.render(context, request))
