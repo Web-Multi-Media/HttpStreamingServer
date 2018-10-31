@@ -5,16 +5,20 @@ from os.path import isfile, join
 from django.conf import settings
 from StreamServerApp.models import Video
 
+has_db_load = False
+
 
 def index(request):
     template = loader.get_template('StreamServerApp/index.html')
     my_path = settings.SERVER_VIDEO_DIR
+    global has_db_load
 
-    for f in listdir(my_path):
-        if isfile(join(my_path, f)) and f.endswith(".mp4"):
-            v = Video(name="f", baseurl=settings.REMOTE_VIDEO_DIR + "/" + f)
-            v.save()
-
+    if not has_db_load:
+        for f in listdir(my_path):
+            if isfile(join(my_path, f)) and f.endswith(".mp4"):
+                v = Video(name="f", baseurl=settings.REMOTE_VIDEO_DIR + "/" + f)
+                v.save()
+        has_db_load = True
     return HttpResponse(template.render({}, request))
 
 
