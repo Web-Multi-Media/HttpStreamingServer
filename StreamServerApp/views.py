@@ -8,10 +8,10 @@ from StreamServerApp.models import Video
 
 def index(request):
     template = loader.get_template('StreamServerApp/index.html')
-    mypath = settings.SERVER_VIDEO_DIR
+    my_path = settings.SERVER_VIDEO_DIR
 
-    for f in listdir(mypath):
-        if isfile(join(mypath, f)) and f.endswith(".mp4"):
+    for f in listdir(my_path):
+        if isfile(join(my_path, f)) and f.endswith(".mp4"):
             v = Video(name="f", baseurl=settings.REMOTE_VIDEO_DIR + "/" + f)
             v.save()
 
@@ -20,31 +20,31 @@ def index(request):
 
 def rendervideo(request):
     template = loader.get_template('StreamServerApp/ShowVideo.html')
-    VidNumberStr = request.GET.get('VideoNumber')
+    vid_number_str = request.GET.get('VideoNumber')
     context = {}
     pks = list(Video.objects.values_list('pk', flat=True))
-    if not VidNumberStr:
+    if not vid_number_str:
         # Return first video urls with the "neighboors" primary key
         url = Video.objects.get(pk=pks[0]).baseurl
-        previd = pks[len(pks) - 1]
-        nextid = pks[1]
+        prev_id = pks[len(pks) - 1]
+        next_id = pks[1]
         context = {
             'url': url,
-            'prevId': previd,
-            'nextId': nextid
+            'prevId': prev_id,
+            'nextId': next_id
         }
     else:
         # Return requested video urls with the two neighboors primary keys
-        Vidpk = int(VidNumberStr)
-        url = Video.objects.get(pk=Vidpk).baseurl
-        if pks.index(Vidpk) == len(pks) - 1:
+        vid_primary_key = int(vid_number_str)
+        url = Video.objects.get(pk=vid_primary_key).baseurl
+        if pks.index(vid_primary_key) == len(pks) - 1:
             nextid = pks[0]
         else:
-            nextid = pks[pks.index(Vidpk) + 1]
-        if pks.index(Vidpk) == 0:
+            nextid = pks[pks.index(vid_primary_key) + 1]
+        if pks.index(vid_primary_key) == 0:
             previd = pks[len(pks) - 1]
         else:
-            previd = pks[pks.index(Vidpk) - 1]
+            previd = pks[pks.index(vid_primary_key) - 1]
         context = {
             'url': url,
             'prevId': previd,
