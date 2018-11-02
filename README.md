@@ -9,16 +9,29 @@ Please note that this software assumes that you have local access to your video 
 
 How to use
 -------------------
-1, pip3 install django
 
-2, Edit StreamingServer/settings.py to modify SERVER_VIDEO_DIR and REMOTE_BASE_URL.
+#### Virtualenv & installation
 
-3, Run the following command to create your db and fill it with the videos infos.
+From the root repository folder:
 
-python3 manage.py migrate && python3 manage.py populatedb
+- `python3 -m venv ./venv`
 
-4, Run the server
+- `source venv/bin/activate`
 
-python3 manage.py runserver
+- `pip install django`
 
+
+#### Configuration
+
+- Edit `StreamingServer/settings.py` to modify `SERVER_VIDEO_DIR` and `REMOTE_BASE_URL`.
+
+- Run the following command to create your db and fill it with the videos infos:
+
+    `python3 manage.py migrate && python3 manage.py populatedb`
+
+- Run the server:
+
+    `python3 manage.py runserver`
+
+- Now the application should be accessible from your browser at `http://localhost:8000`.
 
