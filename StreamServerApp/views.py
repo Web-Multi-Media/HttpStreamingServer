@@ -1,6 +1,7 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.template import loader
 from StreamServerApp.models import Video
+
 
 def index(request):
     template = loader.get_template('StreamServerApp/index.html')
@@ -12,6 +13,9 @@ def rendervideo(request):
     vid_number_str = request.GET.get('VideoNumber')
     context = {}
     pks = list(Video.objects.values_list('pk', flat=True))
+    if (len(pks) == 0):
+        print("ERROR: Database is not loaded")
+        return Http404("Database is not loaded")
     if not vid_number_str:
         # Return first video urls with the "neighboors" primary key
         url = Video.objects.get(pk=pks[0]).baseurl
