@@ -33,5 +33,5 @@ From the root repository folder:
 
     `python3 manage.py runserver`
 
-- Now the application should be accessible from your browser at `http://localhost:8000`.
+- Now the application should be accessible from your browser at `http://localhost:8000/StreamServerApp/`.
 
