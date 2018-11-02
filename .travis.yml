@@ -1,9 +1,14 @@
 language: python
 python:
     - 3.6.2
+env:    
+    - DJANGO=2.0 DB=sqlite
   
 install:
     - pip3 install -r requirements.txt
 
 script:
+    - python3 manage.py makemigrations
     - python3 manage.py test
+    
+    
