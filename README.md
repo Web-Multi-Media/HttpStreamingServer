@@ -9,7 +9,7 @@ How to use
 -------------------
 1, pip3 install django
 
-2, Edit StreamingServer/settings.py to modify SERVER_VIDEO_DIR and REMOTE_VIDEO_DIR.
+2, Edit StreamingServer/settings.py to modify SERVER_VIDEO_DIR and REMOTE_BASE_URL.
 
 3, Run the following command to create your db and fill it with the videos infos.
 

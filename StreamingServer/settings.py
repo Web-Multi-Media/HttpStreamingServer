@@ -12,11 +12,13 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
-SERVER_VIDEO_DIR = '/home/nicolas/Videos/'
-REMOTE_VIDEO_DIR = 'http://localhost/Videos'
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+SERVER_VIDEO_DIR = BASE_DIR + "/StreamServerApp/static/test/"
+REMOTE_BASE_URL = 'http://localhost:8000/static/test'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
