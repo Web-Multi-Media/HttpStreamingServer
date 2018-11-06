@@ -1,14 +1,13 @@
 language: python
 python:
     - 3.6.2
-env:    
-    - DJANGO=2.0 DB=sqlite
+
+services:
+    - docker
+    - docker-compose
   
 install:
-    - pip3 install -r requirements.txt
+    - docker build .
 
 script:
-    - python3 manage.py makemigrations
-    - python3 manage.py test
-    
-    
+    - docker-compose run --rm web python manage.py test

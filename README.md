@@ -10,28 +10,24 @@ Please note that this software assumes that you have local access to your video 
 How to use
 -------------------
 
-#### Virtualenv & installation
+#### Installation (Docker)
 
-From the root repository folder:
-
-- `python3 -m venv ./venv`
-
-- `source venv/bin/activate`
-
-- `pip install django`
-
+You'll need to have [`docker`](https://docs.docker.com/install/) and [`docker-compose`](https://docs.docker.com/compose/install/) installed.
 
 #### Configuration
 
-- Edit `StreamingServer/settings.py` to modify `SERVER_VIDEO_DIR` and `REMOTE_BASE_URL`.
+Edit `StreamingServer/settings.py` to modify `SERVER_VIDEO_DIR` and `REMOTE_BASE_URL`.
 
-- Run the following command to create your db and fill it with the videos infos:
+The first time you load the application you will need to perform migrations:
 
-    `python3 manage.py migrate && python3 manage.py populatedb`
+    `docker-compose run --rm web python manage.py migrate`
 
-- Run the server:
+You will have to fill the db with the video info:
 
-    `python3 manage.py runserver`
+    `docker-compose run --rm web python manage.py populatedb`
 
-- Now the application should be accessible from your browser at `http://localhost:8000/StreamServerApp/`.
+Run the server:
 
+    `docker-compose up`
+
+Now the application should be accessible from your browser at `http://localhost:8000/StreamServerApp/`.

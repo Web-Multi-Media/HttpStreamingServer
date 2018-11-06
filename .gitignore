@@ -134,9 +134,5 @@ tmtags
 *.db
 db.sqlite3
 
-#django production
-static/
-media/
-
 # OS files
 .DS_Store

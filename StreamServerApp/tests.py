@@ -1,4 +1,4 @@
-
+from django.urls import reverse
 from django.core.management import call_command
 from django.test import Client, TestCase
 
@@ -31,3 +31,20 @@ class LoadingTest(TestCase):
         # Check that the response is 200 OK.
         self.assertEqual(response.status_code, 200)
 
+    def test_search_video_without_query(self):
+        response = self.client.get(reverse('search-video'))
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(str(response.content, encoding='utf8'), [])
+
+    def test_search_video_with_query(self):
+        expected_result = [{
+            'name': 'canard',
+            'baseurl': "http://localhost:8000/static/test/test1.mp4",
+            'id': 1
+        }]
+        data = {
+            'q': 'cana'
+        }
+        response = self.client.get(reverse('search-video'), data=data)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(str(response.content, encoding='utf8'), expected_result)
