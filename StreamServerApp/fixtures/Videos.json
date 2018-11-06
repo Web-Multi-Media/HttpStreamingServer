@@ -3,7 +3,7 @@
     "model": "StreamServerApp.Video",
     "pk": 1,
     "fields": {
-      "name": "test1.mp4",
+      "name": "canard",
       "baseurl": "http://localhost:8000/static/test/test1.mp4"
     }
   },
@@ -11,7 +11,7 @@
     "model": "StreamServerApp.Video",
     "pk": 2,
     "fields": {
-      "name": "test2.mp4",
+      "name": "cochon",
       "baseurl": "http://localhost:8000/static/test/test2.mp4"
     }
   },
@@ -19,7 +19,7 @@
     "model": "StreamServerApp.Video",
     "pk": 3,
     "fields": {
-      "name": "test3.mp4",
+      "name": "singe",
       "baseurl": "http://localhost:8000/static/test/test3.mp4"
     }
   }
