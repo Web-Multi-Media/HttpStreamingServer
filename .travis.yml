@@ -7,7 +7,7 @@ services:
     - docker-compose
   
 install:
-    - docker build -t .
+    - docker build .
 
 script:
     - docker-compose run --rm web python manage.py test
