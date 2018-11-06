@@ -1,6 +1,7 @@
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from StreamServerApp.models import Video
+from django.contrib.postgres.search import TrigramSimilarity
 
 
 def index(request):
@@ -44,3 +45,22 @@ def rendervideo(request):
             'nextId': nextid
         }
     return HttpResponse(template.render(context, request))
+
+
+def search_video(request):
+    query = request.GET.get('q', '')
+
+    # ANOTHER EXAMPLE:
+    # vector = SearchVector('name', weight='A') + SearchVector('description', weight='C')
+    # query = SearchQuery(query)
+    # qs_results = TaxonomyNode.objects.filter(taxonomy__dataset=dataset)\
+    #                                  .annotate(rank=SearchRank(vector, query)).filter(rank__gte=0.3)\
+    #                                  .order_by('rank')
+
+    qs_results = Video.objects.annotate(similarity=TrigramSimilarity('name', query)) \
+                              .filter(similarity__gte=0.2) \
+                              .order_by('-similarity')
+
+    results = qs_results.values('name', 'baseurl', 'id')
+
+    return JsonResponse(list(results[:10]), safe=False)

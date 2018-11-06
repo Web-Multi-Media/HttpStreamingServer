@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -13,6 +14,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
             crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "semanticui/semantic.min.css" %}" />
     {% load static %}
      <script src="{% static "HttpStreamingClient.js" %}" ></script>
     <title>HTTP Streaming Server</title>
@@ -39,6 +41,16 @@
                 <span class="glyphicon glyphicon-step-backward"></span> Next Movie
             </button>
         </div>
+    </div>
+</div>
+
+<br>
+<div class="searchbox-container" style="width: 30%">
+    <div class="ui icon input">
+        <input placeholder="Search video..." type="search" oninput="displayResults(5, this)" class="searchbox">
+        <i class="search icon"></i>
+    </div>
+    <div class="ui results" style="display: none;">
     </div>
 </div>
 
