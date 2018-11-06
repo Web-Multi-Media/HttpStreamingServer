@@ -16,7 +16,7 @@ You'll need to have [`docker`](https://docs.docker.com/install/) and [`docker-co
 
 #### Configuration
 
-- Edit `StreamingServer/settings.py` to modify `SERVER_VIDEO_DIR` and `REMOTE_BASE_URL`.
+Edit `StreamingServer/settings.py` to modify `SERVER_VIDEO_DIR` and `REMOTE_BASE_URL`.
 
 The first time you load the application you will need to perform migrations:
 
@@ -26,8 +26,8 @@ You will have to fill the db with the video info:
 
     `docker-compose run --rm web python manage.py populatedb`
 
-- Run the server:
+Run the server:
 
     `docker-compose up`
 
-- Now the application should be accessible from your browser at `http://localhost:8000/StreamServerApp/`.
+Now the application should be accessible from your browser at `http://localhost:8000/StreamServerApp/`.
