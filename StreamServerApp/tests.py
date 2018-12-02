@@ -1,15 +1,17 @@
 from django.urls import reverse
 from django.core.management import call_command
 from django.test import Client, TestCase
+from StreamServerApp.utils import get_DB_size
 
 
 class CommandsTestCase(TestCase):
-    def test_mycommand(self):
-        " Test my custom command."
+    def test_database_populate_command(self):
+        " Test database creation."
 
         args = []
         opts = {}
         call_command('populatedb', *args, **opts)
+        self.assertEqual(get_DB_size(), 3)
 
 class LoadingTest(TestCase):
     fixtures = ['StreamServerApp/fixtures/Videos.json']
