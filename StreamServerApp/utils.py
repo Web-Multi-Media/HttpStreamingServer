@@ -12,8 +12,7 @@ Todo:
 from StreamServerApp.models import Video
 import os
 from os.path import isfile, join
-
-VIDEO_NAMES = ['canard', 'cochon', 'singe']
+import ffmpeg
 
 def delete_DB_Infos():
     """ delete all videos infos in the db
@@ -39,7 +38,20 @@ def populate_db_from_local_folder(remote_path, base_path):
             full_path = os.path.join(root, filename)
             relative_path = os.path.relpath(full_path, video_path)
             if isfile(full_path) and full_path.endswith(".mp4"):
-                v = Video(name=VIDEO_NAMES[idx % 3], baseurl="{}/{}".format(remote_path, relative_path))
+                try:
+                    probe = ffmpeg.probe(full_path)
+                except ffmpeg.Error as e:
+                    print(e.stderr, file=sys.stderr)
+                    continue
+
+                video_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
+                if video_stream is None:
+                    print('No video stream found', file=sys.stderr)
+                    continue
+
+                codec_type = video_stream['codec_type']
+
+                v = Video(name=filename, baseurl="{}/{}".format(remote_path, relative_path), codec=codec_type)
                 v.save()
 
 def populate_db_from_remote_server(remotePath, ListOfVideos):
