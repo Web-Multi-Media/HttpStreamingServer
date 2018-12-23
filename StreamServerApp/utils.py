@@ -51,7 +51,7 @@ def populate_db_from_local_folder(remote_path, base_path):
 
                 codec_type = video_stream['codec_type']
 
-                v = Video(name=filename, baseurl="{}/{}".format(remote_path, relative_path), codec=codec_type)
+                v = Video(name=filename, baseurl="{}/{}".format(remote_path, relative_path), video_codec=codec_type)
                 v.save()
 
 def populate_db_from_remote_server(remotePath, ListOfVideos):
