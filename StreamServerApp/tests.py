@@ -11,7 +11,7 @@ class CommandsTestCase(TestCase):
         args = []
         opts = {}
         call_command('populatedb', *args, **opts)
-        self.assertEqual(get_DB_size(), 3)
+        self.assertEqual(get_DB_size(), 4)
 
 class LoadingTest(TestCase):
     fixtures = ['StreamServerApp/fixtures/Videos.json']
