@@ -4,7 +4,8 @@
     "pk": 1,
     "fields": {
       "name": "canard",
-      "baseurl": "http://localhost:8000/static/test/test1.mp4"
+      "baseurl": "http://localhost:8000/static/test/folder1/canard.mp4",
+      "video_codec": "h264"
     }
   },
   {
@@ -12,7 +13,8 @@
     "pk": 2,
     "fields": {
       "name": "cochon",
-      "baseurl": "http://localhost:8000/static/test/test2.mp4"
+      "baseurl": "http://localhost:8000/static/test/folder1/cochon.mp4",
+      "video_codec": "h264"
     }
   },
   {
@@ -20,7 +22,8 @@
     "pk": 3,
     "fields": {
       "name": "singe",
-      "baseurl": "http://localhost:8000/static/test/test3.mp4"
+      "baseurl": "http://localhost:8000/static/test/folder2/singe.mp4",
+      "video_codec": "h264"
     }
   }
 ]

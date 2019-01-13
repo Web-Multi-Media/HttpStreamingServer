@@ -11,7 +11,7 @@ class CommandsTestCase(TestCase):
         args = []
         opts = {}
         call_command('populatedb', *args, **opts)
-        self.assertEqual(get_DB_size(), 3)
+        self.assertEqual(get_DB_size(), 4)
 
 class LoadingTest(TestCase):
     fixtures = ['StreamServerApp/fixtures/Videos.json']
@@ -41,7 +41,7 @@ class LoadingTest(TestCase):
     def test_search_video_with_query(self):
         expected_result = [{
             'name': 'canard',
-            'baseurl': "http://localhost:8000/static/test/test1.mp4",
+            'baseurl': 'http://localhost:8000/static/test/folder1/canard.mp4',
             'id': 1
         }]
         data = {
