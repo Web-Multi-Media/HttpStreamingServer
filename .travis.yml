@@ -10,4 +10,4 @@ install:
     - docker build ./app
 
 script:
-    - docker-compose run --rm web python manage.py test
+    - docker-compose run --rm web python3 manage.py test
