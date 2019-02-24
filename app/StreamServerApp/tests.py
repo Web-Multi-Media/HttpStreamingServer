@@ -14,7 +14,7 @@ class CommandsTestCase(TestCase):
         self.assertEqual(get_DB_size(), 4)
 
 class LoadingTest(TestCase):
-    fixtures = ['StreamServerApp/fixtures/Videos.json']
+    fixtures = ['Videos.json']
     def setUp(self):
             # Every test needs a client.
             self.client = Client()

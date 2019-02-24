@@ -23,11 +23,11 @@ def get_DB_size():
     """
     return len(Video.objects.all())
 
-def populate_db_from_local_folder(remote_path, base_path):
+def populate_db_from_local_folder(base_path, remote_url):
     """ # create all the videos infos in the database
         Args:
-        remotePath: baseurl for video access on the server
-        basepPath: Local Folder where the videos are stored
+        remote_url: baseurl for video access on the server
+        base_path: Local Folder where the videos are stored
 
         this functions will only add videos to the database if 
         they are encoded with h264/AAC codec
@@ -40,6 +40,8 @@ def populate_db_from_local_folder(remote_path, base_path):
         for filename in filenames:
             full_path = os.path.join(root, filename)
             relative_path = os.path.relpath(full_path, video_path)
+            print(full_path)
+            print(relative_path)
             if isfile(full_path) and (full_path.endswith(".mp4") or full_path.endswith(".mkv")):
                 try:
                     probe = ffmpeg.probe(full_path)
@@ -64,7 +66,7 @@ def populate_db_from_local_folder(remote_path, base_path):
                 audio_codec_type = audio_stream['codec_name']
 
                 if(("h264" in video_codec_type) and ("aac" in audio_codec_type)):
-                    v = Video(name=filename, baseurl="{}/{}".format(remote_path, relative_path),\
+                    v = Video(name=filename, baseurl="{}/{}".format(remote_url, relative_path),\
                                         video_codec=video_codec_type, audio_codec=audio_codec_type,\
                                         height=video_height, width=video_width)
                     v.save()

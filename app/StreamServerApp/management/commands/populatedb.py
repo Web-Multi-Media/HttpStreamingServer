@@ -7,4 +7,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         delete_DB_Infos()
-        populate_db_from_local_folder(settings.REMOTE_BASE_URL, settings.SERVER_VIDEO_DIR)
+        populate_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL)

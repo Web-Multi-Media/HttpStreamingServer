@@ -23,6 +23,7 @@ services:
       - .env
     volumes:
       - ./app/:/usr/src/app/
+      - ./Videos/:/usr/src/app/Videos
       - static_volume:/usr/src/app/staticfiles
       - /static/
       - ipython:/root/.ipython
@@ -32,6 +33,8 @@ services:
   nginx:
     build: ./nginx
     volumes:
+      - ./app/:/usr/src/app/
+      - ./Videos/:/usr/src/app/Videos
       - static_volume:/usr/src/app/staticfiles
     ports:
       - 1337:80
