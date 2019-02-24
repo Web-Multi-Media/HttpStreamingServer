@@ -3,6 +3,8 @@ version: '2'
 volumes:
   dbvolume:
   ipython:
+  static_volume:
+
 services:
   db:
     image: postgres:9.6
@@ -13,18 +15,25 @@ services:
     volumes:
       - dbvolume:/var/lib/postgresql/data/
   web:
-    build: .
-#    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate --run-syncdb && python3 manage.py runserver 0.0.0.0:8002"
-    ports:
-      - "8000:8000"
+    build: ./app
+    restart: always 
+    expose:
+      - 8000
     env_file:
       - .env
-    environment:
-      - MyURLSaverProdKey=1111111
     volumes:
-      - .:/code
+      - ./app/:/usr/src/app/
+      - static_volume:/usr/src/app/staticfiles
       - /static/
       - ipython:/root/.ipython
-    command: python manage.py runserver 0.0.0.0:8000
+    command: bash -c "python3 /usr/src/app/manage.py migrate && python3 /usr/src/app/manage.py collectstatic --no-input && gunicorn StreamingServer.wsgi:application --bind 0.0.0.0:8000"
     depends_on:
       - db
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/usr/src/app/staticfiles
+    ports:
+      - 1337:80
+    depends_on:
+      - web
