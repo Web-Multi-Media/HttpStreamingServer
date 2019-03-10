@@ -8,15 +8,13 @@ def index(request):
     template = loader.get_template('StreamServerApp/index.html')
     return HttpResponse(template.render({}, request))
 
-
 def rendervideo(request):
-    template = loader.get_template('StreamServerApp/ShowVideo.html')
     vid_number_str = request.GET.get('VideoNumber')
     context = {}
     pks = list(Video.objects.values_list('pk', flat=True))
     if (len(pks) == 0):
         print("ERROR: Database is not loaded")
-        return Http404("Database is not loaded")
+        raise Http404("Database is not loaded")
     if not vid_number_str:
         # Return first video urls with the "neighboors" primary key
         url = Video.objects.get(pk=pks[0]).baseurl
@@ -44,7 +42,7 @@ def rendervideo(request):
             'prevId': previd,
             'nextId': nextid
         }
-    return HttpResponse(template.render(context, request))
+    return JsonResponse(context)
 
 
 def search_video(request):
@@ -64,3 +62,5 @@ def search_video(request):
     results = qs_results.values('name', 'baseurl', 'id')
 
     return JsonResponse(list(results[:10]), safe=False)
+
+

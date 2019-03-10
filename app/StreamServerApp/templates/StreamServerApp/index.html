@@ -16,7 +16,6 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="{% static "semanticui/semantic.min.css" %}" />
     {% load static %}
-     <script src="{% static "HttpStreamingClient.js" %}" ></script>
     <title>HTTP Streaming Server</title>
 </head>
 
@@ -31,10 +30,12 @@
         </div>
         <div class="col-xs">
             <div id="ShowVideo"></div>
-            <script>
-            loadFirstVideo()
-
-            </script>
+            <ul>
+                <video id="example_video_1" class="video-js vjs-default-skin vjs-big-play-centered"
+                controls preload="auto" width="640" height="264">
+                
+              </video>
+            </ul>
         </div>
         <div class="col-xs-2">
             <button type="button" onclick=loadNextVideo() class="btn btn-default btn-sm">
@@ -42,6 +43,8 @@
             </button>
         </div>
     </div>
+    <script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
+    <script src="{% static "HttpStreamingClient.js" %}" ></script>
 </div>
 
 <br>
@@ -55,7 +58,7 @@
 </div>
 
 
-<script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
+
 
 </body>
 

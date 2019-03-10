@@ -13,18 +13,24 @@ How to use
 
 You'll need to have [`docker`](https://docs.docker.com/install/) and [`docker-compose`](https://docs.docker.com/compose/install/) installed.
 
-#### Configuration
+#### RUN
 
 The first time you load the application you will need to perform migrations:
 
     `docker-compose run --rm web python manage.py migrate`
 
-You will have to fill the db with the video info:
-
-    `docker-compose run --rm web python manage.py populatedb`
 
 Run the server:
 
     `docker-compose up`
 
 Now the application should be accessible from your browser at `http://localhost:1337/StreamServerApp/`.
+
+
+#### CONFIGURATION
+
+The videos contained in the Videos/ folder are updated everytime the app is launched.
+
+If you want to manually triggers an update, use the following command
+
+    `docker-compose run --rm web python manage.py populatedb`

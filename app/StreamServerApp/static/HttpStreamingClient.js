@@ -15,8 +15,16 @@ function loadVideo(id) {
 }
 
 function loadFirstVideo() {
-    $("#ShowVideo").load("rendervideo/");
+    $.getJSON('rendervideo/', function(data) {
+        console.log(data);
+        //data is the JSON string
+    });
 }
+
+videojs("example_video_1", {}, function(){
+    console.log("Player is ready !")
+    // Player (this) is initialized and ready.
+});
 
 function updateIds(newpreviousid, newnextid) {
     previousid = newpreviousid;

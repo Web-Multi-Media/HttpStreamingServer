@@ -1,0 +1,31 @@
+version: '2'
+
+volumes:
+  dbvolume:
+  ipython:
+  static_volume:
+
+services:
+  db:
+    image: postgres:9.6
+    ports:
+      - 5543:5432
+    env_file:
+      - .env
+    volumes:
+      - dbvolume:/var/lib/postgresql/data/
+  web:
+    build: ./app
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+    volumes:
+      - ./app/:/usr/src/app/
+      - ./Videos/:/usr/src/app/Videos
+      - static_volume:/usr/src/app/staticfiles
+      - /static/
+      - ipython:/root/.ipython
+    command: bash -c "python3 /usr/src/app/manage.py migrate && python3 /usr/src/app/manage.py populatedb && python3 manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
