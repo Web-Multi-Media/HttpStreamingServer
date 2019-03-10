@@ -1,29 +1,53 @@
 var currentid = 0;
 var previousid = 0;
 var nextid = 0;
+var myPlayer;
 
 function loadPreviousVideo() {
-    $("#ShowVideo").load("rendervideo/?VideoNumber=" + previousid);
+    $.getJSON("rendervideo/?VideoNumber=" + previousid, function(data) {
+        console.log(data.nextId);
+        console.log(data.url);
+        console.log(data.prevId);
+        nextid = data.nextId;
+        previousid = data.prevId;
+        myPlayer.src({ src: data.url });
+    });
 }
 
 function loadNextVideo() {
-    $("#ShowVideo").load("rendervideo/?VideoNumber=" + nextid);
+    $.getJSON("rendervideo/?VideoNumber=" + nextid, function(data) {
+        console.log(data.nextId);
+        console.log(data.url);
+        console.log(data.prevId);
+        nextid = data.nextId;
+        previousid = data.prevId;
+        myPlayer.src({ src: data.url });
+    });
 }
 
 function loadVideo(id) {
-    $("#ShowVideo").load("rendervideo/?VideoNumber=" + id);
-}
-
-function loadFirstVideo() {
-    $.getJSON('rendervideo/', function(data) {
-        console.log(data);
-        //data is the JSON string
+    $.getJSON("rendervideo/?VideoNumber=" + id, function(data) {
+        console.log(data.nextId);
+        console.log(data.url);
+        console.log(data.prevId);
+        nextid = data.nextId;
+        previousid = data.prevId;
+        myPlayer.src({ src: data.url });
     });
 }
 
 videojs("example_video_1", {}, function(){
     console.log("Player is ready !")
+    myPlayer = this;
     // Player (this) is initialized and ready.
+    $.getJSON('rendervideo/', function(data) {
+        console.log(data.nextId);
+        console.log(data.url);
+        console.log(data.prevId);
+        nextid = data.nextId;
+        previousid = data.prevId;
+        myPlayer.src({ src: data.url });
+    });
 });
 
 function updateIds(newpreviousid, newnextid) {
