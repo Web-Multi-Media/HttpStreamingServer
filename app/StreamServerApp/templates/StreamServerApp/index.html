@@ -24,38 +24,42 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs">
-            <button type="button" onclick=loadPreviousVideo() class="btn btn-default btn-sm">
+            <button type="button" onclick=loadPreviousVideo() class="btn btn-default btn-block">
                 <span class="glyphicon glyphicon-step-backward"></span> Previous Movie
             </button>
         </div>
-        <div class="col-xs">
+        <div class="col">
             <div id="ShowVideo"></div>
             <ul>
-                <video id="example_video_1" class="video-js vjs-default-skin vjs-big-play-centered"
-                controls preload="auto" width="640" height="264">
+                <video id="example_video_1" class="video-js vjs-default-skin vjs-16-9 vjs-big-play-centered"
+                controls preload="auto">
                 
               </video>
             </ul>
         </div>
-        <div class="col-xs-2">
-            <button type="button" onclick=loadNextVideo() class="btn btn-default btn-sm">
+        <div class="col-xs">
+            <button type="button" onclick=loadNextVideo() class="btn btn-default btn-block">
                 <span class="glyphicon glyphicon-step-backward"></span> Next Movie
             </button>
         </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="searchbox-container" style="width: 100%">
+            <div class="ui icon input">
+            <input placeholder="Search video..." type="search" oninput="displayResults(5, this)" class="searchbox">
+                 <i class="search icon"></i>
+           </div>
+           <div class="ui results" style="display: none;">
+         </div>
+         </div>
     </div>
     <script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
     <script src="{% static "HttpStreamingClient.js" %}" ></script>
 </div>
 
-<br>
-<div class="searchbox-container" style="width: 30%">
-    <div class="ui icon input">
-        <input placeholder="Search video..." type="search" oninput="displayResults(5, this)" class="searchbox">
-        <i class="search icon"></i>
-    </div>
-    <div class="ui results" style="display: none;">
-    </div>
-</div>
+
+
 
 
 

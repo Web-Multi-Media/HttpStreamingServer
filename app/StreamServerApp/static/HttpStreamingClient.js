@@ -46,7 +46,10 @@ videojs("example_video_1", {}, function(){
         console.log(data.prevId);
         nextid = data.nextId;
         previousid = data.prevId;
+        $( window ).width();
         myPlayer.src({ src: data.url });
+        myPlayer.width = $( window ).width();
+
     });
 });
 
