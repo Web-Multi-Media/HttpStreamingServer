@@ -7,7 +7,7 @@ const VideoDetail = ({video}) => {
     return (
         <div>
             <div className='ui embed'>
-                <video controls width="320" height="240" key={video.pk}>
+                <video preload="auto" controls width="320" height="240" key={video.pk}>
                     <source src={video.fields.baseurl} title='Video player'/>
                 </video>
             </div>

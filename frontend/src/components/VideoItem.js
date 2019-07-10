@@ -4,7 +4,7 @@ import '../style/video.css';
 const VideoItem = ({video , handleVideoSelect}) => {
     return (
         <div onClick={ () => handleVideoSelect(video)} className=' video-item item'>
-            <video width="10%" key={video.pk}>
+            <video width="10%" preload="metadata" key={video.pk}>
                 <source src={video.fields.baseurl} title='Video player'/>
             </video>
             <div className='content'>
