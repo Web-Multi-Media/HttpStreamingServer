@@ -17,10 +17,18 @@ import dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-STATIC_URL = '/staticfiles/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-VIDEO_URL = '/Videos/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, '../frontend/build/static/'),  # update the STATICFILES_DIRS
+)
+
+if "DEBUG" in os.environ:
+    VIDEO_URL = 'http://localhost:1337/Videos/'
+else:
+    VIDEO_URL = '/Videos/'
+
 VIDEO_ROOT = os.path.join(BASE_DIR, 'Videos/')
 
 # Quick-start development settings - unsuitable for production
@@ -32,7 +40,7 @@ SECRET_KEY = 'yn4+-6uw$)i%w_wey*k65go68^=t_i)trb%m+ptb_%(7rcxc@h'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['web', 'localhost']
 
 # Application definition
 
@@ -46,9 +54,11 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'StreamingServer',
     'StreamServerApp',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -63,7 +73,7 @@ ROOT_URLCONF = 'StreamingServer.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'StreamServerApp/templates')],
+        'DIRS': [os.path.join(BASE_DIR, '../frontend/build/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,3 +145,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 FIXTURE_DIRS =  ['/usr/src/app/StreamServerApp/fixtures/']
+
+# CORS Config
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False

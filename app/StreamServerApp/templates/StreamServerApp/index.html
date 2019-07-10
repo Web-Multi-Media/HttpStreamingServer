@@ -1,69 +1,15 @@
-{% load staticfiles %}
+{% load render_bundle from webpack_loader %}
+<!DOCTYPE html>
+<html>
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link href="https://vjs.zencdn.net/7.2.3/video-js.css" rel="stylesheet">
-    <!-- If you'd like to support IE8 (for Video.js versions prior to v7) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-            crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-            crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="{% static "semanticui/semantic.min.css" %}" />
-    {% load static %}
-    <title>HTTP Streaming Server</title>
+    <meta charset="UTF-8">
+    <title>Django React Webpack</title>
+    <!-- Webpack rendered CSS -->
+    {% render_bundle 'main' 'css' %}
 </head>
-
 <body>
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-xs">
-            <button type="button" onclick=loadPreviousVideo() class="btn btn-default btn-block">
-                <span class="glyphicon glyphicon-step-backward"></span> Previous Movie
-            </button>
-        </div>
-        <div class="col">
-            <div id="ShowVideo"></div>
-            <ul>
-                <video id="example_video_1" class="video-js vjs-default-skin vjs-16-9 vjs-big-play-centered"
-                controls preload="auto">
-                
-              </video>
-            </ul>
-        </div>
-        <div class="col-xs">
-            <button type="button" onclick=loadNextVideo() class="btn btn-default btn-block">
-                <span class="glyphicon glyphicon-step-backward"></span> Next Movie
-            </button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="searchbox-container" style="width: 100%">
-            <div class="ui icon input">
-            <input placeholder="Search video..." type="search" oninput="displayResults(5, this)" class="searchbox">
-                 <i class="search icon"></i>
-           </div>
-           <div class="ui results" style="display: none;">
-         </div>
-         </div>
-    </div>
-    <script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
-    <script src="{% static "HttpStreamingClient.js" %}" ></script>
-</div>
-
-
-
-
-
-
-
+    <div id="react-app"></div>
+    <!-- Webpack rendered JS -->
+    {% render_bundle 'main' 'js' %}
 </body>
-
-
+</html>

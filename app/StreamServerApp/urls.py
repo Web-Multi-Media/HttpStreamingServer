@@ -5,6 +5,6 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    url(r'^rendervideo/$', views.rendervideo, name="viewvideo"),
+    url('getallvideos/', views.getallvideos, name="getallvideos"),
     path('search_video/', views.search_video, name='search-video'),
 ]

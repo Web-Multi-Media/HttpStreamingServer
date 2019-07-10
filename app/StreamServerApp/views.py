@@ -1,52 +1,29 @@
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
+from django.shortcuts import render
 from StreamServerApp.models import Video
 from django.contrib.postgres.search import TrigramSimilarity
+from django.core import serializers
 
 
 def index(request):
-    template = loader.get_template('StreamServerApp/index.html')
-    return HttpResponse(template.render({}, request))
+    return render(request, "index.html")
 
-def rendervideo(request):
-    vid_number_str = request.GET.get('VideoNumber')
-    context = {}
-    pks = list(Video.objects.values_list('pk', flat=True))
-    if (len(pks) == 0):
-        print("ERROR: Database is not loaded")
-        raise Http404("Database is not loaded")
-    if not vid_number_str:
-        # Return first video urls with the "neighboors" primary key
-        url = Video.objects.get(pk=pks[0]).baseurl
-        prev_id = pks[len(pks) - 1]
-        next_id = pks[1]
-        context = {
-            'url': url,
-            'prevId': prev_id,
-            'nextId': next_id
-        }
-    else:
-        # Return requested video urls with the two neighboors primary keys
-        vid_primary_key = int(vid_number_str)
-        url = Video.objects.get(pk=vid_primary_key).baseurl
-        if pks.index(vid_primary_key) == len(pks) - 1:
-            nextid = pks[0]
-        else:
-            nextid = pks[pks.index(vid_primary_key) + 1]
-        if pks.index(vid_primary_key) == 0:
-            previd = pks[len(pks) - 1]
-        else:
-            previd = pks[pks.index(vid_primary_key) - 1]
-        context = {
-            'url': url,
-            'prevId': previd,
-            'nextId': nextid
-        }
-    return JsonResponse(context)
+def getallvideos(request):
+    qs = Video.objects.all()
+    qs_json = serializers.serialize('json', qs)
+    return HttpResponse(qs_json, content_type='application/json')
 
 
 def search_video(request):
+    print(request)
     query = request.GET.get('q', '')
+
+    if query == '':
+        qs = Video.objects.all()
+        qs_json = serializers.serialize('json', qs)
+        return HttpResponse(qs_json, content_type='application/json')
+
 
     # ANOTHER EXAMPLE:
     # vector = SearchVector('name', weight='A') + SearchVector('description', weight='C')
@@ -59,8 +36,6 @@ def search_video(request):
                               .filter(similarity__gte=0.2) \
                               .order_by('-similarity')
 
-    results = qs_results.values('name', 'baseurl', 'id')
+    qs_json = serializers.serialize('json', qs_results)
 
-    return JsonResponse(list(results[:10]), safe=False)
-
-
+    return HttpResponse(qs_json, content_type='application/json')

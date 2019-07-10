@@ -42,7 +42,7 @@ def populate_db_from_local_folder(base_path, remote_url):
             relative_path = os.path.relpath(full_path, video_path)
             print(full_path)
             print(relative_path)
-            if isfile(full_path) and (full_path.endswith(".mp4") or full_path.endswith(".mkv")):
+            if isfile(full_path) and (full_path.endswith(".mp4")):
                 try:
                     probe = ffmpeg.probe(full_path)
                 except ffmpeg.Error as e:

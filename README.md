@@ -3,8 +3,9 @@
 Intro
 -------------------
 
-This is a simple http media presentation server based on Django and Video-js.
-It will display the Videos located in the Videos folder as a playlist in your webbrowser.
+This is a simple http media presentation server based on Django and React.
+It will display the Videos located in the Videos folder on the server side as a playlist in your webbrowser. Support is therefore limited to mp4 container with H264/AAC content.
+
 
 How to use
 -------------------
@@ -15,14 +16,13 @@ You'll need to have [`docker`](https://docs.docker.com/install/) and [`docker-co
 
 #### RUN
 
-The first time you load the application you will need to perform migrations:
+Build the frontend:
 
-    `docker-compose run --rm web python manage.py migrate`
-
+    `docker-compose -f docker-compose-prod.yml build`
 
 Run the server:
 
-    `docker-compose up`
+    `docker-compose -f docker-compose-prod.yml up`
 
 Now the application should be accessible from your browser at `http://localhost:1337/StreamServerApp/`.
 

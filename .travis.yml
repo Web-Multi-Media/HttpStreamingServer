@@ -8,6 +8,7 @@ services:
   
 install:
     - docker build ./app
+    - docker build ./frontend
 
 script:
-    - docker-compose run --rm web python3 manage.py test
+    - docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py test
