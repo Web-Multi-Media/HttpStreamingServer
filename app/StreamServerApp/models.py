@@ -9,3 +9,4 @@ class Video(models.Model):
     audio_codec = models.CharField(max_length=100, default="")
     metadata = models.CharField(max_length=100, default="")
     baseurl = models.CharField(max_length=300, default="")
+    thumbnail = models.CharField(max_length=300, default="")

@@ -24,6 +24,11 @@ class LoadingTest(TestCase):
         self.assertEqual(response.status_code, 200)
         #self.assertJSONEqual(str(response.content, encoding='utf8'), [])
 
+    def test_get_videos(self):
+        response = self.client.get(reverse('get-videos'))
+        self.assertEqual(response.status_code, 200)
+        #self.assertJSONEqual(str(response.content, encoding='utf8'), [])
+
     def test_search_video_with_query(self):
         '''expected_result = [{
             'name': 'canard',

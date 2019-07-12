@@ -22,7 +22,8 @@ class App extends React.Component {
     };
 
     componentDidMount(){
-        djangoAPI.get("/getallvideos/").then((response)=>{
+        djangoAPI.get("/get_videos/").then((response)=>{
+            console.log(response.data);
             this.setState({
                 videos: response.data
             })
@@ -38,11 +39,11 @@ class App extends React.Component {
             <div className='ui container' style={{marginTop: '1em'}}>
                 <SearchBar handleFormSubmit={this.handleSubmit}/>
                 <div className='ui grid'>
-                    <div className="ui row">
-                        <div className="eleven wide column">
+                    <div className="ui column">
+                        <div className="eleven wide row">
                             <VideoDetail video={this.state.selectedVideo}/>
                         </div>
-                        <div className="five wide column">
+                        <div className="five wide row">
                             <VideoList handleVideoSelect={this.handleVideoSelect} videos={this.state.videos}/>
                         </div>
                     </div>

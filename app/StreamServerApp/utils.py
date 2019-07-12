@@ -12,6 +12,7 @@ from StreamServerApp.models import Video
 import os
 from os.path import isfile, join
 import ffmpeg
+import subprocess
 
 def delete_DB_Infos():
     """ delete all videos infos in the db
@@ -57,7 +58,8 @@ def populate_db_from_local_folder(base_path, remote_url):
                 video_codec_type = video_stream['codec_name']
                 video_width = video_stream['width']
                 video_height = video_stream['height']
-                
+                duration = float(video_stream['duration'])
+
                 audio_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'audio'), None)
                 if audio_stream is None:
                     print('No video stream found', file=sys.stderr)
@@ -65,11 +67,18 @@ def populate_db_from_local_folder(base_path, remote_url):
 
                 audio_codec_type = audio_stream['codec_name']
 
-                if(("h264" in video_codec_type) and ("aac" in audio_codec_type)):
+
+
+                if(full_path.endswith(".mp4") and ("h264" in video_codec_type) and ("aac" in audio_codec_type)):
+                    thumbnail_fullpath=os.path.splitext(full_path)[0]+'.jpg'
+                    thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
+                    subprocess.run(["ffmpeg", "-ss", str(duration/2), "-i", full_path, "-an", "-vf", "select=eq(pict_type\,I),scale=320:-1", "-vframes", "1", thumbnail_fullpath])
                     v = Video(name=filename, baseurl="{}/{}".format(remote_url, relative_path),\
                                         video_codec=video_codec_type, audio_codec=audio_codec_type,\
-                                        height=video_height, width=video_width)
+                                        height=video_height, width=video_width, thumbnail="{}/{}".format(remote_url, thumbnail_relativepath))
                     v.save()
+
+
 
     print("{} videos were added to the database".format(str(get_DB_size())))
 

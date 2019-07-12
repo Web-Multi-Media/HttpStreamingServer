@@ -4,12 +4,13 @@ from django.shortcuts import render
 from StreamServerApp.models import Video
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core import serializers
+from StreamServerApp import utils
 
 
 def index(request):
     return render(request, "index.html")
 
-def getallvideos(request):
+def get_videos(request):
     qs = Video.objects.all()
     qs_json = serializers.serialize('json', qs)
     return HttpResponse(qs_json, content_type='application/json')
@@ -39,3 +40,8 @@ def search_video(request):
     qs_json = serializers.serialize('json', qs_results)
 
     return HttpResponse(qs_json, content_type='application/json')
+
+def update_database(request):
+    print("updating database")
+    utils.delete_DB_Infos()
+    utils.populate_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL)
