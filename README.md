@@ -4,7 +4,7 @@ Intro
 -------------------
 
 This is a simple http media presentation server based on Django and React.
-It will display the Videos located in the Videos folder on the server side as a playlist in your webbrowser. Support is therefore limited to mp4 container with H264/AAC content.
+It will display the Videos located in the Videos folder on the server side as a playlist in your webbrowser. Support is therefore limited to mp4 container with H264/AAC content. In case mkv files with H264/AAC codecs are present in the Videos folder, they will be transmuxed to mp4 without reencoding.
 
 
 How to use

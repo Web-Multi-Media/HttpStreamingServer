@@ -24,6 +24,16 @@ def get_DB_size():
     """
     return len(Video.objects.all())
 
+def pretty(d, indent=0):
+    """ pretty print for nested dictionnary
+    """
+    for key, value in d.items():
+        print('\t' * indent + str(key))
+        if isinstance(value, dict):
+            pretty(value, indent+1)
+        else:
+            print('\t' * (indent+1) + str(value))
+
 def populate_db_from_local_folder(base_path, remote_url):
     """ # create all the videos infos in the database
         Args:
@@ -41,9 +51,7 @@ def populate_db_from_local_folder(base_path, remote_url):
         for filename in filenames:
             full_path = os.path.join(root, filename)
             relative_path = os.path.relpath(full_path, video_path)
-            print(full_path)
-            print(relative_path)
-            if isfile(full_path) and (full_path.endswith(".mp4")):
+            if isfile(full_path) and (full_path.endswith(".mp4") or full_path.endswith(".mkv")):
                 try:
                     probe = ffmpeg.probe(full_path)
                 except ffmpeg.Error as e:
@@ -53,12 +61,15 @@ def populate_db_from_local_folder(base_path, remote_url):
                 video_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
                 if video_stream is None:
                     print('No video stream found', file=sys.stderr)
-                    continue
+                    continue  
 
                 video_codec_type = video_stream['codec_name']
                 video_width = video_stream['width']
                 video_height = video_stream['height']
-                duration = float(video_stream['duration'])
+                if 'duration' in video_stream:
+                    duration = float(video_stream['duration'])
+                elif 'duration' in probe['format']:
+                    duration = float(probe['format']['duration'])
 
                 audio_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'audio'), None)
                 if audio_stream is None:
@@ -67,16 +78,34 @@ def populate_db_from_local_folder(base_path, remote_url):
 
                 audio_codec_type = audio_stream['codec_name']
 
-
-
-                if(full_path.endswith(".mp4") and ("h264" in video_codec_type) and ("aac" in audio_codec_type)):
+                if(("h264" in video_codec_type) and ("aac" in audio_codec_type)):
+                    #Thumbnail creation
                     thumbnail_fullpath=os.path.splitext(full_path)[0]+'.jpg'
                     thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
-                    subprocess.run(["ffmpeg", "-ss", str(duration/2), "-i", full_path, "-an", "-vf", "select=eq(pict_type\,I),scale=320:-1", "-vframes", "1", thumbnail_fullpath])
+                    subprocess.run(["ffmpeg", "-ss", str(duration/2.0), "-i", full_path,\
+                                        "-an", "-vf", "scale=320:-1", \
+                                            "-vframes", "1", thumbnail_fullpath])
+
+                    #if file is mkv, transmux to mp4
+                    if(full_path.endswith(".mkv")):
+                        temp_mp4 = os.path.splitext(full_path)[0]+'.mp4'
+                        cmd = ["ffmpeg", "-i", full_path, "-codec", "copy", temp_mp4]
+                        try:
+                            subprocess.run(cmd)
+                        except subprocess.CalledProcessError as e:
+                            print(e.returncode)
+                            print(e.cmd)
+                            print(e.output)
+                            continue
+                        #remove old mkv file
+                        os.remove(full_path)
+                        relative_path = os.path.splitext(relative_path)[0]+'.mp4'
+
                     v = Video(name=filename, baseurl="{}/{}".format(remote_url, relative_path),\
-                                        video_codec=video_codec_type, audio_codec=audio_codec_type,\
-                                        height=video_height, width=video_width, thumbnail="{}/{}".format(remote_url, thumbnail_relativepath))
+                                            video_codec=video_codec_type, audio_codec=audio_codec_type,\
+                                            height=video_height, width=video_width, thumbnail="{}/{}".format(remote_url, thumbnail_relativepath))
                     v.save()
+
 
 
 
