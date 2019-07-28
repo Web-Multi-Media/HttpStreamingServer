@@ -18,13 +18,13 @@ You'll need to have [`docker`](https://docs.docker.com/install/) and [`docker-co
 
 Build the frontend:
 
-    `docker-compose -f docker-compose-prod.yml build`
+    docker-compose -f docker-compose-prod.yml build
 
 Run the server:
 
-    `docker-compose -f docker-compose-prod.yml up`
+    docker-compose -f docker-compose-prod.yml up
 
-Now the application should be accessible from your browser at `http://localhost:1337/StreamServerApp/`.
+Now the application should be accessible from your browser at `http://localhost:1337/streaming/`.
 
 
 #### CONFIGURATION
@@ -33,4 +33,16 @@ The videos contained in the Videos/ folder are updated everytime the app is laun
 
 If you want to manually triggers an update, use the following command
 
-    `docker-compose run --rm web python manage.py populatedb`
+    docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py populatedb
+
+If you want to reload videos while the app is running, you need to have a superuser created.
+
+    docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py createsuperuser
+
+then go to `http://localhost:1337/admin/`, select all Videos and check 'reload Videos' actions.
+
+#### REACT/DJANGO Interaction
+
+So far, the django indew view is mapped to react build directory in the app/settings.py
+
+

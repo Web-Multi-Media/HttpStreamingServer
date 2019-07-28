@@ -15,7 +15,7 @@ services:
     volumes:
       - dbvolume:/var/lib/postgresql/data/
   web:
-    build: ./app
+    build: ./backend
     restart: always 
     expose:
       - 8000
@@ -24,7 +24,7 @@ services:
     environment:
       - DEBUG=1
     volumes:
-      - ./app/:/usr/src/app/
+      - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
       - static_volume:/usr/src/app/staticfiles
       - ./frontend/:/usr/src/frontend/
@@ -37,7 +37,7 @@ services:
   nginx:
     build: ./nginx
     volumes:
-      - ./app/:/usr/src/app/
+      - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
       - static_volume:/usr/src/app/staticfiles
     ports:

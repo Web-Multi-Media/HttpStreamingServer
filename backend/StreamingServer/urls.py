@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('StreamServerApp/', include('StreamServerApp.urls')),
+    path('streaming/', include('StreamServerApp.urls')),
     path('admin/', admin.site.urls),
 
 ]
