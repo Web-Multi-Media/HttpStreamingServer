@@ -50,66 +50,98 @@ def populate_db_from_local_folder(base_path, remote_url):
         idx += len(filenames)
         for filename in filenames:
             full_path = os.path.join(root, filename)
-            relative_path = os.path.relpath(full_path, video_path)
+
             if isfile(full_path) and (full_path.endswith(".mp4") or full_path.endswith(".mkv")):
                 try:
-                    probe = ffmpeg.probe(full_path)
-                except ffmpeg.Error as e:
-                    print(e.stderr, file=sys.stderr)
+                    # Print current working directory
+                    print ("Current working dir : %s" % root)
+                    video_infos = prepare_video(full_path, video_path)
+                    if not video_infos:
+                        print("Dict is Empty")
+                        continue
+                except:
+                    print ("An error occured")
                     continue
 
-                video_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
-                if video_stream is None:
-                    print('No video stream found', file=sys.stderr)
-                    continue  
-
-                video_codec_type = video_stream['codec_name']
-                video_width = video_stream['width']
-                video_height = video_stream['height']
-                if 'duration' in video_stream:
-                    duration = float(video_stream['duration'])
-                elif 'duration' in probe['format']:
-                    duration = float(probe['format']['duration'])
-
-                audio_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'audio'), None)
-                if audio_stream is None:
-                    print('No video stream found', file=sys.stderr)
-                    continue
-
-                audio_codec_type = audio_stream['codec_name']
-
-                if(("h264" in video_codec_type) and ("aac" in audio_codec_type)):
-                    #Thumbnail creation
-                    thumbnail_fullpath=os.path.splitext(full_path)[0]+'.jpg'
-                    thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
-                    subprocess.run(["ffmpeg", "-ss", str(duration/2.0), "-i", full_path,\
-                                        "-an", "-vf", "scale=320:-1", \
-                                            "-vframes", "1", thumbnail_fullpath])
-
-                    #if file is mkv, transmux to mp4
-                    if(full_path.endswith(".mkv")):
-                        temp_mp4 = os.path.splitext(full_path)[0]+'.mp4'
-                        cmd = ["ffmpeg", "-i", full_path, "-codec", "copy", temp_mp4]
-                        try:
-                            subprocess.run(cmd)
-                        except subprocess.CalledProcessError as e:
-                            print(e.returncode)
-                            print(e.cmd)
-                            print(e.output)
-                            continue
-                        #remove old mkv file
-                        os.remove(full_path)
-                        relative_path = os.path.splitext(relative_path)[0]+'.mp4'
-
-                    v = Video(name=filename, baseurl="{}/{}".format(remote_url, relative_path),\
-                                            video_codec=video_codec_type, audio_codec=audio_codec_type,\
-                                            height=video_height, width=video_width, thumbnail="{}/{}".format(remote_url, thumbnail_relativepath))
-                    v.save()
-
-
-
+                v = Video(name=filename, video_folder = root, \
+                                            video_url="{}/{}".format(remote_url, video_infos['relative_path']),\
+                                            video_codec=video_infos['video_codec_type'], audio_codec=video_infos['audio_codec_type'],\
+                                            height=video_infos['video_height'], width=video_infos['video_width'], \
+                                            thumbnail="{}/{}".format(remote_url, video_infos['thumbnail_relativepath']))
+                v.save()
 
     print("{} videos were added to the database".format(str(get_DB_size())))
+
+def prepare_video(full_path, video_path):
+    """ # Create thumbnail, transmux if necessayr and get all the videos infos.
+        Args:
+        full_path: full path to the video
+        video_path: full path to the video
+
+        return: Dictionnary with video infos
+
+        this functions will only add videos to the database if 
+        they are encoded with h264/AAC codec
+    """
+    print(full_path)
+    print(video_path)
+    try:
+        probe = ffmpeg.probe(full_path)
+    except ffmpeg.Error as e:
+        print(e.stderr, file=sys.stderr)
+        raise
+
+    video_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
+    if video_stream is None:
+        print('No video stream found', file=sys.stderr)
+        return {}
+
+    video_codec_type = video_stream['codec_name']
+    video_width = video_stream['width']
+    video_height = video_stream['height']
+    if 'duration' in video_stream:
+        duration = float(video_stream['duration'])
+    elif 'duration' in probe['format']:
+        duration = float(probe['format']['duration'])
+
+    audio_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'audio'), None)
+    if audio_stream is None:
+        print('No audio stream found', file=sys.stderr)
+        return {}
+
+    audio_codec_type = audio_stream['codec_name']
+
+    relative_path = os.path.relpath(full_path, video_path)
+
+    if(("h264" in video_codec_type) and ("aac" in audio_codec_type)):
+        #Thumbnail creation
+        thumbnail_fullpath=os.path.splitext(full_path)[0]+'.jpg'
+        thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
+        subprocess.run(["ffmpeg", "-ss", str(duration/2.0), "-i", full_path,\
+        "-an", "-vf", "scale=320:-1", \
+        "-vframes", "1", thumbnail_fullpath])
+
+        #if file is mkv, transmux to mp4
+        if(full_path.endswith(".mkv")):
+            temp_mp4 = os.path.splitext(full_path)[0]+'.mp4'
+            cmd = ["ffmpeg", "-i", full_path, "-codec", "copy", temp_mp4]
+            try:
+                subprocess.run(cmd)
+            except subprocess.CalledProcessError as e:
+                print(e.returncode)
+                print(e.cmd)
+                print(e.output)
+                raise
+            #remove old mkv file
+            os.remove(full_path)
+            relative_path = os.path.splitext(relative_path)[0]+'.mp4'
+    else:
+        #Input is not h264, let's skip it
+        return {}
+
+    return {'relative_path': relative_path, 'video_codec_type': video_codec_type, \
+            'audio_codec_type': audio_codec_type, 'video_height': video_height,\
+            'video_width': video_width, 'thumbnail_relativepath': thumbnail_relativepath }
 
 def populate_db_from_remote_server(remotePath, ListOfVideos):
     """ # tobeDone
