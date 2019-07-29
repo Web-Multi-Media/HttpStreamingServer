@@ -59,16 +59,17 @@ def populate_db_from_local_folder(base_path, remote_url):
                     if not video_infos:
                         print("Dict is Empty")
                         continue
-                except:
-                    print ("An error occured")
-                    continue
 
-                v = Video(name=filename, video_folder = root, \
+                    v = Video(name=filename, video_folder = root, \
                                             video_url="{}/{}".format(remote_url, video_infos['relative_path']),\
                                             video_codec=video_infos['video_codec_type'], audio_codec=video_infos['audio_codec_type'],\
                                             height=video_infos['video_height'], width=video_infos['video_width'], \
                                             thumbnail="{}/{}".format(remote_url, video_infos['thumbnail_relativepath']))
-                v.save()
+                    v.save()
+                except:
+                    print ("An error occured")
+                    continue
+
 
     print("{} videos were added to the database".format(str(get_DB_size())))
 
@@ -119,14 +120,14 @@ def prepare_video(full_path, video_path):
         thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
         subprocess.run(["ffmpeg", "-ss", str(duration/2.0), "-i", full_path,\
         "-an", "-vf", "scale=320:-1", \
-        "-vframes", "1", thumbnail_fullpath])
+        "-vframes", "1", thumbnail_fullpath], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         #if file is mkv, transmux to mp4
         if(full_path.endswith(".mkv")):
             temp_mp4 = os.path.splitext(full_path)[0]+'.mp4'
             cmd = ["ffmpeg", "-i", full_path, "-codec", "copy", temp_mp4]
             try:
-                subprocess.run(cmd)
+                subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             except subprocess.CalledProcessError as e:
                 print(e.returncode)
                 print(e.cmd)

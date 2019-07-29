@@ -8,7 +8,7 @@ const VideoDetail = ({video}) => {
         <div>
             <div className='ui embed'>
                 <video preload="auto" controls width="320" height="240" key={video.pk}>
-                    <source src={video.fields.baseurl} title='Video player'/>
+                    <source src={video.fields.video_url} title='Video player'/>
                 </video>
             </div>
             <div className='ui segment'>
