@@ -25,5 +25,14 @@
       "video_url": "http://localhost:8000/static/test/folder2/singe.mp4",
       "video_codec": "h264"
     }
+  },
+  {
+    "model": "StreamServerApp.Folder",
+    "pk": 1,
+    "fields": {
+      "path": "/usr/src/app/Videos/",
+      "videos":[1,2]
+    }
   }
+
 ]

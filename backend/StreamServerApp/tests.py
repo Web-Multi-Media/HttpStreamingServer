@@ -24,10 +24,18 @@ class LoadingTest(TestCase):
         self.assertEqual(response.status_code, 200)
         #self.assertJSONEqual(str(response.content, encoding='utf8'), [])
 
-    def test_get_videos(self):
+    def test_get_all_videos(self):
         response = self.client.get(reverse('get-videos'))
         self.assertEqual(response.status_code, 200)
         #self.assertJSONEqual(str(response.content, encoding='utf8'), [])
+
+    def test_get_all_videos_in_one_folder(self):
+        data = {
+            'folder': '/usr/src/app/Videos/'
+        }
+        response = self.client.get(reverse('get-videos'), data)
+        self.assertEqual(response.status_code, 200)
+        print(response.content)
 
     def test_search_video_with_query(self):
         '''expected_result = [{

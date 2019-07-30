@@ -1,7 +1,7 @@
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.shortcuts import render
-from StreamServerApp.models import Video
+from StreamServerApp.models import Video, Folder
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core import serializers
 from StreamServerApp import utils
@@ -11,13 +11,21 @@ def index(request):
     return render(request, "index.html")
 
 def get_videos(request):
-    qs = Video.objects.all()
-    qs_json = serializers.serialize('json', qs)
-    return HttpResponse(qs_json, content_type='application/json')
+    if request.method == 'GET':
+        query = request.GET.get('folder', '')
+        if query == '':
+            qs = Video.objects.all()
+            qs_json = serializers.serialize('json', qs)
+            return HttpResponse(qs_json, content_type='application/json')
+        else:
+            qs = Folder.objects.filter(path=query)
+            print(qs)
+            videos = qs[0].videos.all()
+            qs_json = serializers.serialize('json', videos)
+            return HttpResponse(qs_json, content_type='application/json')
 
 
 def search_video(request):
-    print(request)
     query = request.GET.get('q', '')
 
     if query == '':
