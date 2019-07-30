@@ -8,7 +8,7 @@ Todo:
     * Update database only when needed.
 """
 
-from StreamServerApp.models import Video
+from StreamServerApp.models import Video, Folder
 import os
 from os.path import isfile, join
 import ffmpeg
@@ -45,7 +45,6 @@ def populate_db_from_local_folder(base_path, remote_url):
     """
     video_path = base_path
     idx = 0
-    print ("Get videos infos in dir: {} ".format(video_path))
     for root, directories, filenames in os.walk(video_path):
         idx += len(filenames)
         for filename in filenames:
@@ -54,20 +53,25 @@ def populate_db_from_local_folder(base_path, remote_url):
             if isfile(full_path) and (full_path.endswith(".mp4") or full_path.endswith(".mkv")):
                 try:
                     # Print current working directory
-                    print ("Current working dir : %s" % root)
                     video_infos = prepare_video(full_path, video_path)
                     if not video_infos:
                         print("Dict is Empty")
                         continue
 
-                    v = Video(name=filename, video_folder = root, \
+                    v = Video(name=filename, \
                                             video_url="{}/{}".format(remote_url, video_infos['relative_path']),\
                                             video_codec=video_infos['video_codec_type'], audio_codec=video_infos['audio_codec_type'],\
                                             height=video_infos['video_height'], width=video_infos['video_width'], \
                                             thumbnail="{}/{}".format(remote_url, video_infos['thumbnail_relativepath']))
                     v.save()
-                except:
+                    folder, created = Folder.objects.get_or_create(path=root)
+                    folder.save()
+                    folder.videos.add(v)
+                    folder.save()
+                    
+                except Exception as e:
                     print ("An error occured")
+                    print (e)
                     continue
 
 
@@ -84,7 +88,6 @@ def prepare_video(full_path, video_path):
         this functions will only add videos to the database if 
         they are encoded with h264/AAC codec
     """
-    print(full_path)
     print(video_path)
     try:
         probe = ffmpeg.probe(full_path)
@@ -118,14 +121,14 @@ def prepare_video(full_path, video_path):
         #Thumbnail creation
         thumbnail_fullpath=os.path.splitext(full_path)[0]+'.jpg'
         thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
-        subprocess.run(["ffmpeg", "-ss", str(duration/2.0), "-i", full_path,\
+        subprocess.run(["ffmpeg", "-n", "-ss", str(duration/2.0), "-i", full_path,\
         "-an", "-vf", "scale=320:-1", \
         "-vframes", "1", thumbnail_fullpath], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         #if file is mkv, transmux to mp4
         if(full_path.endswith(".mkv")):
             temp_mp4 = os.path.splitext(full_path)[0]+'.mp4'
-            cmd = ["ffmpeg", "-i", full_path, "-codec", "copy", temp_mp4]
+            cmd = ["ffmpeg", "-n", "-i", full_path, "-codec", "copy", temp_mp4]
             try:
                 subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             except subprocess.CalledProcessError as e:

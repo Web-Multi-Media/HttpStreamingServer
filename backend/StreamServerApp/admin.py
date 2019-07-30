@@ -1,5 +1,5 @@
 from django.contrib import admin
-from StreamServerApp.models import Video
+from StreamServerApp.models import Video, Folder
 from StreamServerApp.utils import delete_DB_Infos, populate_db_from_local_folder
 from django.conf import settings
 
@@ -13,4 +13,5 @@ class VideoAdmin(admin.ModelAdmin):
     actions = []
 
 admin.site.register(Video, VideoAdmin)
+admin.site.register(Folder, VideoAdmin)
 admin.site.add_action(reload_video)
