@@ -7,7 +7,7 @@ services:
     - docker-compose
   
 install:
-    - docker build ./app
+    - docker build ./backend
     - docker build ./frontend
 
 script:
