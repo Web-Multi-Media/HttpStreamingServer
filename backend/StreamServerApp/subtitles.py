@@ -33,7 +33,7 @@ def get_subtitles(video_path):
 
     if(best_subtitles[video]):
         best_subtitle = best_subtitles[video][0]
-        value = save_subtitles(video, [best_subtitle])
+        value = save_subtitles(video, [best_subtitle], encoding='utf8')
         if(len(value) > 0):
             print("converting srt to vtt")
             srt_fullpath = subtitle.get_subtitle_path(
@@ -41,7 +41,7 @@ def get_subtitles(video_path):
             webvtt_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
             try:
                 subprocess.run(
-                    ["ffmpeg", "-n", "-i", srt_fullpath, webvtt_fullpath])
+                    ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", srt_fullpath, webvtt_fullpath])
                 return webvtt_fullpath
             except subprocess.CalledProcessError as e:
                 print(e.returncode)
