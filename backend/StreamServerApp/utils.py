@@ -71,7 +71,8 @@ def populate_db_from_local_folder(base_path, remote_url):
                                             video_url="{}/{}".format(remote_url, video_infos['relative_path']),\
                                             video_codec=video_infos['video_codec_type'], audio_codec=video_infos['audio_codec_type'],\
                                             height=video_infos['video_height'], width=video_infos['video_width'], \
-                                            thumbnail="{}/{}".format(remote_url, video_infos['thumbnail_relativepath']))
+                                            thumbnail="{}/{}".format(remote_url, video_infos['thumbnail_relativepath']),
+                                            subtitle="{}/{}".format(remote_url, video_infos['subtitles_relative_path']))
                     v.save()
                 except Exception as ex:
                     print ("An error occured")
@@ -81,7 +82,7 @@ def populate_db_from_local_folder(base_path, remote_url):
 
     print("{} videos were added to the database".format(str(get_DB_size())))
 
-def prepare_video(full_path, video_path, video_dir):
+def prepare_video(video_full_path, video_path, video_dir):
     """ # Create thumbnail, transmux if necessayr and get all the videos infos.
         Args:
         full_path: full path to the video (eg: /Videos/folder1/video.mp4)
@@ -93,10 +94,10 @@ def prepare_video(full_path, video_path, video_dir):
         this functions will only add videos to the database if 
         they are encoded with h264/AAC codec
     """
-    print(full_path)
+    print(video_full_path)
     print(video_path)
     try:
-        probe = ffmpeg.probe(full_path)
+        probe = ffmpeg.probe(video_full_path)
     except ffmpeg.Error as e:
         print(e.stderr, file=sys.stderr)
         raise
@@ -121,20 +122,20 @@ def prepare_video(full_path, video_path, video_dir):
 
     audio_codec_type = audio_stream['codec_name']
 
-    relative_path = os.path.relpath(full_path, video_path)
+    relative_path = os.path.relpath(video_full_path, video_path)
 
     if(("h264" in video_codec_type) and ("aac" in audio_codec_type)):
         #Thumbnail creation
-        thumbnail_fullpath=os.path.splitext(full_path)[0]+'.jpg'
+        thumbnail_fullpath=os.path.splitext(video_full_path)[0]+'.jpg'
         thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
-        subprocess.run(["ffmpeg", "-ss", str(duration/2.0), "-i", full_path,\
+        subprocess.run(["ffmpeg", "-ss", str(duration/2.0), "-i", video_full_path,\
         "-an", "-vf", "scale=320:-1", \
         "-vframes", "1", thumbnail_fullpath], stdout=customstdout, stderr=customstderr)
 
         #if file is mkv, transmux to mp4
-        if(full_path.endswith(".mkv")):
-            temp_mp4 = os.path.splitext(full_path)[0]+'.mp4'
-            cmd = ["ffmpeg", "-i", full_path, "-codec", "copy", temp_mp4]
+        if(video_full_path.endswith(".mkv")):
+            temp_mp4 = os.path.splitext(video_full_path)[0]+'.mp4'
+            cmd = ["ffmpeg", "-i", video_full_path, "-codec", "copy", temp_mp4]
             try:
                 subprocess.run(cmd, stdout=customstdout, stderr=customstderr)
             except subprocess.CalledProcessError as e:
@@ -143,11 +144,14 @@ def prepare_video(full_path, video_path, video_dir):
                 print(e.output)
                 raise
             #remove old mkv file
-            os.remove(full_path)
+            os.remove(video_full_path)
             relative_path = os.path.splitext(relative_path)[0]+'.mp4'
-            full_path = temp_mp4
+            video_full_path = temp_mp4
 
-        get_subtitles(full_path)
+        subtitles_full_path = get_subtitles(video_full_path)
+        subtitles_relative_path = ''
+        if(subtitles_full_path):
+            subtitles_relative_path = os.path.relpath(subtitles_full_path, video_path)
         
     else:
         #Input is not h264, let's skip it
@@ -155,7 +159,8 @@ def prepare_video(full_path, video_path, video_dir):
 
     return {'relative_path': relative_path, 'video_codec_type': video_codec_type, \
             'audio_codec_type': audio_codec_type, 'video_height': video_height,\
-            'video_width': video_width, 'thumbnail_relativepath': thumbnail_relativepath }
+            'video_width': video_width, 'thumbnail_relativepath': thumbnail_relativepath,\
+             'subtitles_relative_path':subtitles_relative_path}
 
 def populate_db_from_remote_server(remotePath, ListOfVideos):
     """ # tobeDone
