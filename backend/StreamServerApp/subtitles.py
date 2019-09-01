@@ -31,10 +31,10 @@ def get_subtitles(video_path):
 
     best_subtitles = download_best_subtitles([video], {Language('fra')})
 
-    if(best_subtitles[video]):
+    if best_subtitles[video]:
         best_subtitle = best_subtitles[video][0]
         value = save_subtitles(video, [best_subtitle], encoding='utf8')
-        if(len(value) > 0):
+        if len(value) > 0:
             print("converting srt to vtt")
             srt_fullpath = subtitle.get_subtitle_path(
                 video_path, Language('fra'))

@@ -72,7 +72,7 @@ def populate_db_from_local_folder(base_path, remote_url):
                                             video_codec=video_infos['video_codec_type'], audio_codec=video_infos['audio_codec_type'],\
                                             height=video_infos['video_height'], width=video_infos['video_width'], \
                                             thumbnail="{}/{}".format(remote_url, video_infos['thumbnail_relativepath']),
-                                            subtitle="{}/{}".format(remote_url, video_infos['subtitles_relative_path']))
+                                            subtitle_url="{}/{}".format(remote_url, video_infos['subtitles_relative_path']))
                     v.save()
                 except Exception as ex:
                     print ("An error occured")
