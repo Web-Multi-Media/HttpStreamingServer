@@ -31,7 +31,8 @@ class App extends React.Component {
     }
 
     handleVideoSelect = (video) => {
-        this.setState({selectedVideo: video})
+        this.setState({selectedVideo: video});
+        window.scrollTo(0, 0);
     }
 
     render() {
