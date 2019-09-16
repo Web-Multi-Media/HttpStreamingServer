@@ -4,6 +4,7 @@ volumes:
   dbvolume:
   ipython:
   static_volume:
+  frontend-build-volume:
 
 services:
   db:
@@ -27,7 +28,7 @@ services:
       - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
       - static_volume:/usr/src/app/staticfiles
-      - ./frontend/:/usr/src/frontend/
+      - frontend-build-volume:/usr/src/frontend/
       - /static/
       - ipython:/root/.ipython
     command: bash -c "python3 /usr/src/app/manage.py migrate && python3 /usr/src/app/manage.py populatedb && gunicorn StreamingServer.wsgi:application --bind 0.0.0.0:8000"
@@ -48,7 +49,7 @@ services:
   frontend:
     build: ./frontend
     volumes:
-      - ./frontend/:/usr/src/app/
+      - frontend-build-volume:/usr/src/app/
     command: npm start
     depends_on:
       - web
