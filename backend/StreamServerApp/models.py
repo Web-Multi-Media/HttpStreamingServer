@@ -11,4 +11,5 @@ class Video(models.Model):
     video_url = models.CharField(max_length=300, default="")
     video_folder = models.CharField(max_length=300, default="")
     thumbnail = models.CharField(max_length=300, default="")
-    subtitle_url = models.CharField(max_length=300, default="")
+    fr_subtitle_url = models.CharField(max_length=300, default="")
+    en_subtitle_url = models.CharField(max_length=300, default="")

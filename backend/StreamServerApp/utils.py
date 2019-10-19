@@ -72,7 +72,8 @@ def populate_db_from_local_folder(base_path, remote_url):
                                             video_codec=video_infos['video_codec_type'], audio_codec=video_infos['audio_codec_type'],\
                                             height=video_infos['video_height'], width=video_infos['video_width'], \
                                             thumbnail="{}/{}".format(remote_url, video_infos['thumbnail_relativepath']),
-                                            subtitle_url="{}/{}".format(remote_url, video_infos['subtitles_relative_path']))
+                                            fr_subtitle_url="{}/{}".format(remote_url, video_infos['fr_subtitles_relative_path']),\
+                                            en_subtitle_url="{}/{}".format(remote_url, video_infos['en_subtitles_relative_path']))
                     v.save()
                 except Exception as ex:
                     print ("An error occured")
@@ -151,9 +152,13 @@ def prepare_video(video_full_path, video_path, video_dir):
             
 
         subtitles_full_path = get_subtitles(video_full_path)
-        subtitles_relative_path = ''
+        fr_subtitles_relative_path = ''
         if(subtitles_full_path[0]):
-            subtitles_relative_path = os.path.relpath(subtitles_full_path[0], video_path)
+            fr_subtitles_relative_path = os.path.relpath(subtitles_full_path[0], video_path)
+
+        en_subtitles_relative_path = ''
+        if(subtitles_full_path[1]):
+            en_subtitles_relative_path = os.path.relpath(subtitles_full_path[1], video_path)
         
     else:
         #Input is not h264, let's skip it
@@ -162,7 +167,7 @@ def prepare_video(video_full_path, video_path, video_dir):
     return {'relative_path': relative_path, 'video_codec_type': video_codec_type, \
             'audio_codec_type': audio_codec_type, 'video_height': video_height,\
             'video_width': video_width, 'thumbnail_relativepath': thumbnail_relativepath,\
-             'subtitles_relative_path':subtitles_relative_path}
+             'fr_subtitles_relative_path':fr_subtitles_relative_path, 'en_subtitles_relative_path':en_subtitles_relative_path}
 
 def populate_db_from_remote_server(remotePath, ListOfVideos):
     """ # tobeDone
