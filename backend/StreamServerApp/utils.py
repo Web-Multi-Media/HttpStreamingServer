@@ -129,21 +129,25 @@ def prepare_video(video_full_path, video_path, video_dir):
         #Thumbnail creation
         thumbnail_fullpath=os.path.splitext(video_full_path)[0]+'.jpg'
         thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
-        subprocess.run(["ffmpeg", "-ss", str(duration/2.0), "-i", video_full_path,\
-        "-an", "-vf", "scale=320:-1", \
-        "-vframes", "1", thumbnail_fullpath], stdout=customstdout, stderr=customstderr)
+        if(os.path.isfile(thumbnail_fullpath) == False):
+            subprocess.run(["ffmpeg", "-ss", str(duration/2.0), "-i", video_full_path,
+                            "-an", "-vf", "scale=320:-1",
+                            "-vframes", "1", thumbnail_fullpath], stdout=customstdout, stderr=customstderr)
 
         #if file is mkv, transmux to mp4
         if(video_full_path.endswith(".mkv")):
             temp_mp4 = os.path.splitext(video_full_path)[0]+'.mp4'
-            cmd = ["ffmpeg", "-i", video_full_path, "-codec", "copy", temp_mp4]
-            try:
-                subprocess.run(cmd, stdout=customstdout, stderr=customstderr)
-            except subprocess.CalledProcessError as e:
-                print(e.returncode)
-                print(e.cmd)
-                print(e.output)
-                raise
+            if(os.path.isfile(temp_mp4) == False):
+                cmd = ["ffmpeg", "-i", video_full_path,
+                       "-codec", "copy", temp_mp4]
+                try:
+                    subprocess.run(cmd, stdout=customstdout,
+                                   stderr=customstderr)
+                except subprocess.CalledProcessError as e:
+                    print(e.returncode)
+                    print(e.cmd)
+                    print(e.output)
+                    raise
             #remove old mkv file
             os.remove(video_full_path)
             relative_path = os.path.splitext(relative_path)[0]+'.mp4'
