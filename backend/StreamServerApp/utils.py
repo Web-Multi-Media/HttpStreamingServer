@@ -148,10 +148,12 @@ def prepare_video(video_full_path, video_path, video_dir):
             relative_path = os.path.splitext(relative_path)[0]+'.mp4'
             video_full_path = temp_mp4
 
+            
+
         subtitles_full_path = get_subtitles(video_full_path)
         subtitles_relative_path = ''
-        if(subtitles_full_path):
-            subtitles_relative_path = os.path.relpath(subtitles_full_path, video_path)
+        if(subtitles_full_path[0]):
+            subtitles_relative_path = os.path.relpath(subtitles_full_path[0], video_path)
         
     else:
         #Input is not h264, let's skip it

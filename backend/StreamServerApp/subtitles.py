@@ -25,26 +25,43 @@ def get_subtitles(video_path):
         return: empty string if no subtitles was found. Otherwise return subtitle absolute location
     """
 
-    webvtt_fullpath = ''
+    webvtt_fr_fullpath = ''
+    webvtt_en_fullpath = ''
+
 
     video = Video.fromname(video_path)
 
-    best_subtitles = download_best_subtitles([video], {Language('fra')})
+    best_subtitles = download_best_subtitles([video], {Language('eng'), Language('fra')})
 
     if best_subtitles[video]:
         best_subtitle = best_subtitles[video][0]
         value = save_subtitles(video, [best_subtitle], encoding='utf8')
         if len(value) > 0:
-            print("converting srt to vtt")
+            print("converting fr srt to vtt")
             srt_fullpath = subtitle.get_subtitle_path(
                 video_path, Language('fra'))
-            webvtt_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
+            print(srt_fullpath)
+            webvtt_fr_fullpath = os.path.splitext(srt_fullpath)[0]+'_fr.vtt'
             try:
                 subprocess.run(
-                    ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", srt_fullpath, webvtt_fullpath])
-                return webvtt_fullpath
+                    ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", srt_fullpath, webvtt_fr_fullpath])
             except subprocess.CalledProcessError as e:
                 print(e.returncode)
                 print(e.cmd)
                 print(e.output)
                 raise
+            print("converting eng srt to vtt")
+            srt_fullpath = subtitle.get_subtitle_path(
+                video_path, Language('eng'))
+            print(srt_fullpath)
+            webvtt_en_fullpath = os.path.splitext(srt_fullpath)[0]+'_en.vtt'
+            try:
+                subprocess.run(
+                    ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", srt_fullpath, webvtt_en_fullpath])
+            except subprocess.CalledProcessError as e:
+                print(e.returncode)
+                print(e.cmd)
+                print(e.output)
+                raise
+    print([webvtt_fr_fullpath, webvtt_en_fullpath])
+    return [webvtt_fr_fullpath, webvtt_en_fullpath]
