@@ -3,6 +3,8 @@ import SearchBar from './Searchbar';
 import djangoAPI from '../api/djangoAPI';
 import VideoList from './VideoList';
 import VideoDetail from './VideoDetail';
+import { withRouter } from "react-router-dom";
+import queryString from 'query-string'
 
 class App extends React.Component {
     state = {
@@ -23,15 +25,23 @@ class App extends React.Component {
 
     componentDidMount(){
         djangoAPI.get("/get_videos/").then((response)=>{
-            console.log(response.data);
+            var video = null;
+            const values = queryString.parse(this.props.location.search)
+            response.data.forEach(function(element) {               
+                if(element.pk==values.video) {
+                    video=element;                   
+                }  
+            });
             this.setState({
-                videos: response.data
+                videos: response.data,
+                selectedVideo: video
             })
-        })
+        })    
     }
 
-    handleVideoSelect = (video) => {
-        this.setState({selectedVideo: video});
+    handleVideoSelect = (video) => {  
+        this.setState({selectedVideo: video});       
+        this.props.history.push("/?video="+video.pk);
         window.scrollTo(0, 0);
     }
 
@@ -54,4 +64,4 @@ class App extends React.Component {
     }
 }
 
-export default App;
+export default withRouter(App);
