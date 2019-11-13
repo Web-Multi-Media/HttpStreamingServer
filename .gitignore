@@ -136,3 +136,8 @@ db.sqlite3
 
 # OS files
 .DS_Store
+
+*.srt
+*.vtt
+*.jpeg
+*.jpg

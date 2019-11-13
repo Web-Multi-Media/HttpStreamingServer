@@ -23,39 +23,40 @@ class App extends React.Component {
         })
     };
 
-    componentDidMount(){
-        djangoAPI.get("/get_videos/").then((response)=>{
+    componentDidMount() {
+        djangoAPI.get("/get_videos/").then((response) => {
             var video = null;
+            //We look here if a query string for the video is provided, if so load the video
             const values = queryString.parse(this.props.location.search)
-            response.data.forEach(function(element) {               
-                if(element.pk==values.video) {
-                    video=element;                   
-                }  
+            response.data.forEach(function (element) {
+                if (element.pk == values.video) {
+                    video = element;
+                }
             });
             this.setState({
                 videos: response.data,
                 selectedVideo: video
             })
-        })    
+        })
     }
 
-    handleVideoSelect = (video) => {  
-        this.setState({selectedVideo: video});       
-        this.props.history.push("/?video="+video.pk);
+    handleVideoSelect = (video) => {
+        this.setState({ selectedVideo: video });
+        this.props.history.push("/streaming/?video=" + video.pk);
         window.scrollTo(0, 0);
     }
 
     render() {
         return (
-            <div className='ui container' style={{marginTop: '1em'}}>
-                <SearchBar handleFormSubmit={this.handleSubmit}/>
+            <div className='ui container' style={{ marginTop: '1em' }}>
+                <SearchBar handleFormSubmit={this.handleSubmit} />
                 <div className='ui grid'>
                     <div className="ui column">
                         <div className="eleven wide row">
-                            <VideoDetail video={this.state.selectedVideo}/>
+                            <VideoDetail video={this.state.selectedVideo} />
                         </div>
                         <div className="five wide row">
-                            <VideoList handleVideoSelect={this.handleVideoSelect} videos={this.state.videos}/>
+                            <VideoList handleVideoSelect={this.handleVideoSelect} videos={this.state.videos} />
                         </div>
                     </div>
                 </div>
