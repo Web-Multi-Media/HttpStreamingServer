@@ -1,10 +1,10 @@
 import React from 'react';
 import SearchBar from './Searchbar';
 import djangoAPI from '../api/djangoAPI';
-import VideoList from './VideoList';
 import VideoDetail from './VideoDetail';
 import { withRouter } from "react-router-dom";
 import queryString from 'query-string'
+import VideoCarrousel from "./VideoCarrousel";
 
 class App extends React.Component {
     state = {
@@ -53,14 +53,22 @@ class App extends React.Component {
                 <div className='ui grid'>
                     <div className="ui column">
                         <div className="eleven wide row">
-                            <VideoDetail video={this.state.selectedVideo} />
+                            <VideoDetail video={this.state.selectedVideo}  />
                         </div>
-                        <div className="five wide row">
-                            <VideoList handleVideoSelect={this.handleVideoSelect} videos={this.state.videos} />
-                        </div>
+
                     </div>
                 </div>
+                <div>
+                    {
+                        this.state.videos.length > 0 &&
+                        <div>
+                            <VideoCarrousel videos = {this.state.videos} handleVideoSelect={this.handleVideoSelect} />
+                        </div>
+                    }
+                </div>
             </div>
+
+
         )
     }
 }

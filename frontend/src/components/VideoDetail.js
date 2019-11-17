@@ -16,7 +16,6 @@ const VideoDetail = ({video}) => {
             </div>
             <div className='ui segment'>
                 <h4 className='ui header'>{video.fields.name}</h4>
-                <p>{video.fields.name}</p>
             </div>
         </div>
 
