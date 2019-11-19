@@ -1,49 +1,72 @@
-import React from 'react';
+import React, {Component} from 'react';
 import '../style/video.css';
 import {
     ButtonBack, ButtonFirst, ButtonLast, ButtonNext,
-    CarouselProvider, DotGroup, Image, ImageWithZoom, Slide, Slider,
+    CarouselProvider, Image, Slide, Slider,
 } from "pure-react-carousel";
 import 'pure-react-carousel/dist/react-carousel.es.css';
-import s from '../style/style.scss';
+import '../style/style.scss';
 
-const VideoCarrousel = ({videos, handleVideoSelect}) => {
+class VideoCarrousel extends Component{
 
-    const slider = videos.map((video,vIndex) => {
-    return <Slide index={vIndex}>
-        <div onClick={() => handleVideoSelect(video)} className="img1-wrap">
-        <Image src={video.fields.thumbnail} />
-        <div className="overlay">
-            <div className="text">{video.fields.name}</div>
-        </div>
-        </div>
-    </Slide>
-});
+    constructor(props) {
+        super(props);
+        this.onNextClick = this.onNextClick.bind(this);
+        this.onPreviousClick = this.onPreviousClick.bind(this);
+    }
+    onNextClick(event){
+        console.log(event);
+    }
+    onPreviousClick(event){
+        console.log(event);
+    }
+    render() {
+        const slider = this.props.videos.map((video, vIndex) => {
+            return <Slide index={vIndex}>
+                <div onClick={() => this.props.handleVideoSelect(video)} className="img1-wrap">
+                    <Image src={video.fields.thumbnail}/>
+                    <div className="overlay">
+                        <div className="text">
+                            <p className="paragraph">{video.fields.name}</p>
+                        </div>
+                    </div>
+                </div>
+            </Slide>
+        });
 
-    return (    <CarouselProvider
-            visibleSlides={4}
-            totalSlides={videos.length}
-            step={2}
-            naturalSlideWidth={400}
-            naturalSlideHeight={500}
-            hasMasterSpinner
-            infinite
-        >
-
-            <div   >
-                {videos.length > 0 &&
-                    <Slider className={s.slider}>
+        return (
+            <CarouselProvider
+                visibleSlides={4}
+                totalSlides={this.props.videos.length}
+                step={2}
+                naturalSlideWidth={540}
+                naturalSlideHeight={320}
+                hasMasterSpinner
+                infinite
+            >
+                <div>
+                    {this.props.videos.length > 0 &&
+                    <Slider>
                         {slider}
                     </Slider>
-                }
-            </div>
-            <ButtonFirst>First</ButtonFirst>
-            <ButtonBack>Back</ButtonBack>
-            <ButtonNext>Next</ButtonNext>
-            <ButtonLast>Last</ButtonLast>
-        </CarouselProvider>
-
-    )
+                    }
+                </div>
+                <ButtonFirst>First</ButtonFirst>
+                <ButtonBack className='_1z3wF right' onClick={this.onPreviousClick}>
+                    <svg viewBox="0 0 100 100">
+                        <path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z"/>
+                    </svg>
+                </ButtonBack>
+                <ButtonNext className='_1z3wF left'  onClick={this.onNextClick}>
+                    <svg viewBox="0 0 100 100">
+                        <path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z"
+                        transform="translate(100, 100) rotate(180)"/>
+                    </svg>
+                </ButtonNext>
+                <ButtonLast>Last</ButtonLast>
+            </CarouselProvider>
+        )
+    }
 };
 export default VideoCarrousel;
 

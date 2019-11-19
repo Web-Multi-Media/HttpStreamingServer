@@ -29,7 +29,7 @@ class App extends React.Component {
             //We look here if a query string for the video is provided, if so load the video
             const values = queryString.parse(this.props.location.search)
             response.data.forEach(function (element) {
-                if (element.pk == values.video) {
+                if (element.pk === values.video) {
                     video = element;
                 }
             });
@@ -67,8 +67,6 @@ class App extends React.Component {
                     }
                 </div>
             </div>
-
-
         )
     }
 }
