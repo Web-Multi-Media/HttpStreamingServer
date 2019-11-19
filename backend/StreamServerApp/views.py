@@ -10,6 +10,7 @@ from StreamServerApp import utils
 def index(request):
     return render(request, "index.html")
 
+
 def get_videos(request):
     qs = Video.objects.all()
     qs_json = serializers.serialize('json', qs)
@@ -34,12 +35,13 @@ def search_video(request):
     #                                  .order_by('rank')
 
     qs_results = Video.objects.annotate(similarity=TrigramSimilarity('name', query)) \
-                              .filter(similarity__gte=0.2) \
+                              .filter(similarity__gte=0.01) \
                               .order_by('-similarity')
 
     qs_json = serializers.serialize('json', qs_results)
 
     return HttpResponse(qs_json, content_type='application/json')
+
 
 def update_database(request):
     print("updating database")
