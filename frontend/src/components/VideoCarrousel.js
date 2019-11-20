@@ -7,6 +7,7 @@ import {
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import '../style/style.scss';
 
+
 class VideoCarrousel extends Component{
 
     constructor(props) {
