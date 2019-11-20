@@ -1,9 +1,12 @@
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.shortcuts import render
-from StreamServerApp.models import Video
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core import serializers
+from django.core.paginator import Paginator
+from django.conf import settings
+
+from StreamServerApp.models import Video
 from StreamServerApp import utils
 
 
@@ -13,7 +16,12 @@ def index(request):
 
 def get_videos(request):
     qs = Video.objects.all()
-    qs_json = serializers.serialize('json', qs)
+    paginator = Paginator(qs, settings.PAGE_SIZE)
+
+    page = request.GET.get('page', 0)
+    videos = paginator.get_page(page)
+    qs_json = serializers.serialize('json', videos)
+
     return HttpResponse(qs_json, content_type='application/json')
 
 
@@ -22,23 +30,17 @@ def search_video(request):
     query = request.GET.get('q', '')
 
     if query == '':
-        qs = Video.objects.all()
-        qs_json = serializers.serialize('json', qs)
-        return HttpResponse(qs_json, content_type='application/json')
+        qs_results = Video.objects.all()
+    else:
+        qs_results = Video.objects.annotate(similarity=TrigramSimilarity('name', query)) \
+                                .filter(similarity__gte=0.01) \
+                                .order_by('-similarity')
 
+    paginator = Paginator(qs_results, settings.PAGE_SIZE)
+    page = request.GET.get('page', 0)
+    videos = paginator.get_page(page)
 
-    # ANOTHER EXAMPLE:
-    # vector = SearchVector('name', weight='A') + SearchVector('description', weight='C')
-    # query = SearchQuery(query)
-    # qs_results = TaxonomyNode.objects.filter(taxonomy__dataset=dataset)\
-    #                                  .annotate(rank=SearchRank(vector, query)).filter(rank__gte=0.3)\
-    #                                  .order_by('rank')
-
-    qs_results = Video.objects.annotate(similarity=TrigramSimilarity('name', query)) \
-                              .filter(similarity__gte=0.01) \
-                              .order_by('-similarity')
-
-    qs_json = serializers.serialize('json', qs_results)
+    qs_json = serializers.serialize('json', videos)
 
     return HttpResponse(qs_json, content_type='application/json')
 
