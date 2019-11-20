@@ -2,6 +2,7 @@ import React from 'react';
 import VideoItem from './VideoCarrousel';
 import {ImageWithZoom, Slide} from "pure-react-carousel";
 
+
 const VideoList = ({videos , handleVideoSelect}) => {
 
     if(!videos)

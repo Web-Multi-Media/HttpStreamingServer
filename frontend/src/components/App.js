@@ -6,6 +6,7 @@ import { withRouter } from "react-router-dom";
 import queryString from 'query-string'
 import VideoCarrousel from "./VideoCarrousel";
 
+
 class App extends React.Component {
     state = {
         videos: [],
@@ -55,7 +56,6 @@ class App extends React.Component {
                         <div className="eleven wide row">
                             <VideoDetail video={this.state.selectedVideo}  />
                         </div>
-
                     </div>
                 </div>
                 <div>
