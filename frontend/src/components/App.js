@@ -30,7 +30,7 @@ class App extends React.Component {
             //We look here if a query string for the video is provided, if so load the video
             const values = queryString.parse(this.props.location.search)
             response.data.forEach(function (element) {
-                if (element.pk === values.video) {
+                if (element.pk === parseInt(values.video)) {
                     video = element;
                 }
             });
@@ -54,7 +54,7 @@ class App extends React.Component {
                 <div className='ui grid'>
                     <div className="ui column">
                         <div className="eleven wide row">
-                            <VideoDetail video={this.state.selectedVideo}  />
+                            <VideoDetail video={this.state.selectedVideo} />
                         </div>
                     </div>
                 </div>
@@ -62,7 +62,7 @@ class App extends React.Component {
                     {
                         this.state.videos.length > 0 &&
                         <div>
-                            <VideoCarrousel videos = {this.state.videos} handleVideoSelect={this.handleVideoSelect} />
+                            <VideoCarrousel videos={this.state.videos} handleVideoSelect={this.handleVideoSelect} />
                         </div>
                     }
                 </div>
