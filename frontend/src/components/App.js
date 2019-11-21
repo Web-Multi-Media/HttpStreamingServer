@@ -32,6 +32,7 @@ class App extends React.Component {
             response.data.forEach(function (element) {
                 if (element.pk === parseInt(values.video)) {
                     video = element;
+                    break;
                 }
             });
             this.setState({
