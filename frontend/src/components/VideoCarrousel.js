@@ -6,6 +6,8 @@ import {
 } from "pure-react-carousel";
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import '../style/style.scss';
+import djangoAPI from "../api/djangoAPI";
+import queryString from "query-string";
 
 
 class VideoCarrousel extends Component{
@@ -13,16 +15,35 @@ class VideoCarrousel extends Component{
     constructor(props) {
         super(props);
         this.onNextClick = this.onNextClick.bind(this);
-        this.onPreviousClick = this.onPreviousClick.bind(this);
     }
-    onNextClick(event){
-        console.log(event);
+
+    state ={
+        videos: this.props.videos,
+        pageCount: 1
     }
-    onPreviousClick(event){
-        console.log(event);
+
+    onNextClick(){
+        const nextPage = this.state.pageCount +1;
+        djangoAPI.get(`/get_videos?page=${nextPage}`)
+                .then((response) => {
+                    const video = this.state.videos;
+                    //this has to be fixed by adjusting the query
+                    if (this.state.videos.length < 19){
+                    video.push(...response.data);
+                    console.log(video);
+                    }
+                    this.setState(({
+                        videos: video,
+                        pageCount: nextPage
+                    }), () =>  console.log(nextPage)
+                    );
+        });
+
     }
+
+
     render() {
-        const slider = this.props.videos.map((video, vIndex) => {
+        const slider = this.state.videos.map((video, vIndex) => {
             return <Slide index={vIndex}>
                 <div onClick={() => this.props.handleVideoSelect(video)} className="img1-wrap">
                     <Image src={video.fields.thumbnail}/>

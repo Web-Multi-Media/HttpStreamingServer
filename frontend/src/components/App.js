@@ -18,14 +18,14 @@ class App extends React.Component {
             params: {
                 q: termFromSearchBar
             }
-        })
+        });
         this.setState({
             videos: response.data
-        })
+        });
     };
 
     componentDidMount() {
-        djangoAPI.get("/get_videos/").then((response) => {
+        djangoAPI.get("/get_videos?page=1").then((response) => {
             var video = null;
             //We look here if a query string for the video is provided, if so load the video
             const values = queryString.parse(this.props.location.search)
@@ -37,16 +37,15 @@ class App extends React.Component {
             this.setState({
                 videos: response.data,
                 selectedVideo: video
-            })
-        })
-    }
+            });
+        });
+    };
 
     handleVideoSelect = (video) => {
         this.setState({ selectedVideo: video });
         this.props.history.push("/streaming/?video=" + video.pk);
         window.scrollTo(0, 0);
-    }
-
+    };
     render() {
         return (
             <div className='ui container' style={{ marginTop: '1em' }}>
