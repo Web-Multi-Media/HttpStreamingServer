@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.shortcuts import render
@@ -15,19 +16,18 @@ def index(request):
 
 
 def get_videos(request):
+    page = request.GET.get('page', 1)
     qs = Video.objects.all()
-    paginator = Paginator(qs, settings.PAGE_SIZE)
 
-    page = request.GET.get('page', 0)
-    videos = paginator.get_page(page)
-    qs_json = serializers.serialize('json', videos)
+    results = paginate_and_serialize_results(qs, page)
 
-    return HttpResponse(qs_json, content_type='application/json')
+    return HttpResponse(results, content_type='application/json')
 
 
 def search_video(request):
     print(request)
     query = request.GET.get('q', '')
+    page = request.GET.get('page', 1)
 
     if query == '':
         qs_results = Video.objects.all()
@@ -36,14 +36,36 @@ def search_video(request):
                                 .filter(similarity__gte=0.01) \
                                 .order_by('-similarity')
 
-    paginator = Paginator(qs_results, settings.PAGE_SIZE)
-    page = request.GET.get('page', 0)
-    videos = paginator.get_page(page)
+    results = paginate_and_serialize_results(qs_results, page)
 
-    qs_json = serializers.serialize('json', videos)
+    return HttpResponse(results, content_type='application/json')
 
-    return HttpResponse(qs_json, content_type='application/json')
 
+def paginate_and_serialize_results(query_set, page=1):
+    """Extract a page and serialize the results.
+
+    This methods aims at facilitating the reuse of our pagination and serialization in the different views.
+    For now, we use a hacky technique (serialize, unserialize, add field, reserialize) in order to add the 
+    informations of the number of results and number of pages.
+
+    Args:
+        query_set (QuerySet): QuerySet instance of retrieved results.
+        page (int): page number requested.
+
+    Returns:
+        str: serialized json string containing the results and informations about the search.
+    """
+    paginator = Paginator(query_set, settings.PAGE_SIZE)
+    results = paginator.get_page(page)
+    results_json = serializers.serialize('json', results)
+    results_dict = json.loads(results_json)
+    output_dict = {
+        'num_results': paginator.count,
+        'num_pages': paginator.num_pages,
+        'results': results_dict
+    }
+    return json.dumps(output_dict)
+    
 
 def update_database(request):
     print("updating database")
