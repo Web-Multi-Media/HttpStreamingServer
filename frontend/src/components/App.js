@@ -26,15 +26,9 @@ class App extends React.Component {
 
     componentDidMount() {
         djangoAPI.get("/get_videos?page=1").then((response) => {
-            var video = null;
             //We look here if a query string for the video is provided, if so load the video
-            const values = queryString.parse(this.props.location.search)
-            response.data.forEach(function (element) {
-                if (element.pk === parseInt(values.video)) {
-                    video = element;
-                    break;
-                }
-            });
+            const values = queryString.parse(this.props.location.search);
+            const video = response.data.find(element => element.pk === parseInt(values.video));
             this.setState({
                 videos: response.data,
                 selectedVideo: video
