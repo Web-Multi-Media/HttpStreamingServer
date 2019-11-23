@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/DerouineauNicolas/HttpStreamingServer.svg?branch=master)](https://travis-ci.org/DerouineauNicolas/HttpStreamingServer)
+[![Build Status](https://travis-ci.org/Web-Multi-Media/HttpStreamingServer.svg?branch=master)](https://travis-ci.org/Web-Multi-Media/HttpStreamingServer)
 
 Intro
 -------------------
