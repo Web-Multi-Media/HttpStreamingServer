@@ -161,4 +161,4 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False
 
 # number of items per page
-PAGE_SIZE = 4
+PAGE_SIZE = 10

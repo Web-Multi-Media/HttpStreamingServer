@@ -12,6 +12,11 @@ import queryString from "query-string";
 
 class VideoCarrousel extends Component{
 
+        CARROUSSEL_SIZE = 4;
+        VIDEO_PER_CLICK = 2;
+        VIDEO_PER_PAGE = 12;
+
+
     constructor(props) {
         super(props);
         this.onNextClick = this.onNextClick.bind(this);
@@ -19,28 +24,35 @@ class VideoCarrousel extends Component{
 
     state ={
         videos: this.props.videos,
-        pageCount: 1
-    }
+        pageCount: 1,
+        clickCount: 0
+    };
 
     onNextClick(){
-        const nextPage = this.state.pageCount +1;
-        djangoAPI.get(`/get_videos?page=${nextPage}`)
+        const numberOfClicks = this.state.clickCount +1;
+        const videoDisplayed = this.CARROUSSEL_SIZE + numberOfClicks * this.VIDEO_PER_CLICK;
+        if ((videoDisplayed / this.VIDEO_PER_PAGE < this.state.pageCount) && (videoDisplayed % this.VIDEO_PER_PAGE === 10)){
+            console.log("APPEL A L'API");
+            const nextPage = this.state.pageCount +1;
+                djangoAPI.get(`/get_videos?page=${nextPage}`)
                 .then((response) => {
-                    const video = this.state.videos;
+                    let video = this.state.videos;
+                    console.log(response.data);
                     //this has to be fixed by adjusting the query
-                    if (this.state.videos.length < 19){
-                    video.push(...response.data);
-                    console.log(video);
-                    }
-                    this.setState(({
+                    video.push(...response.data.results);
+                    this.setState({
                         videos: video,
-                        pageCount: nextPage
-                    }), () =>  console.log(nextPage)
-                    );
-        });
-
-    }
-
+                        pageCount: nextPage,
+                        clickCount: numberOfClicks
+                    });
+                });
+        }
+        else  {
+            this.setState({
+                clickCount: numberOfClicks
+            });
+        }
+    };
 
     render() {
         const slider = this.state.videos.map((video, vIndex) => {

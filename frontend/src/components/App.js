@@ -5,13 +5,15 @@ import VideoDetail from './VideoDetail';
 import { withRouter } from "react-router-dom";
 import queryString from 'query-string'
 import VideoCarrousel from "./VideoCarrousel";
+import VideoCarrouselSlick from "./VideoCarrouselSlick";
 
 
 class App extends React.Component {
     state = {
         videos: [],
-        selectedVideo: null
-    }
+        selectedVideo: null,
+        numberOfPages: 0
+    };
 
     handleSubmit = async (termFromSearchBar) => {
         const response = await djangoAPI.get('/search_video/', {
@@ -25,13 +27,15 @@ class App extends React.Component {
     };
 
     componentDidMount() {
-        djangoAPI.get("/get_videos?page=1").then((response) => {
+        djangoAPI.get("/get_videos/?page=1").then((response) => {
             //We look here if a query string for the video is provided, if so load the video
             const values = queryString.parse(this.props.location.search);
-            const video = response.data.find(element => element.pk === parseInt(values.video));
+            const video = response.data.results.find(element => element.pk === parseInt(values.video));
             this.setState({
-                videos: response.data,
-                selectedVideo: video
+                videos: response.data.results,
+                selectedVideo: video,
+                numberOfPages: response.data.num_pages
+
             });
         });
     };
@@ -56,7 +60,10 @@ class App extends React.Component {
                     {
                         this.state.videos.length > 0 &&
                         <div>
-                            <VideoCarrousel videos={this.state.videos} handleVideoSelect={this.handleVideoSelect} />
+                            <VideoCarrouselSlick
+                                videos={this.state.videos}
+                                handleVideoSelect={this.handleVideoSelect}
+                            />
                         </div>
                     }
                 </div>
