@@ -60,10 +60,7 @@ p {
 
 
 .img1-wrap {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
+
 }
 
 .image {
@@ -78,9 +75,6 @@ p {
   right: 0;
   overflow: hidden;
   text-align: center;
-
-  /*width: 100%;*/
-  height: 20%;
   transition: .5s ease;
 }
 
@@ -148,6 +142,7 @@ button:focus {
 
 .paragraph{
  margin-top: 3%;
+  overflow-wrap: break-word;
 }
 
 .img-cover{

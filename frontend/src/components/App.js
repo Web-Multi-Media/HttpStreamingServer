@@ -21,7 +21,7 @@ class App extends React.Component {
             }
         });
         this.setState({
-            videos: response.data
+            videos: response.data.results
         });
     };
 

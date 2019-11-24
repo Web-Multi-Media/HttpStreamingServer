@@ -25,7 +25,7 @@ class VideoCarrouselSlick extends Component {
     afterChangeMethod() {
         const nextCarrousselCount = this.state.carrousselCount +1;
         const pageCount = nextCarrousselCount * this.CARROUSSEL_SIZE / this.VIDEO_PER_PAGE;
-        if(pageCount === this.state.apiCallCount && pageCount < this.state.pagesTotal){
+        if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
             const nextApiCount = this.state.carrousselCount +1;
             djangoAPI.get(`/get_videos?page=${nextApiCount}`)
                 .then((response) => {
@@ -54,9 +54,10 @@ class VideoCarrouselSlick extends Component {
         };
 
         const slider = this.state.videos.map((video, vIndex) => {
-            return  <div onClick={() => this.props.handleVideoSelect(video)} key={vIndex} >
-                        <img className='img-cover' src={video.fields.thumbnail}/>
-                    </div>
+            return <div><img className='img-cover' onClick={() => this.props.handleVideoSelect(video)} src={video.fields.thumbnail}/>
+                    <p className='paragraph'>{video.fields.name}</p></div>
+
+
         });
 
         return (
