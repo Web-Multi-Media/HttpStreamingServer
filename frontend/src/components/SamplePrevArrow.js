@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-const SampleNextArrow = (props) => {
+const SamplePrevArrow = (props) => {
 
     const { className, style, onClick } = props;
     return (
@@ -13,5 +13,5 @@ const SampleNextArrow = (props) => {
         </div>
     );
 };
-export default SampleNextArrow;
+export default SamplePrevArrow;
 

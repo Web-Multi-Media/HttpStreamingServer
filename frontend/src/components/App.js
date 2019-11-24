@@ -4,7 +4,6 @@ import djangoAPI from '../api/djangoAPI';
 import VideoDetail from './VideoDetail';
 import { withRouter } from "react-router-dom";
 import queryString from 'query-string'
-import VideoCarrousel from "./VideoCarrousel";
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
 
 
@@ -45,6 +44,7 @@ class App extends React.Component {
         this.props.history.push("/streaming/?video=" + video.pk);
         window.scrollTo(0, 0);
     };
+
     render() {
         return (
             <div className='ui container' style={{ marginTop: '1em' }}>
@@ -63,6 +63,7 @@ class App extends React.Component {
                             <VideoCarrouselSlick
                                 videos={this.state.videos}
                                 handleVideoSelect={this.handleVideoSelect}
+                                numberOfPages={this.state.numberOfPages}
                             />
                         </div>
                     }

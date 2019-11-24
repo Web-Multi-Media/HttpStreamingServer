@@ -1,45 +1,45 @@
 import React, {Component} from 'react';
 import Slider from "react-slick";
-import {Image, Slide} from "pure-react-carousel";
 import djangoAPI from "../api/djangoAPI";
 import SampleNextArrow from "./SampleNextArrow";
-
+import SamplePrevArrow from "./SamplePrevArrow";
+import '../style/style.scss';
 
 
 class VideoCarrouselSlick extends Component {
 
     CARROUSSEL_SIZE = 5;
-    VIDEO_PER_CLICK = 4;
     VIDEO_PER_PAGE = 10;
 
     constructor(props) {
         super(props);
         this.state = {
             videos: this.props.videos,
-            pageCount: 1,
-            pagesNum: this.props.pagesNum
-
+            carrousselCount: 1,
+            apiCallCount: 1,
+            pagesTotal: this.props.numberOfPages
         };
-        this.click = this.click.bind(this);
+        this.afterChangeMethod = this.afterChangeMethod.bind(this);
     };
 
-
-    click() {
-        console.log("APPEL A L'API");
-        const nextPage = this.state.pageCount +1;
-        djangoAPI.get(`/get_videos?page=${nextPage}`)
-            .then((response) => {
-                let video = this.state.videos;
-                //this has to be fixed by adjusting the query
-                video.push(...response.data.results);
-                this.setState({
-                    videos: video,
-                    pageCount: nextPage,
+    afterChangeMethod() {
+        const nextCarrousselCount = this.state.carrousselCount +1;
+        const pageCount = nextCarrousselCount * this.CARROUSSEL_SIZE / this.VIDEO_PER_PAGE;
+        if(pageCount === this.state.apiCallCount && pageCount < this.state.pagesTotal){
+            const nextApiCount = this.state.carrousselCount +1;
+            djangoAPI.get(`/get_videos?page=${nextApiCount}`)
+                .then((response) => {
+                    let video = this.state.videos;
+                    //this has to be fixed by adjusting the query
+                    video.push(...response.data.results);
+                    this.setState({
+                        videos: video,
+                        apiCallCount: nextApiCount,
+                    });
                 });
-            });
+            }
+        this.setState( {carrouselCount: nextCarrousselCount});
     }
-
-
 
     render() {
         const settings = {
@@ -49,22 +49,18 @@ class VideoCarrouselSlick extends Component {
             slidesToShow: 5,
             slidesToScroll: 5,
             nextArrow: <SampleNextArrow />,
-            afterChange: current => this.click(current)
+            prevArrow: <SamplePrevArrow />,
+            afterChange: current => this.afterChangeMethod(current)
         };
 
         const slider = this.state.videos.map((video, vIndex) => {
-            return  <div onClick={() => this.props.handleVideoSelect(video)} key={vIndex}>
-                        <img src={video.fields.thumbnail}/>
+            return  <div onClick={() => this.props.handleVideoSelect(video)} key={vIndex} >
+                        <img className='img-cover' src={video.fields.thumbnail}/>
                     </div>
-
         });
-        return (
 
+        return (
             <div>
-                <h2>Dynamic slides</h2>
-                <button className="button" onClick={this.click}>
-                    Click to change slide count
-                </button>
                 <Slider {...settings}>
                     {slider}
                 </Slider>
