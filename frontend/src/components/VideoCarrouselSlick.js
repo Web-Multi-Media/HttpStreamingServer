@@ -30,6 +30,7 @@ class VideoCarrouselSlick extends Component {
                 apiCallCount: 1,
                 pagesTotal: nextProps.numberOfPages -1
             });
+            this.slider.slickGoTo(0, false);
         }
     }
 
@@ -78,7 +79,7 @@ class VideoCarrouselSlick extends Component {
 
         return (
             <div>
-                <Slider {...settings}>
+                <Slider ref={c => (this.slider = c)} {...settings}>
                     {slider}
                 </Slider>
             </div>
