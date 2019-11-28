@@ -17,28 +17,44 @@ class VideoCarrouselSlick extends Component {
             videos: this.props.videos,
             carrousselCount: 1,
             apiCallCount: 1,
-            pagesTotal: this.props.numberOfPages
+            pagesTotal: this.props.numberOfPages -1
         };
         this.afterChangeMethod = this.afterChangeMethod.bind(this);
     };
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.videos !== this.props.videos) {
+            this.setState( {
+                videos: nextProps.videos,
+                carrousselCount: 1,
+                apiCallCount: 1,
+                pagesTotal: nextProps.numberOfPages -1
+            });
+        }
+    }
 
     afterChangeMethod() {
         const nextCarrousselCount = this.state.carrousselCount +1;
         const pageCount = nextCarrousselCount * this.CARROUSSEL_SIZE / this.VIDEO_PER_PAGE;
         if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
-            const nextApiCount = this.state.carrousselCount +1;
+            const nextApiCount = this.state.apiCallCount +1;
+            console.log(nextApiCount)
             djangoAPI.get(`/get_videos?page=${nextApiCount}`)
                 .then((response) => {
+                    console.log(response);
                     let video = this.state.videos;
-                    //this has to be fixed by adjusting the query
                     video.push(...response.data.results);
+                    console.log(video);
                     this.setState({
                         videos: video,
                         apiCallCount: nextApiCount,
+                        carrousselCount: nextCarrousselCount
                     });
                 });
             }
-        this.setState( {carrouselCount: nextCarrousselCount});
+        else{
+        this.setState( {carrousselCount: nextCarrousselCount});
+        }
     }
 
     render() {
