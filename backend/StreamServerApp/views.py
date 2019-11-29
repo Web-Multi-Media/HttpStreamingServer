@@ -31,7 +31,6 @@ def get_one_video(request, video_id):
 
 
 def search_video(request):
-    print(request)
     query = request.GET.get('q', '')
     page = request.GET.get('page', 1)
 
