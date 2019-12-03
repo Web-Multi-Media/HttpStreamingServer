@@ -28,16 +28,21 @@ class App extends React.Component {
     };
 
     componentDidMount() {
-        djangoAPI.get("/get_videos?page=1").then((response) => {
+        var videoFromQueryString = null
+        const values = queryString.parse(this.props.location.search);
+        if (values.video) {
+            var pk = parseInt(values.video);
+            djangoAPI.get("videos/" + pk + "/").then((response) => {
+                videoFromQueryString = response.data[0];
+            });
+        }
+
+        djangoAPI.get("videos?page=1").then((response) => {
             //We look here if a query string for the video is provided, if so load the video
-            const values = queryString.parse(this.props.location.search);
-            const video = response.data.results.find(element => element.pk === parseInt(values.video));
-            console.log(response)
             this.setState({
                 videos: response.data.results,
-                selectedVideo: video,
+                selectedVideo: videoFromQueryString,
                 numberOfPages: response.data.num_pages
-
             });
         });
     };

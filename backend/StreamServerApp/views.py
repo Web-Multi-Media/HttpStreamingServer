@@ -24,8 +24,13 @@ def get_videos(request):
     return HttpResponse(results, content_type='application/json')
 
 
+def get_one_video(request, video_id):
+    data = serializers.serialize("json", Video.objects.filter(pk=video_id))
+
+    return HttpResponse(data, content_type='application/json')
+
+
 def search_video(request):
-    print(request)
     query = request.GET.get('q', '')
     page = request.GET.get('page', 1)
 
@@ -33,8 +38,8 @@ def search_video(request):
         qs_results = Video.objects.all()
     else:
         qs_results = Video.objects.annotate(similarity=TrigramSimilarity('name', query)) \
-                                .filter(similarity__gte=0.01) \
-                                .order_by('-similarity')
+            .filter(similarity__gte=0.01) \
+            .order_by('-similarity')
 
     results = paginate_and_serialize_results(qs_results, page)
 
@@ -65,9 +70,10 @@ def paginate_and_serialize_results(query_set, page=1):
         'results': results_dict
     }
     return json.dumps(output_dict)
-    
+
 
 def update_database(request):
     print("updating database")
     utils.delete_DB_Infos()
-    utils.populate_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL)
+    utils.populate_db_from_local_folder(
+        settings.VIDEO_ROOT, settings.VIDEO_URL)

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Slider from "react-slick";
 import djangoAPI from "../api/djangoAPI";
 import SampleNextArrow from "./SampleNextArrow";
@@ -14,6 +14,7 @@ class VideoCarrouselSlick extends Component {
         super(props);
         this.state = {
             videos: this.props.videos,
+            //carrousselCount: Number of time next button is clicked
             carrousselCount: 1,
             apiCallCount: 1,
             pagesTotal: this.props.numberOfPages -1,
@@ -25,11 +26,11 @@ class VideoCarrouselSlick extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.videos !== this.props.videos) {
-            this.setState( {
+            this.setState({
                 videos: nextProps.videos,
                 carrousselCount: 1,
                 apiCallCount: 1,
-                pagesTotal: nextProps.numberOfPages -1
+                pagesTotal: nextProps.numberOfPages - 1
             });
             this.slider.slickGoTo(0, false);
         }
@@ -82,8 +83,8 @@ class VideoCarrouselSlick extends Component {
         };
 
         const slider = this.state.videos.map((video, vIndex) => {
-            return <div><img className='img-cover' onClick={() => this.props.handleVideoSelect(video)} src={video.fields.thumbnail}/>
-                    <p className='paragraph'>{video.fields.name}</p></div>
+            return <div><img className='img-cover' onClick={() => this.props.handleVideoSelect(video)} src={video.fields.thumbnail} />
+                <p className='paragraph'>{video.fields.name}</p></div>
 
 
         });
