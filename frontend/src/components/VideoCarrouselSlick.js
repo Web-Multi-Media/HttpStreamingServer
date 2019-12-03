@@ -8,7 +8,6 @@ import '../style/style.scss';
 
 class VideoCarrouselSlick extends Component {
 
-    CARROUSSEL_SIZE = 5;
     VIDEO_PER_PAGE = 10;
 
     constructor(props) {
@@ -17,9 +16,11 @@ class VideoCarrouselSlick extends Component {
             videos: this.props.videos,
             carrousselCount: 1,
             apiCallCount: 1,
-            pagesTotal: this.props.numberOfPages -1
+            pagesTotal: this.props.numberOfPages -1,
+            index : 0
         };
         this.afterChangeMethod = this.afterChangeMethod.bind(this);
+        this.setApICall = this.setApICall.bind(this);
     };
 
     componentWillReceiveProps(nextProps) {
@@ -34,24 +35,34 @@ class VideoCarrouselSlick extends Component {
         }
     }
 
-    afterChangeMethod() {
-        const nextCarrousselCount = this.state.carrousselCount +1;
-        const pageCount = nextCarrousselCount * this.CARROUSSEL_SIZE / this.VIDEO_PER_PAGE;
-        if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
-            const nextApiCount = this.state.apiCallCount +1;
-            console.log(nextApiCount)
+    async setApICall(queryText, nextApiCount){
+        let response
+        if (queryText !== '') {
+            response = await djangoAPI.get(`/search_video/?page=${nextApiCount}`, {
+                params: {
+                    q: queryText
+                }
+            });
+        }
+        else {
+            response = await djangoAPI.get(`/get_videos?page=${nextApiCount}`);
             djangoAPI.get(`/get_videos?page=${nextApiCount}`)
-                .then((response) => {
-                    console.log(response);
-                    let video = this.state.videos;
-                    video.push(...response.data.results);
-                    console.log(video);
-                    this.setState({
-                        videos: video,
-                        apiCallCount: nextApiCount,
-                        carrousselCount: nextCarrousselCount
-                    });
-                });
+        }
+        return response;
+    }
+
+    async afterChangeMethod(index) {
+        const nextCarrousselCount = index > this.state.index ? this.state.carrousselCount +1 : this.state.carrousselCount - 1;
+        const pageCount = index / this.VIDEO_PER_PAGE;
+        if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
+            const response = await this.setApICall(this.props.searchText, this.state.apiCallCount +1);
+            let video = this.state.videos;
+            video.push(...response.data.results);
+            this.setState({
+                videos: video,
+                apiCallCount: this.state.apiCallCount +1,
+                carrousselCount: nextCarrousselCount
+            });
             }
         else{
         this.setState( {carrousselCount: nextCarrousselCount});

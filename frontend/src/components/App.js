@@ -11,7 +11,8 @@ class App extends React.Component {
     state = {
         videos: [],
         selectedVideo: null,
-        numberOfPages: 0
+        numberOfPages: 0,
+        submitTerm: ''
     };
 
     handleSubmit = async (termFromSearchBar) => {
@@ -21,7 +22,8 @@ class App extends React.Component {
             }
         });
         this.setState({
-            videos: response.data.results
+            videos: response.data.results,
+            submitTerm: termFromSearchBar
         });
     };
 
@@ -64,6 +66,7 @@ class App extends React.Component {
                             <VideoCarrouselSlick
                                 videos={this.state.videos}
                                 handleVideoSelect={this.handleVideoSelect}
+                                searchText={this.state.submitTerm}
                                 numberOfPages={this.state.numberOfPages}
                             />
                         </div>
