@@ -36,8 +36,14 @@ class VideoCarrouselSlick extends Component {
         }
     }
 
+    /**
+     * Select the call to make to the api depending if the search bar is used or not
+     * @param queryText
+     * @param nextApiCount
+     * @returns {Promise<AxiosResponse<any>>} response from the API call
+     */
     async setApICall(queryText, nextApiCount){
-        let response
+        let response;
         if (queryText !== '') {
             response = await djangoAPI.get(`/search_video/?page=${nextApiCount}`, {
                 params: {
@@ -46,27 +52,34 @@ class VideoCarrouselSlick extends Component {
             });
         }
         else {
-            response = await djangoAPI.get(`/get_videos?page=${nextApiCount}`);
-            djangoAPI.get(`/get_videos?page=${nextApiCount}`)
+            response = await djangoAPI.get(`/videos?page=${nextApiCount}`);
         }
         return response;
     }
 
+    /**
+     * this method is called by react slick after the slider finish transition
+     * used to compute if we need to make new API calls
+     * @param index
+     * @returns {Promise<void>}
+     */
     async afterChangeMethod(index) {
-        const nextCarrousselCount = index > this.state.index ? this.state.carrousselCount +1 : this.state.carrousselCount - 1;
-        const pageCount = index / this.VIDEO_PER_PAGE;
+        //index is gave by react slick and correspond to the index of the video on the left (start at 1)
+        const nextCarrousselCount = index > this.state.index ? this.state.carrousselCount + 1 : this.state.carrousselCount - 1;
+        //we add 5 to index to calcultate the number of videos displayed so far
+        const pageCount = (index + 5) / this.VIDEO_PER_PAGE;
         if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
             const response = await this.setApICall(this.props.searchText, this.state.apiCallCount +1);
-            let video = this.state.videos;
-            video.push(...response.data.results);
+            let videos = this.state.videos;
+            videos.push(...response.data.results);
             this.setState({
-                videos: video,
+                videos: videos,
                 apiCallCount: this.state.apiCallCount +1,
                 carrousselCount: nextCarrousselCount
             });
-            }
+        }
         else{
-        this.setState( {carrousselCount: nextCarrousselCount});
+            this.setState( {carrousselCount: nextCarrousselCount});
         }
     }
 
