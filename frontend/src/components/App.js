@@ -12,6 +12,7 @@ class App extends React.Component {
         videos: [],
         selectedVideo: null,
         numberOfPages: 0,
+        videosPerPages: 0,
         submitTerm: ''
     };
 
@@ -39,10 +40,12 @@ class App extends React.Component {
 
         djangoAPI.get("videos?page=1").then((response) => {
             //We look here if a query string for the video is provided, if so load the video
+            console.log(response.data.num_pages, response.data.results.length,);
             this.setState({
                 videos: response.data.results,
                 selectedVideo: videoFromQueryString,
-                numberOfPages: response.data.num_pages
+                numberOfPages: response.data.num_pages,
+                videosPerPages: response.data.results.length
             });
         });
     };
@@ -73,6 +76,7 @@ class App extends React.Component {
                                 handleVideoSelect={this.handleVideoSelect}
                                 searchText={this.state.submitTerm}
                                 numberOfPages={this.state.numberOfPages}
+                                videosPerPages={this.state.videosPerPages}
                             />
                         </div>
                     }

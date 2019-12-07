@@ -8,7 +8,7 @@ import '../style/style.scss';
 
 class VideoCarrouselSlick extends Component {
 
-    VIDEO_PER_PAGE = 10;
+    SLIDES_OF_CAROUSEL = 5;
 
     constructor(props) {
         super(props);
@@ -52,7 +52,7 @@ class VideoCarrouselSlick extends Component {
             });
         }
         else {
-            response = await djangoAPI.get(`/videos?page=${nextApiCount}`);
+            response = await djangoAPI.get(`videos?page=${nextApiCount}`);
         }
         return response;
     }
@@ -67,7 +67,7 @@ class VideoCarrouselSlick extends Component {
         //index is gave by react slick and correspond to the index of the video on the left (start at 1)
         const nextCarrousselCount = index > this.state.index ? this.state.carrousselCount + 1 : this.state.carrousselCount - 1;
         //we add 5 to index to calcultate the number of videos displayed so far
-        const pageCount = (index + 5) / this.VIDEO_PER_PAGE;
+        const pageCount = (index + this.SLIDES_OF_CAROUSEL) / this.props.videosPerPages;
         if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
             const response = await this.setApICall(this.props.searchText, this.state.apiCallCount +1);
             let videos = this.state.videos;
@@ -88,18 +88,22 @@ class VideoCarrouselSlick extends Component {
             dots: false,
             infinite: false,
             speed: 500,
-            slidesToShow: 5,
-            slidesToScroll: 5,
+            slidesToShow: this.SLIDES_OF_CAROUSEL,
+            slidesToScroll: this.SLIDES_OF_CAROUSEL,
             nextArrow: <SampleNextArrow />,
             prevArrow: <SamplePrevArrow />,
             afterChange: current => this.afterChangeMethod(current)
         };
 
-        const slider = this.state.videos.map((video, vIndex) => {
-            return <div><img className='img-cover' onClick={() => this.props.handleVideoSelect(video)} src={video.fields.thumbnail} />
-                <p className='paragraph'>{video.fields.name}</p></div>
-
-
+        const slider = this.state.videos.map((video) => {
+            return <div>
+                    <img
+                        className='img-cover'
+                        onClick={() => this.props.handleVideoSelect(video)}
+                        src={video.fields.thumbnail}
+                    />
+                    <p className='paragraph'>{video.fields.name}</p>
+                   </div>
         });
 
         return (
