@@ -159,3 +159,6 @@ FIXTURE_DIRS =  ['/usr/src/app/StreamServerApp/fixtures/']
 # CORS Config
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False
+
+# number of items per page
+PAGE_SIZE = 10

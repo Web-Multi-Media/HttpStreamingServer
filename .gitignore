@@ -15,7 +15,9 @@ develop-eggs/
 dist/
 downloads/
 eggs/
+node_modules/
 .eggs/
+static/
 lib/
 lib64/
 parts/

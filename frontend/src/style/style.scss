@@ -1,0 +1,152 @@
+/*
+  All of the CSS below is strictly for the demo.  none of the components rely on this for actual
+  functionality.
+*/
+
+$dark: #373737;
+$light: #f4f4f4;
+$white: #fefefe;
+$highlight1: #c0b283;
+$highlight2: #dcd0c0;
+$font-size--large-headline--mobile: 4rem;
+$font-size--large-headline--desktop: 4.8rem;
+$font-size--large-text--mobile: 1.6rem;
+$font-size--large-text--desktop: 2rem;
+
+html {
+  scroll-behavior: smooth;
+  font-size: 10px;
+}
+
+body {
+  margin: 0;
+  font-family: 'Raleway', sans-serif;
+  color: $dark;
+  background-color: $light;
+}
+
+hr {
+  border: 0;
+  border-bottom: 1px dashed $highlight1;
+  background: $highlight2;
+  margin: 2rem 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+p {
+  font-size: 1.2rem;
+  line-height: 1.5em;
+
+  @media all and (min-width: 480px) {
+    font-size: 1.3rem;
+  }
+}
+
+.select {
+  width: 300px;
+}
+
+.slider {
+  max-width: 1000px;
+}
+
+
+.img1-wrap {
+
+}
+
+.image {
+  width: 100%;
+}
+
+.overlay {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  text-align: center;
+  transition: .5s ease;
+}
+
+.img1-wrap:hover .overlay {
+  height: 100%;
+}
+.img1-wrap:hover .paragraph {
+  top: 50%;
+  font-size: large;
+  margin-top: 8%;
+}
+
+.img1-wrap:hover .text {
+  height: 50%;
+}
+
+.text {
+  color: black;
+  font-size: 20px;
+  position: absolute;
+  overflow: hidden;
+  top: 50%;
+  left: 50%;
+  height: 100%;
+  width: 100%;
+  padding: 0px 5px 0px 5px;
+  overflow-wrap: break-word;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  background-color: rgba(240,240,255,0.42);
+  border-radius: 15%;
+}
+
+._1z3wF{
+  position: absolute;
+  top: 50%;
+  display: block;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  transition: background-color .3s;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 50%;
+  background-color: hsla(0,0%,100%,.5);
+}
+
+._1z3wF:disabled, ._2KnME:disabled {
+  cursor: default;
+  opacity: .3;
+}
+
+.left{
+  left: 95%;
+}
+
+.right{
+  left:1.2%;
+}
+
+button:focus {
+  outline: none !important;
+}
+
+.paragraph{
+ margin-top: 3%;
+  overflow-wrap: break-word;
+}
+
+.img-cover{
+  margin: 0;
+  height: 240px;
+  width: 320px;
+}

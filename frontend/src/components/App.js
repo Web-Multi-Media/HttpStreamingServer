@@ -1,50 +1,60 @@
 import React from 'react';
 import SearchBar from './Searchbar';
 import djangoAPI from '../api/djangoAPI';
-import VideoList from './VideoList';
 import VideoDetail from './VideoDetail';
 import { withRouter } from "react-router-dom";
 import queryString from 'query-string'
+import VideoCarrouselSlick from "./VideoCarrouselSlick";
+
 
 class App extends React.Component {
     state = {
         videos: [],
-        selectedVideo: null
-    }
+        selectedVideo: null,
+        numberOfPages: 0,
+        videosPerPages: 0,
+        submitTerm: ''
+    };
 
     handleSubmit = async (termFromSearchBar) => {
         const response = await djangoAPI.get('/search_video/', {
             params: {
                 q: termFromSearchBar
             }
-        })
+        });
         this.setState({
-            videos: response.data
-        })
+            videos: response.data.results,
+            submitTerm: termFromSearchBar
+        });
     };
 
     componentDidMount() {
-        djangoAPI.get("/get_videos/").then((response) => {
-            var video = null;
-            //We look here if a query string for the video is provided, if so load the video
-            const values = queryString.parse(this.props.location.search)
-            response.data.forEach(function (element) {
-                if (element.pk == values.video) {
-                    video = element;
-                }
+        var videoFromQueryString = null
+        const values = queryString.parse(this.props.location.search);
+        if (values.video) {
+            var pk = parseInt(values.video);
+            djangoAPI.get("videos/" + pk + "/").then((response) => {
+                videoFromQueryString = response.data[0];
             });
+        }
+
+        djangoAPI.get("videos?page=1").then((response) => {
+            //We look here if a query string for the video is provided, if so load the video
+            console.log(response.data.num_pages, response.data.results.length,);
             this.setState({
-                videos: response.data,
-                selectedVideo: video
-            })
-        })
-    }
+                videos: response.data.results,
+                selectedVideo: videoFromQueryString,
+                numberOfPages: response.data.num_pages,
+                videosPerPages: response.data.results.length
+            });
+        });
+    };
 
     handleVideoSelect = (video) => {
         this.setState({ selectedVideo: video });
         this.props.history.push("/streaming/?video=" + video.pk);
         window.scrollTo(0, 0);
-    }
+    };
 
     render() {
         return (
@@ -55,10 +65,21 @@ class App extends React.Component {
                         <div className="eleven wide row">
                             <VideoDetail video={this.state.selectedVideo} />
                         </div>
-                        <div className="five wide row">
-                            <VideoList handleVideoSelect={this.handleVideoSelect} videos={this.state.videos} />
-                        </div>
                     </div>
+                </div>
+                <div>
+                    {
+                        this.state.videos.length > 0 &&
+                        <div>
+                            <VideoCarrouselSlick
+                                videos={this.state.videos}
+                                handleVideoSelect={this.handleVideoSelect}
+                                searchText={this.state.submitTerm}
+                                numberOfPages={this.state.numberOfPages}
+                                videosPerPages={this.state.videosPerPages}
+                            />
+                        </div>
+                    }
                 </div>
             </div>
         )

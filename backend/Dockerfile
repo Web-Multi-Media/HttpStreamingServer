@@ -1,12 +1,11 @@
 
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 RUN apt-get update -y
 RUN apt-get install -y python3-pip python-dev build-essential
 RUN apt-get install -y software-properties-common
 RUN apt-get install -y python3-software-properties
-RUN add-apt-repository -y ppa:jonathonf/ffmpeg-3
-RUN apt-get install -y libav-tools x264 x265 ffmpeg
+RUN apt-get install -y x264 x265 ffmpeg
 
 ENV PYTHONUNBUFFERED 1
 COPY . /usr/src/app/

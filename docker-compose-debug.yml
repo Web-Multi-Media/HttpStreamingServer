@@ -30,7 +30,7 @@ services:
       - static_volume:/usr/src/app/staticfiles
       - /static/
       - ipython:/root/.ipython
-    command: bash -c "python3 /usr/src/app/manage.py migrate && python3 /usr/src/app/manage.py populatedb && gunicorn StreamingServer.wsgi:application --bind 0.0.0.0:8000"
+    command: bash -c "python3 /usr/src/app/manage.py migrate && python3 /usr/src/app/manage.py populatedb && python3 /usr/src/app/manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
 
