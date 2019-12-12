@@ -1,8 +1,6 @@
 
 import axios from 'axios';
 
-
 export default axios.create({
-    //baseURL: 'http://localhost:1337/streaming/',
-    baseURL: '/streaming/',
+    baseURL: process.env.REACT_APP_DJANGO_API
 })
