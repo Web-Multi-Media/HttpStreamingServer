@@ -66,14 +66,26 @@ def populate_db_from_local_folder(base_path, remote_url):
                     if not video_infos:
                         print("Dict is Empty")
                         continue
+                    
+                    fr_subtitles = ''
+                    if video_infos['fr_subtitles_relative_path']:
+                        fr_subtitles = "{}/{}".format(remote_url, video_infos['fr_subtitles_relative_path'])
+
+                    en_subtitles = ''
+                    if video_infos['en_subtitles_relative_path']:
+                        en_subtitles = "{}/{}".format(remote_url, video_infos['en_subtitles_relative_path'])
+
+                    os_subtitles = ''
+                    if video_infos['ov_subtitles_relative_path']:
+                        os_subtitles = "{}/{}".format(remote_url, video_infos['ov_subtitles_relative_path'])
 
                     v = Video(name=filename, video_folder = root, \
                                             video_url="{}/{}".format(remote_url, video_infos['relative_path']),\
                                             video_codec=video_infos['video_codec_type'], audio_codec=video_infos['audio_codec_type'],\
                                             height=video_infos['video_height'], width=video_infos['video_width'], \
-                                            thumbnail="{}/{}".format(remote_url, video_infos['thumbnail_relativepath']),
-                                            fr_subtitle_url="{}/{}".format(remote_url, video_infos['fr_subtitles_relative_path']),\
-                                            en_subtitle_url="{}/{}".format(remote_url, video_infos['en_subtitles_relative_path']))
+                                            thumbnail="{}/{}".format(remote_url, video_infos['thumbnail_relativepath']), \
+                                            fr_subtitle_url=fr_subtitles, ov_subtitle_url = os_subtitles,\
+                                            en_subtitle_url=en_subtitles)
                     v.save()
                 except Exception as ex:
                     print ("An error occured")
@@ -168,6 +180,10 @@ def prepare_video(video_full_path, video_path, video_dir):
         en_subtitles_relative_path = ''
         if(subtitles_full_path[1]):
             en_subtitles_relative_path = os.path.relpath(subtitles_full_path[1], video_path)
+
+        ov_subtitles_relative_path = ''
+        if(subtitles_full_path[2]):
+            ov_subtitles_relative_path = os.path.relpath(subtitles_full_path[2], video_path)
         
     else:
         #Input is not h264, let's skip it
@@ -176,7 +192,8 @@ def prepare_video(video_full_path, video_path, video_dir):
     return {'relative_path': relative_path, 'video_codec_type': video_codec_type, \
             'audio_codec_type': audio_codec_type, 'video_height': video_height,\
             'video_width': video_width, 'thumbnail_relativepath': thumbnail_relativepath,\
-             'fr_subtitles_relative_path':fr_subtitles_relative_path, 'en_subtitles_relative_path':en_subtitles_relative_path}
+             'fr_subtitles_relative_path':fr_subtitles_relative_path, 'en_subtitles_relative_path':en_subtitles_relative_path,
+             'ov_subtitles_relative_path':ov_subtitles_relative_path}
 
 def populate_db_from_remote_server(remotePath, ListOfVideos):
     """ # tobeDone

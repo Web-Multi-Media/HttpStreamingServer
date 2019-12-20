@@ -40,7 +40,8 @@ class App extends React.Component {
 
         djangoAPI.get("videos?page=1").then((response) => {
             //We look here if a query string for the video is provided, if so load the video
-            console.log(response.data.num_pages, response.data.results.length,);
+            console.log(response.data.num_pages, response.data.results.length);
+            console.log(response.data);
             this.setState({
                 videos: response.data.results,
                 selectedVideo: videoFromQueryString,
