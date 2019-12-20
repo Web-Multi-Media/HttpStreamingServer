@@ -18,15 +18,22 @@ def init_cache():
             'filename': 'cachefile.dbm'}, replace_existing_backend=True)
 
 
-def get_subtitles(video_path):
+def get_subtitles(video_path, ov_subtitles):
     """ # get subtitles and convert them to web vtt
         Args:
         video_path: absolute path to videos
+        ov_subtitles: boolean (True if input has subtitles, False if not)
         return: empty string if no subtitles was found. Otherwise return subtitle absolute location
     """
 
     webvtt_fr_fullpath = ''
     webvtt_en_fullpath = ''
+    webvtt_ov_fullpath = ''
+
+    if ov_subtitles:
+        print(webvtt_ov_fullpath)
+        webvtt_ov_fullpath = os.path.splitext(video_path)[0]+'_ov.vtt'
+        subprocess.run(["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", video_path,"-map", "0:s:0", webvtt_ov_fullpath])
 
     video = Video.fromname(video_path)
 
@@ -66,4 +73,4 @@ def get_subtitles(video_path):
                     print(e.output)
                     raise
     print([webvtt_fr_fullpath, webvtt_en_fullpath])
-    return [webvtt_fr_fullpath, webvtt_en_fullpath]
+    return [webvtt_fr_fullpath, webvtt_en_fullpath, webvtt_ov_fullpath]

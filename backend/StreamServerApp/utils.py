@@ -14,7 +14,7 @@ from datetime import timedelta
 from StreamingServer.settings import customstderr, customstdout
 from StreamServerApp.subtitles import get_subtitles, init_cache
 
-import os
+import os, sys
 from os.path import isfile, join
 import ffmpeg
 import subprocess
@@ -121,10 +121,15 @@ def prepare_video(video_full_path, video_path, video_dir):
         print('No audio stream found', file=sys.stderr)
         return {}
 
+    ov_subtitles = False
+    subtitles_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'subtitle'), None)
+    if subtitles_stream is not None:
+        print('Found Subtitles in the input stream')
+        ov_subtitles = True
+
     audio_codec_type = audio_stream['codec_name']
 
     relative_path = os.path.relpath(video_full_path, video_path)
-
     if(("h264" in video_codec_type) and ("aac" in audio_codec_type)):
         #Thumbnail creation
         thumbnail_fullpath=os.path.splitext(video_full_path)[0]+'.jpg'
@@ -155,7 +160,7 @@ def prepare_video(video_full_path, video_path, video_dir):
 
             
 
-        subtitles_full_path = get_subtitles(video_full_path)
+        subtitles_full_path = get_subtitles(video_full_path, ov_subtitles)
         fr_subtitles_relative_path = ''
         if(subtitles_full_path[0]):
             fr_subtitles_relative_path = os.path.relpath(subtitles_full_path[0], video_path)
