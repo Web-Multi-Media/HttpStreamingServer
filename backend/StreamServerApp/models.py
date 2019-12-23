@@ -13,4 +13,5 @@ class Video(models.Model):
     thumbnail = models.CharField(max_length=300, default="")
     fr_subtitle_url = models.CharField(max_length=300, default="")
     en_subtitle_url = models.CharField(max_length=300, default="")
+    #This field describes the path to the subtitle shipped with the input video
     ov_subtitle_url = models.CharField(max_length=300, default="")
