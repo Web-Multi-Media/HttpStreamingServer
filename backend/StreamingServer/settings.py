@@ -25,10 +25,17 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, '../frontend/build/static/'),  # update the STATICFILES_DIRS
 )
 
-if "DEBUG" in os.environ:
-    VIDEO_URL = 'http://localhost:1337/Videos/'
+ALLOWED_HOSTS = ['web', 'localhost']
+
+if os.getenv('DEPLOY_ENV', 'dev') == 'production':
+    DEBUG = False
+    ALLOWED_HOSTS.append(os.getenv('HTTPSTREAMING_HOST', ''))
 else:
-    VIDEO_URL = '/Videos/'
+    DEBUG = True
+
+SECRET_KEY = os.getenv('HTTPSTREAMING_SECRET_KEY', '')
+
+VIDEO_URL = '/Videos/'
 
 VIDEO_ROOT = os.path.join(BASE_DIR, 'Videos/')
 
@@ -44,13 +51,7 @@ else:
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'yn4+-6uw$)i%w_wey*k65go68^=t_i)trb%m+ptb_%(7rcxc@h'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['web', 'localhost']
 
 # Application definition
 
