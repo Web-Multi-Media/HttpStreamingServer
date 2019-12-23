@@ -72,5 +72,4 @@ def get_subtitles(video_path, ov_subtitles):
                     print(e.cmd)
                     print(e.output)
                     raise
-    print([webvtt_fr_fullpath, webvtt_en_fullpath])
-    return [webvtt_fr_fullpath, webvtt_en_fullpath, webvtt_ov_fullpath]
+    return (webvtt_fr_fullpath, webvtt_en_fullpath, webvtt_ov_fullpath)
