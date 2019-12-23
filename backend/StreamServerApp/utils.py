@@ -69,10 +69,10 @@ def populate_db_from_local_folder(base_path, remote_url):
                         continue
 
                     v = Video(name=filename, video_folder = root, \
-                                            video_url="{}/{}".format(remote_url, video_infos['relative_path']),\
+                                            video_url=video_infos['remote_video_url'],\
                                             video_codec=video_infos['video_codec_type'], audio_codec=video_infos['audio_codec_type'],\
                                             height=video_infos['video_height'], width=video_infos['video_width'], \
-                                            thumbnail="{}/{}".format(remote_url, video_infos['thumbnail_relativepath']), \
+                                            thumbnail=video_infos['remote_thumbnail_url'], \
                                             fr_subtitle_url=video_infos['fr_subtitles_remote_path'], ov_subtitle_url = video_infos['ov_subtitles_remote_path'],\
                                             en_subtitle_url=video_infos['en_subtitles_remote_path'])
                     v.save()
@@ -182,9 +182,12 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
         #Input is not h264, let's skip it
         return {}
 
-    return {'relative_path': relative_path, 'video_codec_type': video_codec_type, \
+    remote_video_url = os.path.join(remote_url, relative_path)
+    remote_thumbnail_url = os.path.join(remote_url, thumbnail_relativepath)
+
+    return {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type, \
             'audio_codec_type': audio_codec_type, 'video_height': video_height,\
-            'video_width': video_width, 'thumbnail_relativepath': thumbnail_relativepath,\
+            'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,\
              'fr_subtitles_remote_path':fr_subtitles_remote_path, 'en_subtitles_remote_path':en_subtitles_remote_path,
              'ov_subtitles_remote_path':ov_subtitles_remote_path}
 
