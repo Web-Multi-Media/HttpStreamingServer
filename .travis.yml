@@ -2,9 +2,6 @@ language: python
 python:
   - 3.6.2
 
-env:
-  - HTTPSTREAMING_SECRET_KEY=test
-
 services:
   - docker
   - docker-compose

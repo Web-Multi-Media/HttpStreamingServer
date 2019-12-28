@@ -33,7 +33,7 @@ if os.getenv('DEPLOY_ENV', 'dev') == 'production':
 else:
     DEBUG = True
 
-SECRET_KEY = os.getenv('HTTPSTREAMING_SECRET_KEY', '')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 
 VIDEO_URL = '/Videos/'
 
