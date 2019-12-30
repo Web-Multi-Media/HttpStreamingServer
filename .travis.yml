@@ -1,14 +1,14 @@
 language: python
 python:
-    - 3.6.2
+  - 3.6.2
 
 services:
-    - docker
-    - docker-compose
-  
+  - docker
+  - docker-compose
+
 install:
-    - docker build ./backend
-    - docker build ./frontend
+  - docker build ./backend
+  - docker build ./frontend
 
 script:
-    - docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py test
+  - docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py test
