@@ -24,12 +24,11 @@ class LoadingTest(TestCase):
         self.assertEqual(response.status_code, 200)
         #self.assertJSONEqual(str(response.content, encoding='utf8'), [])
 
-    '''
+
     def test_search_video_with_query(self):
         data = {
-            'q': 'The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4'
+            'name': 'The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4'
         }
-        response = self.client.get(reverse('search-video'), data=data)
-        print(response.content)
+        response = self.client.get(reverse('video-list'), data=data)
         self.assertEqual(response.status_code, 200)
-        #self.assertJSONEqual(str(response.content, encoding='utf8'), expected_result)'''
+        #self.assertJSONEqual(str(response.content, encoding='utf8'), expected_result)

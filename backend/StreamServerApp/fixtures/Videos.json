@@ -1,29 +1,29 @@
 [
-  {
-    "model": "StreamServerApp.Video",
-    "pk": 1,
-    "fields": {
-      "name": "canard",
-      "video_url": "http://localhost:8000/static/test/folder1/canard.mp4",
-      "video_codec": "h264"
+    {
+        "model": "StreamServerApp.Video",
+        "pk": 1,
+        "fields": {
+            "name": "The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4",
+            "video_url": "http://localhost:8000/static/test/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4",
+            "video_codec": "h264"
+        }
+    },
+    {
+        "model": "StreamServerApp.Video",
+        "pk": 2,
+        "fields": {
+            "name": "cochon",
+            "video_url": "http://localhost:8000/static/test/folder1/cochon.mp4",
+            "video_codec": "h264"
+        }
+    },
+    {
+        "model": "StreamServerApp.Video",
+        "pk": 3,
+        "fields": {
+            "name": "singe",
+            "video_url": "http://localhost:8000/static/test/folder2/singe.mp4",
+            "video_codec": "h264"
+        }
     }
-  },
-  {
-    "model": "StreamServerApp.Video",
-    "pk": 2,
-    "fields": {
-      "name": "cochon",
-      "video_url": "http://localhost:8000/static/test/folder1/cochon.mp4",
-      "video_codec": "h264"
-    }
-  },
-  {
-    "model": "StreamServerApp.Video",
-    "pk": 3,
-    "fields": {
-      "name": "singe",
-      "video_url": "http://localhost:8000/static/test/folder2/singe.mp4",
-      "video_codec": "h264"
-    }
-  }
 ]

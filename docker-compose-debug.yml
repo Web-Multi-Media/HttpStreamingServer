@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 
 volumes:
   dbvolume:
@@ -17,9 +17,9 @@ services:
       - dbvolume:/var/lib/postgresql/data/
   web:
     build: ./backend
-    restart: always 
-    expose:
-      - 8000
+    restart: always
+    ports:
+      - 8000:8000
     env_file:
       - .env
     environment:
@@ -55,4 +55,3 @@ services:
       - web
     ports:
       - 3000:3000
-
