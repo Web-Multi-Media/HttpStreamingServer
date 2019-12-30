@@ -14,6 +14,6 @@ video_detail = views.VideoViewSet.as_view({
 urlpatterns = [
     path('', views.index, name='index'),
     path('videos/', video_list, name="video-list"),
-    path('videos/<int:video_id>/', video_detail, name="video-detail"),
+    path('videos/<int:pk>/', video_detail, name="video-detail"),
     #path('search_video/', views.search_video, name='search-video'),
 ]
