@@ -6,3 +6,4 @@ ffmpeg-python==0.1.17
 subliminal==2.0.5 
 gunicorn==19.9.0
 django-cors-headers==3.0.2
+djangorestframework==3.11.0
