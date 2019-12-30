@@ -9,6 +9,8 @@ volumes:
 services:
   db:
     image: postgres:9.6
+    env_file:
+      - .env
     ports:
       - 5543:5432
     volumes:
