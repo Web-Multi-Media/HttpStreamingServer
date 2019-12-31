@@ -1,19 +1,16 @@
 from django.urls import path
+from django.urls.conf import include
 from django.conf.urls import url
+from rest_framework.routers import DefaultRouter
 
 from . import views
 
 
-video_list = views.VideoViewSet.as_view({
-    'get': 'list',
-})
+router = DefaultRouter()
+router.register(r'videos', views.VideoViewSet, basename='videos')
 
-video_detail = views.VideoViewSet.as_view({
-    'get': 'retrieve',
-})
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('videos/', video_list, name="video-list"),
-    path('videos/<int:pk>/', video_detail, name="video-detail"),
+    url(r'^', include(router.urls)),
 ]

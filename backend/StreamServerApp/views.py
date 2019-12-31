@@ -18,11 +18,16 @@ from StreamServerApp import utils
 def index(request):
     return render(request, "index.html")
 
+
 class VideoViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `search` actions for Videos
     """
     serializer_class = VideoSerializer
+
+    def _allowed_methods(self):
+        return ['GET']
+
     def get_queryset(self):
         """
         Optionally restricts the returned purchases to a given user,
