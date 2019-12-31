@@ -9,13 +9,15 @@ Todo:
 """
 import os
 import sys
+import string
 from os.path import isfile, join
 import ffmpeg
 import subprocess
 import traceback
 from datetime import timedelta
+import subliminal
 
-from StreamServerApp.models import Video
+from StreamServerApp.models import Video, Series, Movie
 from StreamingServer.settings import customstderr, customstdout
 from StreamServerApp.subtitles import get_subtitles, init_cache
 
@@ -24,6 +26,8 @@ def delete_DB_Infos():
     """ delete all videos infos in the db
     """
     Video.objects.all().delete()
+    Movie.objects.all().delete()
+    Series.objects.all().delete()
 
 
 def get_DB_size():
@@ -77,6 +81,29 @@ def populate_db_from_local_folder(base_path, remote_url):
                                             thumbnail=video_infos['remote_thumbnail_url'], \
                                             fr_subtitle_url=video_infos['fr_subtitles_remote_path'], ov_subtitle_url = video_infos['ov_subtitles_remote_path'],\
                                             en_subtitle_url=video_infos['en_subtitles_remote_path'])
+                    
+                    # parse movie or series, episode & season
+                    video_type_and_info = get_video_type_and_info(filename)
+                    count_series = 0
+                    count_movies = 0
+
+                    if video_type_and_info:
+                        if video_type_and_info['type'] == 'Series':
+                            series, created = Series.objects.get_or_create(title=video_type_and_info['title'])
+                            v.series = series
+                            v.season = video_type_and_info['season']
+                            v.episode = video_type_and_info['episode']
+                            if created:
+                                count_series += 1
+
+                        elif video_type_and_info['type'] == 'Movie':
+                            movie, created = Movie.objects.get_or_create(title=video_type_and_info['title'])
+                            v.movie = movie
+                            if created:
+                                count_movies += 1
+                    
+                    print('{} series and {} movies were created'.format(count_series, count_movies))
+
                     v.save()
                 except Exception as ex:
                     print ("An error occured")
@@ -197,3 +224,31 @@ def populate_db_from_remote_server(remotePath, ListOfVideos):
     """ # tobeDone
        ListOfVideos could be provided through an API Call
     """
+
+
+def get_video_type_and_info(video_path):
+    """ # Uses subliminal to parse information from filename.
+    
+    Subliminal tells us if the video is a serie or not.
+    If not, we assume it to be a movie, which is not necesarly the case (e.g. documentary, simple video).
+    We use string.capwords() on title strings for consistency of capitalization.
+    
+    Args:
+    video_path: full path to the video (eg: /Videos/folder1/video.mp4)
+
+    Returns: dict containing video type and info
+
+    """
+    video = subliminal.Video.fromname(video_path)
+    if hasattr(video, 'series'):
+        return {
+            'type': 'Series',
+            'title': string.capwords(video.series),
+            'season': video.season,
+            'episode': video.episode,
+        }
+    elif hasattr(video, 'title'):
+        return {
+            'type': 'Movie',
+            'title': string.capwords(video.title),
+        }
