@@ -7,29 +7,30 @@ Todo:
     * Define how to interact with multiple servers
     * Update database only when needed.
 """
-
-from StreamServerApp.models import Video
-from datetime import timedelta
-
-from StreamingServer.settings import customstderr, customstdout
-from StreamServerApp.subtitles import get_subtitles, init_cache
-
 import os
 import sys
 from os.path import isfile, join
 import ffmpeg
 import subprocess
 import traceback
+from datetime import timedelta
+
+from StreamServerApp.models import Video
+from StreamingServer.settings import customstderr, customstdout
+from StreamServerApp.subtitles import get_subtitles, init_cache
+
 
 def delete_DB_Infos():
     """ delete all videos infos in the db
     """
     Video.objects.all().delete()
 
+
 def get_DB_size():
     """ Return db size
     """
     return len(Video.objects.all())
+
 
 def pretty(d, indent=0):
     """ pretty print for nested dictionnary
@@ -40,6 +41,7 @@ def pretty(d, indent=0):
             pretty(value, indent+1)
         else:
             print('\t' * (indent+1) + str(value))
+
 
 def populate_db_from_local_folder(base_path, remote_url):
     """ # create all the videos infos in the database
@@ -83,6 +85,7 @@ def populate_db_from_local_folder(base_path, remote_url):
 
 
     print("{} videos were added to the database".format(str(get_DB_size())))
+
 
 def prepare_video(video_full_path, video_path, video_dir, remote_url):
     """ # Create thumbnail, transmux if necessayr and get all the videos infos.
@@ -160,8 +163,6 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             relative_path = os.path.splitext(relative_path)[0]+'.mp4'
             video_full_path = temp_mp4
 
-            
-
         subtitles_full_path = get_subtitles(video_full_path, ov_subtitles)
         fr_subtitles_remote_path = ''
         if(subtitles_full_path[0]):
@@ -190,6 +191,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,\
              'fr_subtitles_remote_path':fr_subtitles_remote_path, 'en_subtitles_remote_path':en_subtitles_remote_path,
              'ov_subtitles_remote_path':ov_subtitles_remote_path}
+
 
 def populate_db_from_remote_server(remotePath, ListOfVideos):
     """ # tobeDone
