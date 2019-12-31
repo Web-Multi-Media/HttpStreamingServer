@@ -30,12 +30,13 @@ ALLOWED_HOSTS = ['web', 'localhost']
 if os.getenv('DEPLOY_ENV', 'dev') == 'production':
     DEBUG = False
     ALLOWED_HOSTS.append(os.getenv('HTTPSTREAMING_HOST', ''))
+    VIDEO_URL = '/Videos/'
 else:
     DEBUG = True
+    VIDEO_URL = 'http://localhost:1337/Videos/'
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 
-VIDEO_URL = '/Videos/'
 
 VIDEO_ROOT = os.path.join(BASE_DIR, 'Videos/')
 
