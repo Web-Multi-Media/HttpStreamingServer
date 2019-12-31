@@ -3,6 +3,7 @@ from django.conf.urls import url
 
 from . import views
 
+
 video_list = views.VideoViewSet.as_view({
     'get': 'list',
 })
@@ -15,5 +16,4 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('videos/', video_list, name="video-list"),
     path('videos/<int:pk>/', video_detail, name="video-detail"),
-    #path('search_video/', views.search_video, name='search-video'),
 ]
