@@ -59,7 +59,11 @@ def populate_db_from_local_folder(base_path, remote_url):
     init_cache()
     video_path = base_path
     idx = 0
+    count_series = 0
+    count_movies = 0
+
     print ("Get videos infos in dir: {} ".format(video_path))
+
     for root, directories, filenames in os.walk(video_path):
         idx += len(filenames)
         for filename in filenames:
@@ -84,8 +88,6 @@ def populate_db_from_local_folder(base_path, remote_url):
                     
                     # parse movie or series, episode & season
                     video_type_and_info = get_video_type_and_info(filename)
-                    count_series = 0
-                    count_movies = 0
 
                     if video_type_and_info:
                         if video_type_and_info['type'] == 'Series':
@@ -101,17 +103,16 @@ def populate_db_from_local_folder(base_path, remote_url):
                             v.movie = movie
                             if created:
                                 count_movies += 1
-                    
-                    print('{} series and {} movies were created'.format(count_series, count_movies))
-
+                                
                     v.save()
+
                 except Exception as ex:
                     print ("An error occured")
                     traceback.print_exception(type(ex), ex, ex.__traceback__)
                     continue
 
-
     print("{} videos were added to the database".format(str(get_DB_size())))
+    print('{} series and {} movies were created'.format(count_series, count_movies))
 
 
 def prepare_video(video_full_path, video_path, video_dir, remote_url):
