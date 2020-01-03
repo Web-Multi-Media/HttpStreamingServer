@@ -1,3 +1,4 @@
+import json
 from django.urls import reverse
 from django.core.management import call_command
 from django.test import Client, TestCase
@@ -24,15 +25,24 @@ class LoadingTest(TestCase):
     def test_search_video_without_query(self):
         response = self.client.get(reverse('videos-list'))
         self.assertEqual(response.status_code, 200)
-        #self.assertJSONEqual(str(response.content, encoding='utf8'), [])
+
+        # check that we get all the 3 videos from the Videos.json fixture
+        results = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(len(results['results']), 3)
 
     def test_search_video_with_query(self):
         data = {
-            'search_query': 'The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4'
+            'search_query': 'The Big Bang theory'
         }
+        expected_result_name = 'The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4'
+
         response = self.client.get(reverse('videos-list'), data=data)
         self.assertEqual(response.status_code, 200)
-        #self.assertJSONEqual(str(response.content, encoding='utf8'), expected_result)
+        
+        # check that the first result is the best match
+        results = json.loads(str(response.content, encoding='utf8'))
+        retrieved_name = results['results'][0]['name']  
+        self.assertEqual(expected_result_name, retrieved_name)
 
 
 class UtilsTest(TestCase):
