@@ -18,9 +18,9 @@ class App extends React.Component {
     };
 
     handleSubmit = async (termFromSearchBar) => {
-        const response = await djangoAPI.get('/search_video/', {
+        const response = await djangoAPI.get('/videos/', {
             params: {
-                q: termFromSearchBar
+                name: termFromSearchBar
             }
         });
         this.setState({
@@ -39,14 +39,14 @@ class App extends React.Component {
         }
         const videos = await djangoAPI.get("videos");
         console.log(videos);
-            //We look here if a query string for the video is provided, if so load the video
-            this.setState({
-                videos: videos.data.results,
-                selectedVideo: videoFromQueryString,
-                numberOfPages: Math.ceil(videos.data.count / videos.data.results.length),
-                videosPerPages: videos.data.results.length,
-                nextQuery: videos.data.next
-            });
+        //We look here if a query string for the video is provided, if so load the video
+        this.setState({
+            videos: videos.data.results,
+            selectedVideo: videoFromQueryString,
+            numberOfPages: Math.ceil(videos.data.count / videos.data.results.length),
+            videosPerPages: videos.data.results.length,
+            nextQuery: videos.data.next
+        });
     };
 
     handleVideoSelect = (video) => {
@@ -76,7 +76,7 @@ class App extends React.Component {
                                 searchText={this.state.submitTerm}
                                 numberOfPages={this.state.numberOfPages}
                                 videosPerPages={this.state.videosPerPages}
-                                nextQuery = {this.state.nextQuery}
+                                nextQuery={this.state.nextQuery}
                             />
                         </div>
                     }
