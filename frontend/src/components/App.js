@@ -13,13 +13,14 @@ class App extends React.Component {
         selectedVideo: null,
         numberOfPages: 0,
         videosPerPages: 0,
-        submitTerm: ''
+        submitTerm: '',
+        nextQuery: ''
     };
 
     handleSubmit = async (termFromSearchBar) => {
-        const response = await djangoAPI.get('/search_video/', {
+        const response = await djangoAPI.get('/videos/', {
             params: {
-                q: termFromSearchBar
+                search_query: termFromSearchBar
             }
         });
         this.setState({
@@ -28,32 +29,29 @@ class App extends React.Component {
         });
     };
 
-    componentDidMount() {
-        var videoFromQueryString = null
+    async componentDidMount() {
+        let videoFromQueryString = null;
         const values = queryString.parse(this.props.location.search);
         if (values.video) {
-            var pk = parseInt(values.video);
-            djangoAPI.get("videos/" + pk + "/").then((response) => {
-                videoFromQueryString = response.data[0];
-            });
+            let id = parseInt(values.video);
+            const video = await djangoAPI.get("videos/" + id + "/");
+            videoFromQueryString = video.data;
         }
-
-        djangoAPI.get("videos?page=1").then((response) => {
-            //We look here if a query string for the video is provided, if so load the video
-            console.log(response.data.num_pages, response.data.results.length);
-            console.log(response.data);
-            this.setState({
-                videos: response.data.results,
-                selectedVideo: videoFromQueryString,
-                numberOfPages: response.data.num_pages,
-                videosPerPages: response.data.results.length
-            });
+        const videos = await djangoAPI.get("videos");
+        console.log(videos);
+        //We look here if a query string for the video is provided, if so load the video
+        this.setState({
+            videos: videos.data.results,
+            selectedVideo: videoFromQueryString,
+            numberOfPages: Math.ceil(videos.data.count / videos.data.results.length),
+            videosPerPages: videos.data.results.length,
+            nextQuery: videos.data.next
         });
     };
 
     handleVideoSelect = (video) => {
         this.setState({ selectedVideo: video });
-        this.props.history.push("/streaming/?video=" + video.pk);
+        this.props.history.push("/streaming/?video=" + video.id);
         window.scrollTo(0, 0);
     };
 
@@ -78,6 +76,7 @@ class App extends React.Component {
                                 searchText={this.state.submitTerm}
                                 numberOfPages={this.state.numberOfPages}
                                 videosPerPages={this.state.videosPerPages}
+                                nextQuery={this.state.nextQuery}
                             />
                         </div>
                     }

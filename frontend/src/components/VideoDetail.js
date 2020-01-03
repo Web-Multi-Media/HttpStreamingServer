@@ -6,17 +6,18 @@ const VideoDetail = ({ video }) => {
         return null;
     }
     return (
+
         <div>
             <div className='ui embed'>
-                <video preload="auto" controls width="320" height="240" key={video.pk}>
-                    <source src={video.fields.video_url} title='Video player' />
-                    {video.fields.fr_subtitle_url && <track label="French" kind="subtitles" srclang="fr" src={video.fields.fr_subtitle_url} />}
-                    {video.fields.en_subtitle_url && <track label="English" kind="subtitles" srclang="eng" src={video.fields.en_subtitle_url} />}
-                    {video.fields.ov_subtitle_url && <track label="OV" kind="subtitles" srclang="ov" src={video.fields.ov_subtitle_url} />}
+                <video preload="auto" controls width="320" height="240" key={video.id}>
+                    <source src={video.video_url} title='Video player' />
+                    {video.fr_subtitle_url && <track label="French" kind="subtitles" srcLang="fr" src={video.fr_subtitle_url} />}
+                    {video.en_subtitle_url && <track label="English" kind="subtitles" srcLang="eng" src={video.en_subtitle_url} />}
+                    {video.ov_subtitle_url && <track label="OV" kind="subtitles" srcLang="ov" src={video.ov_subtitle_url} />}
                 </video>
             </div>
             <div className='ui segment'>
-                <h4 className='ui header'>{video.fields.name}</h4>
+                <h4 className='ui header'>{video.name}</h4>
             </div>
         </div>
     )

@@ -13,6 +13,7 @@ class CommandsTestCase(TestCase):
         call_command('populatedb', *args, **opts)
         self.assertEqual(get_DB_size(), 5)
 
+
 class LoadingTest(TestCase):
     fixtures = ['Videos.json']
     def setUp(self):
@@ -20,21 +21,15 @@ class LoadingTest(TestCase):
             self.client = Client()
 
     def test_search_video_without_query(self):
-        response = self.client.get(reverse('search-video'))
+        response = self.client.get(reverse('videos-list'))
         self.assertEqual(response.status_code, 200)
         #self.assertJSONEqual(str(response.content, encoding='utf8'), [])
 
-    def test_get_videos(self):
-        response = self.client.get(reverse('get-videos'))
-        print(response.content)
-        self.assertEqual(response.status_code, 200)
-        #self.assertJSONEqual(str(response.content, encoding='utf8'), [])
 
     def test_search_video_with_query(self):
         data = {
-            'q': 'The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4'
+            'search_query': 'The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4'
         }
-        response = self.client.get(reverse('search-video'), data=data)
-        print(response.content)
+        response = self.client.get(reverse('videos-list'), data=data)
         self.assertEqual(response.status_code, 200)
         #self.assertJSONEqual(str(response.content, encoding='utf8'), expected_result)

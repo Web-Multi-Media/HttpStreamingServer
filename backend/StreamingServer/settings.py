@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'StreamingServer',
     'StreamServerApp',
     'corsheaders',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -162,5 +163,7 @@ FIXTURE_DIRS =  ['/usr/src/app/StreamServerApp/fixtures/']
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = False
 
-# number of items per page
-PAGE_SIZE = 10
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10
+}

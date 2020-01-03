@@ -14,11 +14,12 @@ class VideoCarrouselSlick extends Component {
         super(props);
         this.state = {
             videos: this.props.videos,
-            //carrousselCount: Number of time next button is clicked
-            carrousselCount: 1,
+            //carrouselCount: Number of time next button is clicked
+            carrouselCount: 1,
             apiCallCount: 1,
             pagesTotal: this.props.numberOfPages -1,
-            index : 0
+            index : 0,
+            nextQuery: this.props.nextQuery
         };
         this.afterChangeMethod = this.afterChangeMethod.bind(this);
         this.setApICall = this.setApICall.bind(this);
@@ -28,7 +29,7 @@ class VideoCarrouselSlick extends Component {
         if (nextProps.videos !== this.props.videos) {
             this.setState({
                 videos: nextProps.videos,
-                carrousselCount: 1,
+                carrouselCount: 1,
                 apiCallCount: 1,
                 pagesTotal: nextProps.numberOfPages - 1
             });
@@ -52,7 +53,7 @@ class VideoCarrouselSlick extends Component {
             });
         }
         else {
-            response = await djangoAPI.get(`videos?page=${nextApiCount}`);
+                response = await djangoAPI.get(this.state.nextQuery);
         }
         return response;
     }
@@ -65,7 +66,7 @@ class VideoCarrouselSlick extends Component {
      */
     async afterChangeMethod(index) {
         //index is gave by react slick and correspond to the index of the video on the left (start at 1)
-        const nextCarrousselCount = index > this.state.index ? this.state.carrousselCount + 1 : this.state.carrousselCount - 1;
+        const nextCarrouselCount = index > this.state.index ? this.state.carrouselCount + 1 : this.state.carrouselCount - 1;
         //we add 5 to index to calcultate the number of videos displayed so far
         const pageCount = (index + this.SLIDES_OF_CAROUSEL) / this.props.videosPerPages;
         if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
@@ -75,11 +76,12 @@ class VideoCarrouselSlick extends Component {
             this.setState({
                 videos: videos,
                 apiCallCount: this.state.apiCallCount +1,
-                carrousselCount: nextCarrousselCount
+                carrouselCount: nextCarrouselCount,
+                nextQuery: response.data.next
             });
         }
         else{
-            this.setState( {carrousselCount: nextCarrousselCount});
+            this.setState( {carrouselCount: nextCarrouselCount});
         }
     }
 
@@ -100,9 +102,9 @@ class VideoCarrouselSlick extends Component {
                     <img
                         className='img-cover'
                         onClick={() => this.props.handleVideoSelect(video)}
-                        src={video.fields.thumbnail}
+                        src={video.thumbnail}
                     />
-                    <p className='paragraph'>{video.fields.name}</p>
+                    <p className='paragraph'>{video.name}</p>
                    </div>
         });
 

@@ -26,6 +26,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+Videos/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -143,3 +144,4 @@ db.sqlite3
 *.vtt
 *.jpeg
 *.jpg
+
