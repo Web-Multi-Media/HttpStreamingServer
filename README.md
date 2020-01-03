@@ -42,8 +42,8 @@ If you want to reload videos while the app is running, you need to have a superu
 
 then go to `http://localhost:1337/admin/`, select all Videos and check 'reload Videos' actions.
 
-#### REACT/DJANGO Interaction
+#### Build Process and Debug
 
-So far, the django indew view is mapped to react build directory in the app/settings.py
+See the /doc folder for more informations
 
 
