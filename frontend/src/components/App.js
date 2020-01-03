@@ -18,14 +18,17 @@ class App extends React.Component {
     };
 
     handleSubmit = async (termFromSearchBar) => {
-        const response = await djangoAPI.get('/videos/', {
+        const videos = await djangoAPI.get('/videos/', {
             params: {
                 search_query: termFromSearchBar
             }
         });
+        console.log('recherche')
         this.setState({
-            videos: response.data.results,
-            submitTerm: termFromSearchBar
+            videos: videos.data.results,
+            numberOfPages: Math.ceil(videos.data.count / videos.data.results.length),
+            videosPerPages: videos.data.results.length,
+            nextQuery: videos.data.next
         });
     };
 
@@ -73,7 +76,6 @@ class App extends React.Component {
                             <VideoCarrouselSlick
                                 videos={this.state.videos}
                                 handleVideoSelect={this.handleVideoSelect}
-                                searchText={this.state.submitTerm}
                                 numberOfPages={this.state.numberOfPages}
                                 videosPerPages={this.state.videosPerPages}
                                 nextQuery={this.state.nextQuery}

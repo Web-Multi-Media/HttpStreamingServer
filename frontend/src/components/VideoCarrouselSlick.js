@@ -14,7 +14,6 @@ class VideoCarrouselSlick extends Component {
         super(props);
         this.state = {
             videos: this.props.videos,
-            //carrouselCount: Number of time next button is clicked
             carrouselCount: 1,
             apiCallCount: 1,
             pagesTotal: this.props.numberOfPages -1,
@@ -31,31 +30,11 @@ class VideoCarrouselSlick extends Component {
                 videos: nextProps.videos,
                 carrouselCount: 1,
                 apiCallCount: 1,
-                pagesTotal: nextProps.numberOfPages - 1
+                pagesTotal: nextProps.numberOfPages - 1,
+                nextQuery: nextProps.nextQuery
             });
             this.slider.slickGoTo(0, false);
         }
-    }
-
-    /**
-     * Select the call to make to the api depending if the search bar is used or not
-     * @param queryText
-     * @param nextApiCount
-     * @returns {Promise<AxiosResponse<any>>} response from the API call
-     */
-    async setApICall(queryText, nextApiCount){
-        let response;
-        if (queryText !== '') {
-            response = await djangoAPI.get(`/search_video/?page=${nextApiCount}`, {
-                params: {
-                    q: queryText
-                }
-            });
-        }
-        else {
-                response = await djangoAPI.get(this.state.nextQuery);
-        }
-        return response;
     }
 
     /**
@@ -70,7 +49,7 @@ class VideoCarrouselSlick extends Component {
         //we add 5 to index to calcultate the number of videos displayed so far
         const pageCount = (index + this.SLIDES_OF_CAROUSEL) / this.props.videosPerPages;
         if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
-            const response = await this.setApICall(this.props.searchText, this.state.apiCallCount +1);
+            const response = await djangoAPI.get(this.state.nextQuery);
             let videos = this.state.videos;
             videos.push(...response.data.results);
             this.setState({
