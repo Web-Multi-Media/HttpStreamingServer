@@ -28,7 +28,7 @@ class LoadingTest(TestCase):
 
     def test_search_video_with_query(self):
         data = {
-            'name': 'The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4'
+            'search_query': 'The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4'
         }
         response = self.client.get(reverse('videos-list'), data=data)
         self.assertEqual(response.status_code, 200)

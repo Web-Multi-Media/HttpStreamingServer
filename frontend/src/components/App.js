@@ -20,7 +20,7 @@ class App extends React.Component {
     handleSubmit = async (termFromSearchBar) => {
         const response = await djangoAPI.get('/videos/', {
             params: {
-                name: termFromSearchBar
+                search_query: termFromSearchBar
             }
         });
         this.setState({

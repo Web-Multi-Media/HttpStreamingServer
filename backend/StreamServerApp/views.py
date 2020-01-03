@@ -34,7 +34,7 @@ class VideoViewSet(viewsets.ModelViewSet):
         by filtering against a `username` query parameter in the URL.
         """
         
-        videoname = self.request.query_params.get('name', None)
+        videoname = self.request.query_params.get('search_query', None)
         if videoname:
             queryset = Video.objects.annotate(similarity=TrigramSimilarity('name', videoname)) \
             .filter(similarity__gte=0.01) \

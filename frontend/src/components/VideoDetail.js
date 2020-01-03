@@ -3,13 +3,11 @@ import React from 'react';
 
 const VideoDetail = ({ video }) => {
     if (!video) {
-        {console.log('prout 2')}
         return null;
     }
     return (
 
         <div>
-            {console.log('prout')}
             <div className='ui embed'>
                 <video preload="auto" controls width="320" height="240" key={video.id}>
                     <source src={video.video_url} title='Video player' />
