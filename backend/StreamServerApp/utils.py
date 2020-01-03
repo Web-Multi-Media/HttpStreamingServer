@@ -23,7 +23,7 @@ from StreamServerApp.subtitles import get_subtitles, init_cache
 
 
 def delete_DB_Infos():
-    """ delete all videos infos in the db
+    """ delete all videos, movies and series in the db
     """
     Video.objects.all().delete()
     Movie.objects.all().delete()
@@ -31,7 +31,7 @@ def delete_DB_Infos():
 
 
 def get_num_videos():
-    """ Return db size
+    """ Return the number of videos in the db
     """
     return Video.objects.count()
 
