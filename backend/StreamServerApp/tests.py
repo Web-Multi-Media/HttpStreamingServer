@@ -1,7 +1,10 @@
+import os
 import json
+from os.path import isfile
 from django.urls import reverse
 from django.core.management import call_command
 from django.test import Client, TestCase
+from django.conf import settings
 from StreamServerApp.utils import get_num_videos, get_video_type_and_info
 from StreamServerApp.models import Video, Series, Movie
 
@@ -13,7 +16,11 @@ class CommandsTestCase(TestCase):
         args = []
         opts = {}
         call_command('populatedb', *args, **opts)
-        self.assertEqual(get_num_videos(), 5)
+        # a bit of a mess here to make sure to count only files in all folders...
+        files_in_videos_folders = [[os.path.join(root, file) for file in files] for root, _, files in os.walk(settings.VIDEO_ROOT)]
+        video_files = [filename for sublist in files_in_videos_folders for filename in sublist  # flatten nested list
+                       if isfile(filename) and (filename.endswith(".mp4") or filename.endswith(".mkv"))]
+        self.assertEqual(get_num_videos(), len(video_files))
 
 
 class LoadingTest(TestCase):
