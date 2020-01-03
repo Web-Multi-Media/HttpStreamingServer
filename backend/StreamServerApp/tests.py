@@ -2,7 +2,7 @@ import json
 from django.urls import reverse
 from django.core.management import call_command
 from django.test import Client, TestCase
-from StreamServerApp.utils import get_DB_size, get_video_type_and_info
+from StreamServerApp.utils import get_num_videos, get_video_type_and_info
 from StreamServerApp.models import Video, Series, Movie
 
 
@@ -13,7 +13,7 @@ class CommandsTestCase(TestCase):
         args = []
         opts = {}
         call_command('populatedb', *args, **opts)
-        self.assertEqual(get_DB_size(), 5)
+        self.assertEqual(get_num_videos(), 5)
 
 
 class LoadingTest(TestCase):

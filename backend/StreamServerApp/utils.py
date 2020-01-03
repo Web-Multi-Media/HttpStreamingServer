@@ -30,10 +30,10 @@ def delete_DB_Infos():
     Series.objects.all().delete()
 
 
-def get_DB_size():
+def get_num_videos():
     """ Return db size
     """
-    return len(Video.objects.all())
+    return Video.objects.count()
 
 
 def pretty(d, indent=0):
@@ -111,7 +111,7 @@ def populate_db_from_local_folder(base_path, remote_url):
                     traceback.print_exception(type(ex), ex, ex.__traceback__)
                     continue
 
-    print("{} videos were added to the database".format(str(get_DB_size())))
+    print("{} videos were added to the database".format(get_num_videos()))
     print('{} series and {} movies were created'.format(count_series, count_movies))
 
 
