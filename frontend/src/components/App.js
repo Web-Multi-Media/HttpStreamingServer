@@ -18,11 +18,8 @@ class App extends React.Component {
     };
 
     handleSubmit = async (termFromSearchBar) => {
-        const videos = await djangoAPI.get('/videos/', {
-            params: {
-                search_query: termFromSearchBar
-            }
-        });
+        // API call to retrieve videos from searchbar
+        const videos = await this.djangoApi.getVideosByName(termFromSearchBar);
         console.log('recherche')
         this.setState({
             videos: videos.data.results,
@@ -33,14 +30,18 @@ class App extends React.Component {
     };
 
     async componentDidMount() {
+        this.djangoApi = new djangoAPI();
+
         let videoFromQueryString = null;
         const values = queryString.parse(this.props.location.search);
         if (values.video) {
             let id = parseInt(values.video);
-            const video = await djangoAPI.get("videos/" + id + "/");
+            // API call to retrieve current video
+            const video = await this.djangoApi.getVideosById(id);
             videoFromQueryString = video.data;
         }
-        const videos = await djangoAPI.get("videos");
+        // API call to retrieve all videos
+        const videos = await this.djangoApi.getAllVideos();
         console.log(videos);
         //We look here if a query string for the video is provided, if so load the video
         this.setState({
