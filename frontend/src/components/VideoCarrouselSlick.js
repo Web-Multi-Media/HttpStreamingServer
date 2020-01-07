@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Slider from "react-slick";
-import djangoAPI from "../api/djangoAPI";
 import SampleNextArrow from "./SampleNextArrow";
 import SamplePrevArrow from "./SamplePrevArrow";
 import '../style/style.scss';
+import { pagerNext, handleError } from '../api/djangoAPI';
 
 
 class VideoCarrouselSlick extends Component {
@@ -23,10 +23,6 @@ class VideoCarrouselSlick extends Component {
         this.afterChangeMethod = this.afterChangeMethod.bind(this);
     };
 
-    componentDidMount() {
-        this.djangoApi = new djangoAPI();
-    }
-    
     componentWillReceiveProps(nextProps) {
         if (nextProps.videos !== this.props.videos) {
             this.setState({
@@ -53,17 +49,21 @@ class VideoCarrouselSlick extends Component {
         const pageCount = (index + this.SLIDES_OF_CAROUSEL) / this.props.videosPerPages;
         if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
             // API call to retrieve more videos when navigating through carousel
-            const response = await this.djangoApi.getNextVideos(this.state.nextQuery);
-            let videos = this.state.videos;
-            videos.push(...response.data.results);
-            this.setState({
-                videos: videos,
-                apiCallCount: this.state.apiCallCount +1,
-                carrouselCount: nextCarrouselCount,
-                nextQuery: response.data.next
-            });
-        }
-        else{
+            try {
+                const response = await pagerNext(this.state.nextQuery);
+                console.log(response.data)
+                let videos = this.state.videos;
+                videos.push(...response.data.videos);
+                this.setState({
+                    videos: videos,
+                    apiCallCount: this.state.apiCallCount +1,
+                    carrouselCount: nextCarrouselCount,
+                    nextQuery: response.data.nextQuery
+                });
+            } catch(error) {
+                handleError(error);
+            }
+        } else{
             this.setState( {carrouselCount: nextCarrouselCount});
         }
     }

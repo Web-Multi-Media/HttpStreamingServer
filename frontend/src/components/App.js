@@ -1,10 +1,10 @@
 import React from 'react';
 import SearchBar from './Searchbar';
-import djangoAPI from '../api/djangoAPI';
 import VideoDetail from './VideoDetail';
 import { withRouter } from "react-router-dom";
 import queryString from 'query-string'
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
+import { searchVideos, getVideoById, handleError } from '../api/djangoAPI';
 
 
 class App extends React.Component {
@@ -19,41 +19,52 @@ class App extends React.Component {
 
     handleSubmit = async (termFromSearchBar) => {
         // API call to retrieve videos from searchbar
-        const videos = await this.djangoApi.getVideosByName(termFromSearchBar);
-        console.log('recherche')
-        this.setState({
-            videos: videos.data.results,
-            numberOfPages: Math.ceil(videos.data.count / videos.data.results.length),
-            videosPerPages: videos.data.results.length,
-            nextQuery: videos.data.next
-        });
+        try {
+            const response = await searchVideos(termFromSearchBar);
+            this.setState({
+                videos: response.data.videos,
+                numberOfPages: response.data.numberOfPages,
+                videosPerPages: response.data.videosPerPages,
+                nextQuery: response.data.nextQuery
+            });
+            console.log('recherche');
+        } catch(error) {
+            handleError(error);
+        }
     };
 
     async componentDidMount() {
-        this.djangoApi = new djangoAPI();
-
-        let videoFromQueryString = null;
         const values = queryString.parse(this.props.location.search);
         if (values.video) {
             let id = parseInt(values.video);
             // API call to retrieve current video
-            const video = await this.djangoApi.getVideosById(id);
-            videoFromQueryString = video.data;
+            // We look here if a query string for the video is provided, if so load the video
+            try {
+                const response = await getVideoById(id);
+                this.setState({selectedVideo: response.data})
+            } catch(error) {
+                handleError(error);
+            }
         }
+
         // API call to retrieve all videos
-        const videos = await this.djangoApi.getAllVideos();
-        console.log(videos);
-        //We look here if a query string for the video is provided, if so load the video
-        this.setState({
-            videos: videos.data.results,
-            selectedVideo: videoFromQueryString,
-            numberOfPages: Math.ceil(videos.data.count / videos.data.results.length),
-            videosPerPages: videos.data.results.length,
-            nextQuery: videos.data.next
-        });
+        try {
+            const response = await searchVideos();
+            console.log(response);
+
+            this.setState({
+                videos: response.data.videos,
+                numberOfPages: response.data.numberOfPages,
+                videosPerPages: response.data.videosPerPages,
+                nextQuery: response.data.nextQuery
+            });
+        } catch(error) {
+            handleError(error);
+        }
     };
 
     handleVideoSelect = (video) => {
+        console.log(video)
         this.setState({ selectedVideo: video });
         this.props.history.push("/streaming/?video=" + video.id);
         window.scrollTo(0, 0);
