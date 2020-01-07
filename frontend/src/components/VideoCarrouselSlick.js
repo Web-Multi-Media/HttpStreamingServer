@@ -16,12 +16,11 @@ class VideoCarrouselSlick extends Component {
             videos: this.props.videos,
             carrouselCount: 1,
             apiCallCount: 1,
-            pagesTotal: this.props.numberOfPages -1,
-            index : 0,
+            pagesTotal: this.props.numberOfPages - 1,
+            index: 0,
             nextQuery: this.props.nextQuery
         };
         this.afterChangeMethod = this.afterChangeMethod.bind(this);
-        this.setApICall = this.setApICall.bind(this);
     };
 
     componentWillReceiveProps(nextProps) {
@@ -48,19 +47,19 @@ class VideoCarrouselSlick extends Component {
         const nextCarrouselCount = index > this.state.index ? this.state.carrouselCount + 1 : this.state.carrouselCount - 1;
         //we add 5 to index to calcultate the number of videos displayed so far
         const pageCount = (index + this.SLIDES_OF_CAROUSEL) / this.props.videosPerPages;
-        if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
+        if (pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal) {
             const response = await djangoAPI.get(this.state.nextQuery);
             let videos = this.state.videos;
             videos.push(...response.data.results);
             this.setState({
                 videos: videos,
-                apiCallCount: this.state.apiCallCount +1,
+                apiCallCount: this.state.apiCallCount + 1,
                 carrouselCount: nextCarrouselCount,
                 nextQuery: response.data.next
             });
         }
-        else{
-            this.setState( {carrouselCount: nextCarrouselCount});
+        else {
+            this.setState({ carrouselCount: nextCarrouselCount });
         }
     }
 
@@ -78,13 +77,13 @@ class VideoCarrouselSlick extends Component {
 
         const slider = this.state.videos.map((video) => {
             return <div>
-                    <img
-                        className='img-cover'
-                        onClick={() => this.props.handleVideoSelect(video)}
-                        src={video.thumbnail}
-                    />
-                    <p className='paragraph'>{video.name}</p>
-                   </div>
+                <img
+                    className='img-cover'
+                    onClick={() => this.props.handleVideoSelect(video)}
+                    src={video.thumbnail}
+                />
+                <p className='paragraph'>{video.name}</p>
+            </div>
         });
 
         return (
