@@ -3,7 +3,7 @@ import Slider from "react-slick";
 import SampleNextArrow from "./SampleNextArrow";
 import SamplePrevArrow from "./SamplePrevArrow";
 import '../style/style.scss';
-import { pagerNext, handleError } from '../api/djangoAPI';
+import { pager, handleError } from '../api/djangoAPI';
 
 
 class VideoCarrouselSlick extends Component {
@@ -50,8 +50,7 @@ class VideoCarrouselSlick extends Component {
         if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
             // API call to retrieve more videos when navigating through carousel
             try {
-                const response = await pagerNext(this.state.nextQuery);
-                console.log(response.data)
+                const response = await pager.nextPage(this.state.nextQuery);
                 let videos = this.state.videos;
                 videos.push(...response.data.videos);
                 this.setState({
@@ -81,7 +80,7 @@ class VideoCarrouselSlick extends Component {
         };
 
         const slider = this.state.videos.map((video) => {
-            return <div>
+            return <div key={video.id}>
                     <img
                         className='img-cover'
                         onClick={() => this.props.handleVideoSelect(video)}

@@ -4,7 +4,7 @@ import VideoDetail from './VideoDetail';
 import { withRouter } from "react-router-dom";
 import queryString from 'query-string'
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
-import { searchVideos, getVideoById, handleError } from '../api/djangoAPI';
+import { client, handleError } from '../api/djangoAPI';
 
 
 class App extends React.Component {
@@ -20,7 +20,7 @@ class App extends React.Component {
     handleSubmit = async (termFromSearchBar) => {
         // API call to retrieve videos from searchbar
         try {
-            const response = await searchVideos(termFromSearchBar);
+            const response = await client.searchVideos(termFromSearchBar);
             this.setState({
                 videos: response.data.videos,
                 numberOfPages: response.data.numberOfPages,
@@ -40,7 +40,8 @@ class App extends React.Component {
             // API call to retrieve current video
             // We look here if a query string for the video is provided, if so load the video
             try {
-                const response = await getVideoById(id);
+                const response = await client.getVideoById(id);
+                console.log(response)
                 this.setState({selectedVideo: response.data})
             } catch(error) {
                 handleError(error);
@@ -49,7 +50,7 @@ class App extends React.Component {
 
         // API call to retrieve all videos
         try {
-            const response = await searchVideos();
+            const response = await client.searchVideos();
             console.log(response);
 
             this.setState({
@@ -64,7 +65,6 @@ class App extends React.Component {
     };
 
     handleVideoSelect = (video) => {
-        console.log(video)
         this.setState({ selectedVideo: video });
         this.props.history.push("/streaming/?video=" + video.id);
         window.scrollTo(0, 0);
