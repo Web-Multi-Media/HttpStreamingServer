@@ -18,7 +18,6 @@ class VideoCarrouselSlick extends Component {
             apiCallCount: 1,
             pagesTotal: this.props.numberOfPages -1,
             index : 0,
-            // nextQuery: this.props.nextQuery
         };
         this.afterChangeMethod = this.afterChangeMethod.bind(this);
     };
@@ -31,7 +30,6 @@ class VideoCarrouselSlick extends Component {
                 carrouselCount: 1,
                 apiCallCount: 1,
                 pagesTotal: nextProps.numberOfPages - 1,
-                // nextQuery: nextProps.nextQuery
             });
             this.slider.slickGoTo(0, false);
         }
@@ -51,15 +49,14 @@ class VideoCarrouselSlick extends Component {
         if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
             // API call to retrieve more videos when navigating through carousel
             try {
-                let pager = this.state.pager.getNextPage();
-                console.log(pager)
+                let pager = await this.state.pager.getNextPage();
                 let videos = this.state.videos;
                 videos.push(...pager.videos);
                 this.setState({
+                    pager: pager,
                     videos: videos,
                     apiCallCount: this.state.apiCallCount +1,
                     carrouselCount: nextCarrouselCount,
-                    // nextQuery: pager.nextQuery
                 });
             } catch(error) {
                 // handleError(error);

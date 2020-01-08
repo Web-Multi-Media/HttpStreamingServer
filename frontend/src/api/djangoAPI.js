@@ -59,12 +59,12 @@ function Pager(response) {
     this.videosPerPages = response.results.length;
     this.nextPageUrl = response.next;
     this.previewsPageUrl = response.previous;
-
-    async function getNextPage () {
-        var response = await http.get(this.nextPageUrl);
-        return new Pager(response.data);
-    };
 }
+
+Pager.prototype.getNextPage = async function () {
+    var response = await http.get(this.nextPageUrl);
+    return new Pager(response.data);
+};
 
 
 /** 

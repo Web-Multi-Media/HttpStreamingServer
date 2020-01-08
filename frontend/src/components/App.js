@@ -9,25 +9,25 @@ import { client, handleError } from '../api/djangoAPI';
 
 class App extends React.Component {
     state = {
+        pager: null,
         videos: [],
         selectedVideo: null,
         numberOfPages: 0,
         videosPerPages: 0,
         submitTerm: '',
-        nextQuery: ''
     };
 
     handleSubmit = async (termFromSearchBar) => {
         // API call to retrieve videos from searchbar
         try {
-            const response = await client.searchVideos(termFromSearchBar);
+            const pager = await client.searchVideos(termFromSearchBar);
             this.setState({
-                videos: response.data.videos,
-                numberOfPages: response.data.numberOfPages,
-                videosPerPages: response.data.videosPerPages,
-                nextQuery: response.data.nextQuery
+                pager: pager,
+                videos: pager.videos,
+                numberOfPages: pager.numberOfPages,
+                videosPerPages: pager.videosPerPages,
             });
-            console.log('recherche');
+            console.log(this.state);
         } catch(error) {
             // handleError(error);
         }
@@ -41,7 +41,6 @@ class App extends React.Component {
             // We look here if a query string for the video is provided, if so load the video
             try {
                 const video = await client.getVideoById(id);
-                console.log(video)
                 this.setState({selectedVideo: video})
             } catch(error) {
                 // handleError(error);
@@ -58,7 +57,6 @@ class App extends React.Component {
                 videos: pager.videos,
                 numberOfPages: pager.numberOfPages,
                 videosPerPages: pager.videosPerPages,
-                // nextQuery: response.data.nextQuery
             });
         } catch(error) {
             // handleError(error);
@@ -92,7 +90,6 @@ class App extends React.Component {
                                 handleVideoSelect={this.handleVideoSelect}
                                 numberOfPages={this.state.numberOfPages}
                                 videosPerPages={this.state.videosPerPages}
-                                nextQuery={this.state.nextQuery}
                             />
                         </div>
                     }
