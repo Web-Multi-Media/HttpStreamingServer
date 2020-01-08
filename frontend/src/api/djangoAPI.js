@@ -10,10 +10,7 @@ const http = axios.create({
 
 const VIDEOS_ENDPOINT = '/videos';
 
-/*******************************************
- **************** VIDEOS *******************
- *******************************************
- */
+
 const client = {
     /**
      * performs GET request to retrieve a single video by it's ID
@@ -23,8 +20,9 @@ const client = {
      * @returns {Promise<void>}
      *          videos list
      */
-    getVideoById: id => {
-        return http.get(`${VIDEOS_ENDPOINT}/${id}`, { transformResponse: [response => mapper.video(response)] });
+    getVideoById: async id => {
+        var response = await http.get(`${VIDEOS_ENDPOINT}/${id}`);
+        return new Video(response.data);
     },
     /**
      * performs GET request to retrieve videos list from searchbar entry
@@ -35,80 +33,39 @@ const client = {
      * @returns {Promise<void>}
      *          videos list
      */
-    searchVideos: searchQuery => {
+    searchVideos: async searchQuery => {
         const params = searchQuery ? { search_query: searchQuery } : null;
-        return http.get(`${VIDEOS_ENDPOINT}/`, { params: params, transformResponse: [response => mapper.videos(response)] });
+        var response = await http.get(`${VIDEOS_ENDPOINT}/`, { params: params});
+        return new Pager(response.data);
     }
 }
 
-/** 
- ******************************************
- **************** PAGER *******************
- ******************************************
- */
-const pager = {
-    /**
-     * performs GET request to retrieve the next videos in the list
-     *
-     * @param nextQuery
-     *          the full query, usually : "/streaming/videos/?limit=xx&offset=xx"
-     * @returns {Promise<void>}
-     *          videos list
-     */
-    nextPage: url => {
-        return http.get(url, { transformResponse: [response => mapper.videos(response)] });
-    }
+
+function Video (response) {
+    this.id = response.id;
+    this.name = response.name;
+    this.videoUrl = response.video_url;
+    this.thumbnail = response.thumbnail;
+    this.frSubtitleUrl = response.fr_subtitle_url;
+    this.enSubtitleUrl = response.en_subtitle_url;
+    this.ovSubtitleUrl = response.ov_subtitle_url;
 }
 
-/** 
- ******************************************
- **************** MAPPERS *****************
- ******************************************
- */
-const mapper = {
-    /**
-     * Create video standard object from response
-     * 
-     * @param response
-     *          expected response from api
-     * @returns
-     *          mapped object video
-     */
-    video: response => {
-        return {
-            id: response.id,
-            name: response.name,
-            videoUrl: response.video_url,
-            thumbnail: response.thumbnail,
-            frSubtitleUrl: response.fr_subtitle_url,
-            enSubtitleUrl: response.en_subtitle_url,
-            ovSubtitleUrl: response.ov_subtitle_url
-        }
-    },
-    /**
-     * Create videos list standard object from response 
-     *
-     * @param response
-     *          expected response from api
-     * @returns
-     *          mapped object videos list
-     */
-    videos: response => {
-        const numberOfPages = Math.ceil(response.count / response.results.length);
-        const videosPerPages = response.results.length;
-        // use the mapper video for every videos
-        const videos = response.results.map(video => mapper.video(video));
 
-        return {
-            count: response.count,
-            videos: videos,
-            numberOfPages: numberOfPages,
-            videosPerPages: videosPerPages,
-            nextQuery: response.next,
-            previousQuery: response.previous
-        }
-    }
+function Pager(response) {
+    this.count = response.count;
+    this.videos = response.results.map(video => new Video(video));
+    this.numberOfPages = Math.ceil(response.count / response.results.length);
+    this.videosPerPages = response.results.length;
+    this.nextPageUrl = response.next;
+    this.previewsPageUrl = response.previous;
+
+    async function getNextPage () {
+        var response = await http.get(this.nextPageUrl);
+        return new Pager(response.data);
+    };
 }
+
 
 /** 
  ******************************************
@@ -132,4 +89,4 @@ function handleError(err) {
     }
 }
 
-export {client, pager, handleError}
+export {client, handleError}

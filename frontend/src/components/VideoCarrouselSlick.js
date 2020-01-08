@@ -3,7 +3,6 @@ import Slider from "react-slick";
 import SampleNextArrow from "./SampleNextArrow";
 import SamplePrevArrow from "./SamplePrevArrow";
 import '../style/style.scss';
-import { pager, handleError } from '../api/djangoAPI';
 
 
 class VideoCarrouselSlick extends Component {
@@ -13,12 +12,13 @@ class VideoCarrouselSlick extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            pager: this.props.pager,
             videos: this.props.videos,
             carrouselCount: 1,
             apiCallCount: 1,
             pagesTotal: this.props.numberOfPages -1,
             index : 0,
-            nextQuery: this.props.nextQuery
+            // nextQuery: this.props.nextQuery
         };
         this.afterChangeMethod = this.afterChangeMethod.bind(this);
     };
@@ -26,11 +26,12 @@ class VideoCarrouselSlick extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.videos !== this.props.videos) {
             this.setState({
+                pager: nextProps.pager,
                 videos: nextProps.videos,
                 carrouselCount: 1,
                 apiCallCount: 1,
                 pagesTotal: nextProps.numberOfPages - 1,
-                nextQuery: nextProps.nextQuery
+                // nextQuery: nextProps.nextQuery
             });
             this.slider.slickGoTo(0, false);
         }
@@ -50,17 +51,18 @@ class VideoCarrouselSlick extends Component {
         if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
             // API call to retrieve more videos when navigating through carousel
             try {
-                const response = await pager.nextPage(this.state.nextQuery);
+                let pager = this.state.pager.getNextPage();
+                console.log(pager)
                 let videos = this.state.videos;
-                videos.push(...response.data.videos);
+                videos.push(...pager.videos);
                 this.setState({
                     videos: videos,
                     apiCallCount: this.state.apiCallCount +1,
                     carrouselCount: nextCarrouselCount,
-                    nextQuery: response.data.nextQuery
+                    // nextQuery: pager.nextQuery
                 });
             } catch(error) {
-                handleError(error);
+                // handleError(error);
             }
         } else{
             this.setState( {carrouselCount: nextCarrouselCount});

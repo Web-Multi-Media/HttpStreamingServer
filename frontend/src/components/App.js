@@ -29,7 +29,7 @@ class App extends React.Component {
             });
             console.log('recherche');
         } catch(error) {
-            handleError(error);
+            // handleError(error);
         }
     };
 
@@ -40,27 +40,28 @@ class App extends React.Component {
             // API call to retrieve current video
             // We look here if a query string for the video is provided, if so load the video
             try {
-                const response = await client.getVideoById(id);
-                console.log(response)
-                this.setState({selectedVideo: response.data})
+                const video = await client.getVideoById(id);
+                console.log(video)
+                this.setState({selectedVideo: video})
             } catch(error) {
-                handleError(error);
+                // handleError(error);
             }
         }
 
         // API call to retrieve all videos
         try {
-            const response = await client.searchVideos();
-            console.log(response);
-
+            const pager = await client.searchVideos();
+            console.log(pager.videos);
+            
             this.setState({
-                videos: response.data.videos,
-                numberOfPages: response.data.numberOfPages,
-                videosPerPages: response.data.videosPerPages,
-                nextQuery: response.data.nextQuery
+                pager: pager,
+                videos: pager.videos,
+                numberOfPages: pager.numberOfPages,
+                videosPerPages: pager.videosPerPages,
+                // nextQuery: response.data.nextQuery
             });
         } catch(error) {
-            handleError(error);
+            // handleError(error);
         }
     };
 
@@ -86,6 +87,7 @@ class App extends React.Component {
                         this.state.videos.length > 0 &&
                         <div>
                             <VideoCarrouselSlick
+                                pager={this.state.pager}
                                 videos={this.state.videos}
                                 handleVideoSelect={this.handleVideoSelect}
                                 numberOfPages={this.state.numberOfPages}
