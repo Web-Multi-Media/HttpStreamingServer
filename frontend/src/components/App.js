@@ -12,22 +12,18 @@ class App extends React.Component {
         pager: null,
         videos: [],
         selectedVideo: null,
-        numberOfPages: 0,
-        videosPerPages: 0,
         submitTerm: '',
     };
 
     handleSubmit = async (termFromSearchBar) => {
         // API call to retrieve videos from searchbar
         try {
-            const pager = await client.searchVideos(termFromSearchBar);
+            const pager = await client.searchTwoPagesVideos(termFromSearchBar);
             this.setState({
                 pager: pager,
                 videos: pager.videos,
-                numberOfPages: pager.numberOfPages,
-                videosPerPages: pager.videosPerPages,
             });
-            console.log(this.state);
+
         } catch(error) {
             // handleError(error);
         }
@@ -49,14 +45,11 @@ class App extends React.Component {
 
         // API call to retrieve all videos
         try {
-            const pager = await client.searchVideos();
-            console.log(pager.videos);
-            
+            const pager = await client.searchTwoPagesVideos();
             this.setState({
                 pager: pager,
                 videos: pager.videos,
-                numberOfPages: pager.numberOfPages,
-                videosPerPages: pager.videosPerPages,
+
             });
         } catch(error) {
             // handleError(error);
@@ -88,8 +81,6 @@ class App extends React.Component {
                                 pager={this.state.pager}
                                 videos={this.state.videos}
                                 handleVideoSelect={this.handleVideoSelect}
-                                numberOfPages={this.state.numberOfPages}
-                                videosPerPages={this.state.videosPerPages}
                             />
                         </div>
                     }

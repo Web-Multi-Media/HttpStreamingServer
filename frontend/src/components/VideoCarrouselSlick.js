@@ -13,23 +13,18 @@ class VideoCarrouselSlick extends Component {
         super(props);
         this.state = {
             pager: this.props.pager,
-            videos: this.props.videos,
-            carrouselCount: 1,
-            apiCallCount: 1,
-            pagesTotal: this.props.numberOfPages -1,
-            index : 0,
+            videos: this.props.videos
         };
         this.afterChangeMethod = this.afterChangeMethod.bind(this);
     };
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.videos !== this.props.videos) {
+            console.log('nextProps')
+            console.log(nextProps)
             this.setState({
                 pager: nextProps.pager,
-                videos: nextProps.videos,
-                carrouselCount: 1,
-                apiCallCount: 1,
-                pagesTotal: nextProps.numberOfPages - 1,
+                videos: nextProps.videos
             });
             this.slider.slickGoTo(0, false);
         }
@@ -42,11 +37,8 @@ class VideoCarrouselSlick extends Component {
      * @returns {Promise<void>}
      */
     async afterChangeMethod(index) {
-        //index is gave by react slick and correspond to the index of the video on the left (start at 1)
-        const nextCarrouselCount = index > this.state.index ? this.state.carrouselCount + 1 : this.state.carrouselCount - 1;
-        //we add 5 to index to calcultate the number of videos displayed so far
-        const pageCount = (index + this.SLIDES_OF_CAROUSEL) / this.props.videosPerPages;
-        if(pageCount === this.state.apiCallCount && pageCount <= this.state.pagesTotal){
+        const isLastPage = (index + this.SLIDES_OF_CAROUSEL) === this.state.videos.length;
+        if(isLastPage && this.state.pager.nextPageUrl){
             // API call to retrieve more videos when navigating through carousel
             try {
                 let pager = await this.state.pager.getNextPage();
@@ -54,15 +46,11 @@ class VideoCarrouselSlick extends Component {
                 videos.push(...pager.videos);
                 this.setState({
                     pager: pager,
-                    videos: videos,
-                    apiCallCount: this.state.apiCallCount +1,
-                    carrouselCount: nextCarrouselCount,
+                    videos: videos
                 });
             } catch(error) {
                 // handleError(error);
             }
-        } else{
-            this.setState( {carrouselCount: nextCarrouselCount});
         }
     }
 

@@ -37,7 +37,32 @@ const client = {
         const params = searchQuery ? { search_query: searchQuery } : null;
         var response = await http.get(`${VIDEOS_ENDPOINT}/`, { params: params});
         return new Pager(response.data);
+    },
+
+    /**
+     * performs GET request to retrieve videos list from searchbar entry
+     * the param is optional, retrieve full video list instead if not provided
+     *
+     * @param name
+     *          searchbar query, optional
+     * @returns {Promise<void>}
+     *          videos list
+     */
+    searchTwoPagesVideos: async searchQuery => {
+        const params = searchQuery ? { search_query: searchQuery } : null;
+        var response = await http.get(`${VIDEOS_ENDPOINT}/`, { params: params});
+        console.log('response 1 ');
+        console.log(response);
+        var response2 = await http.get(response.data.next, { params: params});
+        console.log('response 2 ');
+        console.log(response2);
+        response2.data.results = response2.data.results.concat(response.data.results);
+        console.log('response 3 ');
+        console.log(response2);
+        return new Pager(response2.data);
     }
+
+
 }
 
 
