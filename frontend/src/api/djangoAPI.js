@@ -40,8 +40,8 @@ const client = {
     },
 
     /**
-     * performs GET request to retrieve videos list from searchbar entry
-     * the param is optional, retrieve full video list instead if not provided
+     * performs two GET request to retrieve videos list from searchbar entry
+     * the param is optional, retrieve two pages list instead if not provided
      *
      * @param name
      *          searchbar query, optional
@@ -51,13 +51,13 @@ const client = {
     searchTwoPagesVideos: async searchQuery => {
         const params = searchQuery ? { search_query: searchQuery } : null;
         var response = await http.get(`${VIDEOS_ENDPOINT}/`, { params: params});
-        var response2 = await http.get(response.data.next, { params: params});
+        var response2 = await http.get(response.data.next);
         response2.data.results = response2.data.results.concat(response.data.results);
         return new Pager(response2.data);
     }
 
 
-}
+};
 
 
 function Video (response) {

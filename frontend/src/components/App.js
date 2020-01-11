@@ -12,7 +12,6 @@ class App extends React.Component {
         pager: null,
         videos: [],
         selectedVideo: null,
-        submitTerm: '',
     };
 
     handleSubmit = async (termFromSearchBar) => {
@@ -21,7 +20,7 @@ class App extends React.Component {
             const pager = await client.searchTwoPagesVideos(termFromSearchBar);
             this.setState({
                 pager: pager,
-                videos: pager.videos,
+                videos: pager.videos
             });
 
         } catch(error) {
@@ -48,8 +47,7 @@ class App extends React.Component {
             const pager = await client.searchTwoPagesVideos();
             this.setState({
                 pager: pager,
-                videos: pager.videos,
-
+                videos: pager.videos
             });
         } catch(error) {
             // handleError(error);

@@ -7,6 +7,7 @@ import '../style/style.scss';
 
 class VideoCarrouselSlick extends Component {
 
+    //this variable must be the same as PAGE_SIZE in settings.py
     SLIDES_OF_CAROUSEL = 5;
 
     constructor(props) {
@@ -20,15 +21,13 @@ class VideoCarrouselSlick extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.videos !== this.props.videos) {
-            console.log('nextProps')
-            console.log(nextProps)
             this.setState({
                 pager: nextProps.pager,
                 videos: nextProps.videos
             });
             this.slider.slickGoTo(0, false);
         }
-    }
+    };
 
     /**
      * this method is called by react slick after the slider finish transition
@@ -38,7 +37,7 @@ class VideoCarrouselSlick extends Component {
      */
     async afterChangeMethod(index) {
         const isLastPage = (index + this.SLIDES_OF_CAROUSEL) === this.state.videos.length;
-        if(isLastPage && this.state.pager.nextPageUrl){
+        if (isLastPage && this.state.pager.nextPageUrl){
             // API call to retrieve more videos when navigating through carousel
             try {
                 let pager = await this.state.pager.getNextPage();
@@ -52,7 +51,7 @@ class VideoCarrouselSlick extends Component {
                 // handleError(error);
             }
         }
-    }
+    };
 
     render() {
         const settings = {
