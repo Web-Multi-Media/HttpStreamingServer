@@ -51,9 +51,12 @@ const client = {
     searchTwoPagesVideos: async searchQuery => {
         const params = searchQuery ? { search_query: searchQuery } : null;
         var response = await http.get(`${VIDEOS_ENDPOINT}/`, { params: params});
-        var response2 = await http.get(response.data.next);
-        response2.data.results = response2.data.results.concat(response.data.results);
-        return new Pager(response2.data);
+        if (response.data.next){
+            var response2 = await http.get(response.data.next);
+            response2.data.results = response2.data.results.concat(response.data.results);
+            return new Pager(response2.data);
+        }
+        return new Pager(response.data);
     }
 
 
