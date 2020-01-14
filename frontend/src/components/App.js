@@ -57,6 +57,8 @@ class App extends React.Component {
     handleVideoSelect = (video) => {
         this.setState({ selectedVideo: video });
         this.props.history.push("/streaming/?video=" + video.id);
+        // change tab title with the name of the selected video
+        document.title = video.name;
         window.scrollTo(0, 0);
     };
 
