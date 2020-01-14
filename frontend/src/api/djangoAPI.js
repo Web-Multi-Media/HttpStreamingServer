@@ -24,6 +24,7 @@ const client = {
         var response = await http.get(`${VIDEOS_ENDPOINT}/${id}`);
         return new Video(response.data);
     },
+    
     /**
      * performs GET request to retrieve videos list from searchbar entry
      * the param is optional, retrieve full video list instead if not provided
@@ -38,24 +39,6 @@ const client = {
         var response = await http.get(`${VIDEOS_ENDPOINT}/`, { params: params});
         return new Pager(response.data);
     },
-
-    /**
-     * performs two GET request to retrieve videos list from searchbar entry
-     * the param is optional, retrieve two pages list instead if not provided
-     *
-     * @param name
-     *          searchbar query, optional
-     * @returns {Promise<void>}
-     *          Pager
-     */
-    searchTwoPagesVideos: async searchQuery => {
-        const params = searchQuery ? { search_query: searchQuery } : {};
-        params.limit = 10;
-        var response = await http.get(`${VIDEOS_ENDPOINT}/`, { params: params});
-        return new Pager(response.data);
-    }
-
-
 };
 
 

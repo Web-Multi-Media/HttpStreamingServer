@@ -17,7 +17,7 @@ class App extends React.Component {
     handleSubmit = async (termFromSearchBar) => {
         // API call to retrieve videos from searchbar
         try {
-            const pager = await client.searchTwoPagesVideos(termFromSearchBar);
+            const pager = await client.searchVideos(termFromSearchBar);
             this.setState({
                 pager: pager,
                 videos: pager.videos
@@ -44,7 +44,7 @@ class App extends React.Component {
 
         // API call to retrieve all videos
         try {
-            const pager = await client.searchTwoPagesVideos();
+            const pager = await client.searchVideos();
             this.setState({
                 pager: pager,
                 videos: pager.videos
