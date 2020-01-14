@@ -165,5 +165,6 @@ CORS_ALLOW_CREDENTIALS = False
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+     # the page size must be greater (strictly) than SLIDES_OF_CAROUSEL in VideoCarouselSlick.js
     'PAGE_SIZE': 10
 }
