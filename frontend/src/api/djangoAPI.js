@@ -18,7 +18,7 @@ const client = {
      * @param id
      *          video's id
      * @returns {Promise<void>}
-     *          videos list
+     *          Video
      */
     getVideoById: async id => {
         var response = await http.get(`${VIDEOS_ENDPOINT}/${id}`);
@@ -31,7 +31,7 @@ const client = {
      * @param name 
      *          searchbar query, optional
      * @returns {Promise<void>}
-     *          videos list
+     *          Pager
      */
     searchVideos: async searchQuery => {
         const params = searchQuery ? { search_query: searchQuery } : null;
@@ -46,16 +46,12 @@ const client = {
      * @param name
      *          searchbar query, optional
      * @returns {Promise<void>}
-     *          videos list
+     *          Pager
      */
     searchTwoPagesVideos: async searchQuery => {
-        const params = searchQuery ? { search_query: searchQuery } : null;
+        const params = searchQuery ? { search_query: searchQuery } : {};
+        params.limit = 10;
         var response = await http.get(`${VIDEOS_ENDPOINT}/`, { params: params});
-        if (response.data.next){
-            var response2 = await http.get(response.data.next);
-            response2.data.results = response2.data.results.concat(response.data.results);
-            return new Pager(response2.data);
-        }
         return new Pager(response.data);
     }
 
