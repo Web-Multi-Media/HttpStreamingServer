@@ -4,7 +4,7 @@ import VideoDetail from './VideoDetail';
 import { withRouter } from "react-router-dom";
 import queryString from 'query-string'
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
-import { client, handleError } from '../api/djangoAPI';
+import { client } from '../api/djangoAPI';
 
 
 class App extends React.Component {
@@ -24,7 +24,7 @@ class App extends React.Component {
             });
 
         } catch(error) {
-            // handleError(error);
+            console.log(error);
         }
     };
 
@@ -38,7 +38,7 @@ class App extends React.Component {
                 const video = await client.getVideoById(id);
                 this.setState({selectedVideo: video})
             } catch(error) {
-                // handleError(error);
+                console.log(error);
             }
         }
 
@@ -50,7 +50,7 @@ class App extends React.Component {
                 videos: pager.videos
             });
         } catch(error) {
-            // handleError(error);
+            console.log(error);
         }
     };
 

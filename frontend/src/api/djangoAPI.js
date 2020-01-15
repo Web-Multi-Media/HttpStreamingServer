@@ -68,26 +68,4 @@ Pager.prototype.getNextPage = async function () {
 };
 
 
-/** 
- ******************************************
- **************** HANDLER *******************
- ******************************************
- */
-
-/**
- * handle the errors coming from api
- *
- * @param err
- *          the full catched error
- */
-function handleError(err) {
-    if (err.response) {
-        console.log(err.response.data);
-    } else if (err.request) {
-        console.log(err.request);
-    } else {
-        console.log('err', err.message);
-    }
-}
-
-export {client, handleError}
+export {client}

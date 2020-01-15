@@ -48,7 +48,7 @@ class VideoCarrouselSlick extends Component {
                     videos: videos
                 });
             } catch(error) {
-                // handleError(error);
+                console.log(error);
             }
         }
     };
