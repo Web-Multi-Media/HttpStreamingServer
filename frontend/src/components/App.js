@@ -5,6 +5,8 @@ import { withRouter } from "react-router-dom";
 import queryString from 'query-string'
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
 import { client } from '../api/djangoAPI';
+import  fakeData from '../fakeData/videos';
+import SeriesCarousel from "./SeriesCarousel";
 
 
 class App extends React.Component {
@@ -12,6 +14,10 @@ class App extends React.Component {
         pager: null,
         videos: [],
         selectedVideo: null,
+        moviesPager:null,
+        seriesPager:null,
+        moviesVideos :[],
+        seriesVideos :[],
     };
 
     handleSubmit = async (termFromSearchBar) => {
@@ -22,13 +28,37 @@ class App extends React.Component {
                 pager: pager,
                 videos: pager.videos
             });
-
+        } catch(error) {
+            console.log(error);
+        }
+    };
+    /**
+     * retrieve movies and series
+     * @returns {Promise<void>}
+     */
+    getMoviesAndSeries = async () => {
+        try {
+            //TODO ADD METHOD TO QUERY SERIES AND MOVIES
+            const pager = await client.searchVideos();
+            this.setState({
+                pager: pager,
+                videos: pager.videos,
+                seriesPager: fakeData.videos.series,
+                seriesVideos: fakeData.videos.series.videos,
+                moviesPager: fakeData.videos.movies,
+                moviesVideos: fakeData.videos.movies.videos
+            });
         } catch(error) {
             console.log(error);
         }
     };
 
-    async componentDidMount() {
+    /**
+     * check in the url if a video is specified
+     * load it in the player if exist
+     * @returns {Promise<void>}
+     */
+    getUrlVideo = async () => {
         const values = queryString.parse(this.props.location.search);
         if (values.video) {
             let id = parseInt(values.video);
@@ -41,17 +71,12 @@ class App extends React.Component {
                 console.log(error);
             }
         }
+    }
 
+    async componentDidMount() {
+        await this.getUrlVideo();
         // API call to retrieve all videos
-        try {
-            const pager = await client.searchVideos();
-            this.setState({
-                pager: pager,
-                videos: pager.videos
-            });
-        } catch(error) {
-            console.log(error);
-        }
+        await this.getMoviesAndSeries();
     };
 
     handleVideoSelect = (video) => {
@@ -73,13 +98,25 @@ class App extends React.Component {
                         </div>
                     </div>
                 </div>
+                {
+                    this.state.seriesVideos.length > 0 &&
+                    <div>
+                        <SeriesCarousel
+                            pager={this.state.seriesPager}
+                            videos={this.state.seriesVideos}
+                            handleVideoSelect={this.handleVideoSelect}
+                        />
+                    </div>
+                }
+                <h4>MOVIES</h4>
                 <div>
+
                     {
-                        this.state.videos.length > 0 &&
+                        this.state.moviesVideos.length > 0 &&
                         <div>
                             <VideoCarrouselSlick
-                                pager={this.state.pager}
-                                videos={this.state.videos}
+                                pager={this.state.moviesPager}
+                                videos={this.state.moviesVideos}
                                 handleVideoSelect={this.handleVideoSelect}
                             />
                         </div>

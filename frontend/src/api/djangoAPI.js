@@ -39,6 +39,8 @@ const client = {
         var response = await http.get(`${VIDEOS_ENDPOINT}/`, { params: params});
         return new Pager(response.data);
     },
+
+
 };
 
 
@@ -50,8 +52,19 @@ function Video (response) {
     this.frSubtitleUrl = response.fr_subtitle_url;
     this.enSubtitleUrl = response.en_subtitle_url;
     this.ovSubtitleUrl = response.ov_subtitle_url;
+    if(response.movie){
+        this.movie = response.movie;
+    }
+    if(response.series){
+        this.series = response.series;
+    }
+    if(response.episode){
+        this.episode = response.episode;
+    }
+    if(response.season){
+        this.season = response.season;
+    }
 }
-
 
 function Pager(response) {
     this.count = response.count;
