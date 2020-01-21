@@ -1,11 +1,20 @@
 from django.db import models
+from django.contrib.postgres.search import TrigramSimilarity
 
+class SearchManager(models.Manager):
+    def search_trigramm(self, query):
+        queryset = self.annotate(similarity=TrigramSimilarity('name', query)) \
+                .filter(similarity__gte=0.01) \
+                .order_by('-similarity')
+        return queryset
 
 class Series(models.Model):
     title = models.CharField(max_length=200)
 
     def __str__(self):
         return self.title
+
+    objects = SearchManager()
 
 
 class Movie(models.Model):
@@ -14,8 +23,11 @@ class Movie(models.Model):
     def __str__(self):
         return self.title
 
+    objects = SearchManager()
+
 
 class Video(models.Model):
+
     name = models.CharField(max_length=200)
     video_codec = models.CharField(max_length=100, default="")
     height = models.IntegerField(default=0)
@@ -38,3 +50,6 @@ class Video(models.Model):
     # For series & movie episodes and series seasons
     episode = models.PositiveSmallIntegerField(default=None, null=True)
     season = models.PositiveSmallIntegerField(default=None, null=True)
+
+    objects = SearchManager()
+

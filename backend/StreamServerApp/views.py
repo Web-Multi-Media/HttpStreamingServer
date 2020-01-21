@@ -36,9 +36,7 @@ class VideoViewSet(viewsets.ModelViewSet):
         
         videoname = self.request.query_params.get('search_query', None)
         if videoname:
-            queryset = Video.objects.annotate(similarity=TrigramSimilarity('name', videoname)) \
-            .filter(similarity__gte=0.01) \
-            .order_by('-similarity')
+            queryset = Video.objects.search_trigramm(videoname)
         else:
             queryset = Video.objects.all()
         return queryset
