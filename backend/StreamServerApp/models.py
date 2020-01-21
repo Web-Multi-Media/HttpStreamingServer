@@ -8,7 +8,8 @@ class SearchManager(models.Manager):
                 .order_by('-similarity')
         return queryset
 
-class Series(models.Model):
+
+class Movie(models.Model):
     title = models.CharField(max_length=200)
 
     def __str__(self):
@@ -16,8 +17,7 @@ class Series(models.Model):
 
     objects = SearchManager()
 
-
-class Movie(models.Model):
+class Series(models.Model):
     title = models.CharField(max_length=200)
 
     def __str__(self):

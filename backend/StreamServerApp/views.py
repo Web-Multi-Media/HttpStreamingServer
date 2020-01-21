@@ -10,8 +10,8 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import filters
 
-from StreamServerApp.serializers import VideoSerializer
-from StreamServerApp.models import Video
+from StreamServerApp.serializers import VideoSerializer, SeriesSerializer
+from StreamServerApp.models import Video, Series
 from StreamServerApp import utils
 
 
@@ -39,4 +39,26 @@ class VideoViewSet(viewsets.ModelViewSet):
             queryset = Video.objects.search_trigramm(videoname)
         else:
             queryset = Video.objects.all()
+        return queryset
+
+class SeriesViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `search` actions for Videos
+    """
+    serializer_class = SeriesSerializer
+
+    def _allowed_methods(self):
+        return ['GET']
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        
+        videoname = self.request.query_params.get('search_query', None)
+        if videoname:
+            queryset = Series.objects.search_trigramm(videoname)
+        else:
+            queryset = Series.objects.all()
         return queryset

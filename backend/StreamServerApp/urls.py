@@ -8,6 +8,7 @@ from . import views
 
 router = DefaultRouter()
 router.register(r'videos', views.VideoViewSet, basename='videos')
+router.register(r'series', views.SeriesViewSet, basename='series')
 
 
 urlpatterns = [
