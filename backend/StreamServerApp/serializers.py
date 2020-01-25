@@ -8,7 +8,19 @@ class VideoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Video
-        fields = ['id', 'name', 'video_url', 'thumbnail', 'fr_subtitle_url', 'en_subtitle_url', 'ov_subtitle_url', 'series', 'movie', 'episode', 'season']
+        fields = [
+            'id', 
+            'name', 
+            'video_url', 
+            'thumbnail', 
+            'fr_subtitle_url', 
+            'en_subtitle_url', 
+            'ov_subtitle_url', 
+            'series', 
+            'movie', 
+            'episode', 
+            'season'
+        ]
 
 
 class SeriesSerializer(serializers.ModelSerializer):
