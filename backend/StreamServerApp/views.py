@@ -41,6 +41,7 @@ class VideoViewSet(viewsets.ModelViewSet):
             queryset = Video.objects.all()
         return queryset
 
+
 class SeriesViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `search` actions for Videos
