@@ -1,5 +1,7 @@
-from StreamServerApp.models import Video, Series
 from rest_framework import serializers
+
+from StreamServerApp.models import Video, Series
+from StreamServerApp.fields import PaginatedRelationField
 
 
 class VideoSerializer(serializers.ModelSerializer):
@@ -24,7 +26,8 @@ class VideoSerializer(serializers.ModelSerializer):
 
 
 class SeriesSerializer(serializers.ModelSerializer):
+    video_set = PaginatedRelationField(VideoSerializer)
 
     class Meta:
         model = Series
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'video_set']
