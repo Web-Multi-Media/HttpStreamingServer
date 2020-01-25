@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.postgres.search import TrigramSimilarity
 
+
 class SearchManager(models.Manager):
     def search_trigramm(self, query):
         queryset = self.annotate(similarity=TrigramSimilarity('name', query)) \
@@ -16,6 +17,7 @@ class Movie(models.Model):
         return self.title
 
     objects = SearchManager()
+
 
 class Series(models.Model):
     title = models.CharField(max_length=200)
@@ -52,4 +54,3 @@ class Video(models.Model):
     season = models.PositiveSmallIntegerField(default=None, null=True)
 
     objects = SearchManager()
-
