@@ -91,7 +91,7 @@ class SeriesCarousel extends Component {
     render() {
         return (
             <div>
-                <h4 onClick={()=>this.resetSeries()}>SERIES</h4>
+                <h3 onClick={()=>this.resetSeries()}>SERIES</h3>
                 {this.state.series.length > 0 &&  <span onClick={()=>this.resetEpisodes()}> > {this.state.series}</span>}
                 {this.state.season.length  > 0 &&  <span> > {this.state.season}</span>}
                 {this.state.episode.length  > 0 &&  <span> > {this.state.episode}</span>}

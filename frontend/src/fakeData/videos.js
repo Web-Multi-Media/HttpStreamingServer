@@ -83,28 +83,32 @@ export default {
                 {
                     "id":123,
                     "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "videoUrl":"http://localhost:1337/Videos/folder1/canard (4th copy).mp4",
                     "name":"E01",
 
                 },
                 {
                     "id":124,
                     "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "videoUrl":"http://localhost:1337/Videos/folder1/canard (4th copy).mp4",
                     "name":"E02",
                 },
                 {
                     "id":125,
                     "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "videoUrl":"http://localhost:1337/Videos/folder1/canard (4th copy).mp4",
                     "name":"E03",
                 },
                 {
                     "id":126,
                     "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "videoUrl":"http://localhost:1337/Videos/folder1/canard (4th copy).mp4",
                     "name":"E05",
-
                 },
                 {
                     "id":127,
                     "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "videoUrl":"http://localhost:1337/Videos/folder1/canard (4th copy).mp4",
                     "name":"E06"
                 }
             ],
