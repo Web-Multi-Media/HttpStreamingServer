@@ -12,28 +12,28 @@ export default {
             {
                 "id":124,
                 "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
-                "name":"The Big Bang Theory",
+                "name":"The Big Bang Theory 2",
             },
             {
                 "id":125,
                 "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
-                "name":"The Big Bang Theory",
+                "name":"The Big Bang Theory 3",
             },
             {
                 "id":126,
                 "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
-                "name":"The Big Bang Theory",
+                "name":"The Big Bang Theory 4",
 
             },
             {
                 "id":127,
                 "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
-                "name":"The Big Bang Theory",
+                "name":"The Big Bang Theory 5",
             },
             {
                 "id":128,
                 "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
-                "name":"The Big Bang Theory",
+                "name":"The Big Bang Theory 6",
             }
         ],
         "numberOfPages":1,
@@ -41,6 +41,78 @@ export default {
         "nextPageUrl":"http://localhost:1337/streaming/videos/?limit=10&offset=10",
         "previewsPageUrl":null
     },
+    seriesSeason :{
+            "count":4,
+            "videos":[
+                {
+                    "id":123,
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "name":"S01",
+
+                },
+                {
+                    "id":124,
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "name":"S02",
+                },
+                {
+                    "id":125,
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "name":"S03",
+                },
+                {
+                    "id":126,
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "name":"S05",
+
+                },
+                {
+                    "id":127,
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "name":"S06"
+                }
+            ],
+            "numberOfPages":1,
+            "videosPerPages":10,
+            "nextPageUrl":"http://localhost:1337/streaming/videos/?limit=10&offset=10",
+            "previewsPageUrl":null
+        },
+    seriesEpisodes :{
+            "count":4,
+            "videos":[
+                {
+                    "id":123,
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "name":"E01",
+
+                },
+                {
+                    "id":124,
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "name":"E02",
+                },
+                {
+                    "id":125,
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "name":"E03",
+                },
+                {
+                    "id":126,
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "name":"E05",
+
+                },
+                {
+                    "id":127,
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "name":"E06"
+                }
+            ],
+            "numberOfPages":1,
+            "videosPerPages":10,
+            "nextPageUrl":"http://localhost:1337/streaming/videos/?limit=10&offset=10",
+            "previewsPageUrl":null
+        },
     movies :{
         "count":43,
         "videos":[

@@ -12,18 +12,21 @@ class SeriesCarousel extends Component {
             pager:  this.props.pager,
             videos: this.props.videos,
             series: '',
-            season: 0,
-            episode: 0,
+            seriesPager: this.props.pager,
+            season: '',
+            seasonPager: null,
+            episode: '',
         };
     };
 
     getSeriesSeason = async (tvShow) => {
         try {
-            //TODO ADD METHOD TO QUERY SEASONS OF A SERIES
+            //TODO ADD METHOD TO QUERY A SERIES
             //const pager = await client.getSeason(tvShow);
             this.setState({
-                pager: fakeData.videos.series,
-                videos: fakeData.videos.videos,
+                pager: fakeData.videos.seriesSeason,
+                videos: fakeData.videos.seriesSeason.videos,
+                seasonPager: fakeData.videos.seriesSeason,
                 series: tvShow
             })
         } catch(error) {
@@ -36,8 +39,8 @@ class SeriesCarousel extends Component {
             //TODO ADD METHOD TO QUERY SEASONS OF A SERIES
             //const pager = await client.getEpisodes(season);
             this.setState({
-                pager: fakeData.videos.series,
-                videos: fakeData.videos.series.videos,
+                pager: fakeData.videos.seriesEpisodes,
+                videos: fakeData.videos.seriesEpisodes.videos,
                 season: season
             })
         } catch(error) {
@@ -49,27 +52,49 @@ class SeriesCarousel extends Component {
         if (this.state.series === '') {
             await this.getSeriesSeason(video.name);
         }
-        else if(this.state.season === 0){
-            await this.getSeriesEpisodes(video.season);
+        else if(this.state.season === ''){
+            await this.getSeriesEpisodes(video.name);
         }
         else{
             this.props.handleVideoSelect(video);
             this.setState({
-                episode: video.episode
+                episode: video.name
             });
         }
         // change tab title with the name of the selected video
         document.title = video.name;
     };
 
-    render() {
+    resetSeries = () => {
+        this.props.handleVideoSelect();
+        this.setState({
+            pager: this.state.seriesPager,
+            videos: this.state.seriesPager.videos,
+            series: '',
+            season: '',
+            episode: ''
+        })
 
+    };
+
+    resetEpisodes = () => {
+        this.props.handleVideoSelect();
+        this.setState({
+            pager: this.state.seasonPager,
+            videos: this.state.seasonPager.videos,
+            season: '',
+            episode: ''
+        })
+    };
+
+
+    render() {
         return (
             <div>
-                <h4>SERIES</h4>
-                {this.state.series.length > 0 &&  <h4> > {this.state.series}</h4>}
-                {this.state.season > 0 &&  <h4> > S{this.state.season}</h4>}
-                {this.state.episode > 0 &&  <h4> > E{this.state.episode}</h4>}
+                <h4 onClick={()=>this.resetSeries()}>SERIES</h4>
+                {this.state.series.length > 0 &&  <span onClick={()=>this.resetEpisodes()}> > {this.state.series}</span>}
+                {this.state.season.length  > 0 &&  <span> > {this.state.season}</span>}
+                {this.state.episode.length  > 0 &&  <span> > {this.state.episode}</span>}
                 {this.state.videos.length > 0 &&
                 <div>
                     <VideoCarrouselSlick
