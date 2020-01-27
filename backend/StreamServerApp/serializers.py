@@ -27,7 +27,8 @@ class VideoSerializer(serializers.ModelSerializer):
 
 class SeriesSerializer(serializers.ModelSerializer):
     video_set = PaginatedRelationField(VideoSerializer)
+    seasons = serializers.ReadOnlyField(source='return_season_list')
 
     class Meta:
         model = Series
-        fields = ['id', 'title', 'video_set']
+        fields = ['id', 'title', 'video_set', 'seasons']
