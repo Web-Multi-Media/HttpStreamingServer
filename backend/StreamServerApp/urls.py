@@ -14,4 +14,5 @@ router.register(r'series', views.SeriesViewSet, basename='series')
 urlpatterns = [
     path('', views.index, name='index'),
     url(r'^', include(router.urls)),
+    url('^series/(?P<series>.+)/season/(?P<season>.+)$', views.SeriesSeaonViewSet.as_view()),
 ]

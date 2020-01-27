@@ -27,6 +27,12 @@ class Series(models.Model):
 
     objects = SearchManager()
 
+    def return_season_list(self):
+        return list(set(self.video_set.values_list('season', flat=True)))
+
+    def return_season_episodes(self, season):
+        return self.video_set.filter(season=season)
+
 
 class Video(models.Model):
 

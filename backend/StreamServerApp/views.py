@@ -9,6 +9,7 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import filters
+from rest_framework import generics
 
 from StreamServerApp.serializers import VideoSerializer, SeriesSerializer
 from StreamServerApp.models import Video, Series
@@ -63,3 +64,20 @@ class SeriesViewSet(viewsets.ModelViewSet):
         else:
             queryset = Series.objects.all()
         return queryset
+
+
+class SeriesSeaonViewSet(generics.ListAPIView):
+    """
+    This viewset provides listing of episodes of a season of a series.
+    """
+    serializer_class = VideoSerializer
+
+    def _allowed_methods(self):
+        return ['GET']
+
+    def get_queryset(self):
+        series_pk = int(self.kwargs['series'])
+        season_number = int(self.kwargs['season'])
+
+        return Series.objects.get(pk=series_pk).return_season_episodes(season_number)
+        
