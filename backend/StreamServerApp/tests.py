@@ -90,10 +90,11 @@ class UtilsTest(TestCase):
         call_command('populatedb')
 
         self.assertEqual(Series.objects.count(), 1)
-        self.assertEqual(Movie.objects.count(), 3)
+        self.assertEqual(Movie.objects.count(), 5)
 
         video = Video.objects.get(name='The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4')
         series = Series.objects.first()
         self.assertEqual(video.episode, 19)
         self.assertEqual(video.season, 5)
         self.assertEqual(video.series, series)
+        self.assertNotEqual(series.thumbail, "")
