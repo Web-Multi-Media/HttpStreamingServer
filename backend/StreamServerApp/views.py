@@ -11,8 +11,8 @@ from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework import generics
 
-from StreamServerApp.serializers import VideoSerializer, SeriesSerializer
-from StreamServerApp.models import Video, Series
+from StreamServerApp.serializers import VideoSerializer, SeriesSerializer, MoviesSerializer
+from StreamServerApp.models import Video, Series, Movie
 from StreamServerApp import utils
 
 
@@ -80,4 +80,26 @@ class SeriesSeaonViewSet(generics.ListAPIView):
         season_number = int(self.kwargs['season'])
 
         return Series.objects.get(pk=series_pk).return_season_episodes(season_number)
+
+class MoviesViewSet(generics.ListAPIView):
+    """
+    This viewset automatically provides `list` and `search` actions for Series
+    """
+    serializer_class = MoviesSerializer
+
+    def _allowed_methods(self):
+        return ['GET']
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        
+        seriesname = self.request.query_params.get('search_query', None)
+        if seriesname:
+            queryset = Movie.objects.search_trigramm('title', seriesname)
+        else:
+            queryset = Movie.objects.all()
+        return queryset
         
