@@ -37,7 +37,7 @@ class VideoViewSet(viewsets.ModelViewSet):
         
         videoname = self.request.query_params.get('search_query', None)
         if videoname:
-            queryset = Video.objects.search_trigramm(videoname)
+            queryset = Video.objects.search_trigramm('name', videoname)
         else:
             queryset = Video.objects.all()
         return queryset
@@ -45,7 +45,7 @@ class VideoViewSet(viewsets.ModelViewSet):
 
 class SeriesViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list` and `search` actions for Videos
+    This viewset automatically provides `list` and `search` actions for Series
     """
     serializer_class = SeriesSerializer
 
@@ -58,9 +58,9 @@ class SeriesViewSet(viewsets.ModelViewSet):
         by filtering against a `username` query parameter in the URL.
         """
         
-        videoname = self.request.query_params.get('search_query', None)
-        if videoname:
-            queryset = Series.objects.search_trigramm(videoname)
+        seriesname = self.request.query_params.get('search_query', None)
+        if seriesname:
+            queryset = Series.objects.search_trigramm('title', seriesname)
         else:
             queryset = Series.objects.all()
         return queryset

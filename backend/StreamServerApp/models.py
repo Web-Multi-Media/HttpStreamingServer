@@ -3,8 +3,8 @@ from django.contrib.postgres.search import TrigramSimilarity
 
 
 class SearchManager(models.Manager):
-    def search_trigramm(self, query):
-        queryset = self.annotate(similarity=TrigramSimilarity('name', query)) \
+    def search_trigramm(self, model_field, query):
+        queryset = self.annotate(similarity=TrigramSimilarity(model_field, query)) \
                 .filter(similarity__gte=0.01) \
                 .order_by('-similarity')
         return queryset
