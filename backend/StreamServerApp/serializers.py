@@ -33,6 +33,7 @@ class SeriesSerializer(serializers.ModelSerializer):
         model = Series
         fields = ['id', 'title', 'video_set', 'seasons']
 
+
 class MoviesSerializer(serializers.ModelSerializer):
     video_set = PaginatedRelationField(VideoSerializer)
 

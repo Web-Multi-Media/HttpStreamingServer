@@ -81,6 +81,7 @@ class SeriesSeaonViewSet(generics.ListAPIView):
 
         return Series.objects.get(pk=series_pk).return_season_episodes(season_number)
 
+
 class MoviesViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `search` actions for Series
