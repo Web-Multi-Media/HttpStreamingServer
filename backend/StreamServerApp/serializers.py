@@ -25,9 +25,23 @@ class VideoSerializer(serializers.ModelSerializer):
         ]
 
 
+class SeriesListSerializer(serializers.ModelSerializer):
+    """
+    This serializer is used for listing series. 
+    We do not list items from the video_set related field.
+    """
+    class Meta:
+        model = Series
+        fields = ['id', 'title']
+
+
 class SeriesSerializer(serializers.ModelSerializer):
+    """
+    This serializer is used for retrieving a series. 
+    We list items from the video_set related field, and the seasons.
+    """
     video_set = PaginatedRelationField(VideoSerializer)
-    seasons = serializers.ReadOnlyField(source='return_season_list')
+    seasons = serializers.ReadOnlyField(source='season_list')
 
     class Meta:
         model = Series

@@ -11,7 +11,7 @@ from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework import generics
 
-from StreamServerApp.serializers import VideoSerializer, SeriesSerializer, MoviesSerializer
+from StreamServerApp.serializers import VideoSerializer, SeriesSerializer, MoviesSerializer, SeriesListSerializer
 from StreamServerApp.models import Video, Series, Movie
 from StreamServerApp import utils
 
@@ -31,13 +31,13 @@ class VideoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
+        Optionally performs search on the videos, by using the `search_query` 
+        query parameter in the URL.
         """
         
-        videoname = self.request.query_params.get('search_query', None)
-        if videoname:
-            queryset = Video.objects.search_trigramm('name', videoname)
+        search_query = self.request.query_params.get('search_query', None)
+        if search_query:
+            queryset = Video.objects.search_trigramm('name', search_query)
         else:
             queryset = Video.objects.all()
         return queryset
@@ -47,20 +47,28 @@ class SeriesViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `search` actions for Series
     """
-    serializer_class = SeriesSerializer
 
     def _allowed_methods(self):
         return ['GET']
 
+    def get_serializer_class(self):
+        """
+        Overwirte 
+        """
+        if self.action == 'list':
+            return SeriesListSerializer
+        if self.action == 'retrieve':
+            return SeriesSerializer          
+
     def get_queryset(self):
         """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
+        Optionally performs search on the series, by using the `search_query` 
+        query parameter in the URL.
         """
         
-        seriesname = self.request.query_params.get('search_query', None)
-        if seriesname:
-            queryset = Series.objects.search_trigramm('title', seriesname)
+        search_query = self.request.query_params.get('search_query', None)
+        if search_query:
+            queryset = Series.objects.search_trigramm('title', search_query)
         else:
             queryset = Series.objects.all()
         return queryset
@@ -84,7 +92,7 @@ class SeriesSeaonViewSet(generics.ListAPIView):
 
 class MoviesViewSet(viewsets.ModelViewSet):
     """
-    This viewset automatically provides `list` and `search` actions for Series
+    This viewset automatically provides `list` and `search` actions for Movies
     """
     serializer_class = MoviesSerializer
 
@@ -93,8 +101,8 @@ class MoviesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
+        Optionally performs search on the movies, by using the `search_query` 
+        query parameter in the URL.
         """
         
         seriesname = self.request.query_params.get('search_query', None)
