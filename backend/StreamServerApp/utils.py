@@ -92,7 +92,7 @@ def populate_db_from_local_folder(base_path, remote_url):
                     if video_type_and_info:
                         if video_type_and_info['type'] == 'Series':
                             series, created = Series.objects.get_or_create(title=video_type_and_info['title'],
-                                                                           defaults={'thumbail': video_infos['remote_thumbnail_url']})
+                                                                           defaults={'thumbnail': video_infos['remote_thumbnail_url']})
                             v.series = series
                             v.season = video_type_and_info['season']
                             v.episode = video_type_and_info['episode']

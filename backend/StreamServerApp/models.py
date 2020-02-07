@@ -21,7 +21,7 @@ class Movie(models.Model):
 
 class Series(models.Model):
     title = models.CharField(max_length=200)
-    thumbail = models.CharField(max_length=300, default="")
+    thumbnail = models.CharField(max_length=300, default="")
 
     def __str__(self):
         return self.title

@@ -97,4 +97,4 @@ class UtilsTest(TestCase):
         self.assertEqual(video.episode, 19)
         self.assertEqual(video.season, 5)
         self.assertEqual(video.series, series)
-        self.assertNotEqual(series.thumbail, "")
+        self.assertNotEqual(series.thumbnail, "")

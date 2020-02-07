@@ -32,7 +32,7 @@ class SeriesListSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Series
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'thumbnail']
 
 
 class SeriesSerializer(serializers.ModelSerializer):
