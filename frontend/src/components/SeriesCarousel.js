@@ -82,8 +82,7 @@ class SeriesCarousel extends Component {
                     <div>
                     <span> > {this.state.series}</span>
                     <SelectBar
-                    seasons = {[1,2]}
-                    // seasons = {this.state.seasons}
+                    seasons = {this.state.seasons}
                     handleSeason= {this.handleSeasonSelect}
                     />
                     </div>
