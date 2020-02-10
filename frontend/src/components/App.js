@@ -40,14 +40,15 @@ class App extends React.Component {
         try {
             //TODO ADD METHOD TO QUERY SERIES AND MOVIES
             const pager = await client.searchSeries();
+            const pager2 = await client.searchMovies();
             console.log(pager);
             this.setState({
                 pager: pager,
                 videos: pager.videos,
                 seriesPager:  pager,
                 seriesVideos: pager.videos,
-                moviesPager: fakeData.videos.movies,
-                moviesVideos: fakeData.videos.movies.videos
+                moviesPager: pager2,
+                moviesVideos: pager2.videos
             });
         } catch(error) {
             console.log(error);

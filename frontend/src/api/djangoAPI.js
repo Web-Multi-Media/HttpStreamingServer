@@ -43,11 +43,20 @@ const client = {
         return new Pager(response.data);
     },
 
+    searchMovies: async searchQuery => {
+        const params = searchQuery ? { search_query: searchQuery } : null;
+        var response = await http.get(`${MOVIES_ENDPOINT}/`, { params: params});
+        return new Pager(response.data);
+    },
+
     getSeason: async (id) => {
         var response = await http.get(`${SERIES_ENDPOINT}/${id}`);
         console.log(response);
-        var response2 = await http.get(`${SERIES_ENDPOINT}/${id}${SEASON_ENDPOINT}/${response.data.seasons[0]}`);
-        return new Pager(response2.data, response.data.seasons, response.data.title);
+        const serie = {
+            seasons: response.data.seasons,
+            title : response.data.title
+        };
+        return serie;
     },
 
     getEpisodes: async (id, season) => {
@@ -85,12 +94,6 @@ function Pager(response, seasons, title) {
     console.log(response);
     this.count = response.count;
     this.videos = response.results.map(video => new Video(video));
-    if(seasons){
-        this.seasons = seasons;
-    }
-    if(title){
-        this.title = title;
-    }
     this.nextPageUrl = response.next;
     this.previewsPageUrl = response.previous;
     this.seasons = seasons ? seasons : null;

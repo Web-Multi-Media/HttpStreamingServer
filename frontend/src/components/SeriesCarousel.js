@@ -23,14 +23,13 @@ class SeriesCarousel extends Component {
 
     getSeriesSeason = async (tvShow) => {
         try {
-            const pager = await client.getSeason(tvShow);
-            console.log(pager);
-            console.log('pager');
+            const serie = await client.getSeason(tvShow);
+            const pager = await client.getEpisodes(tvShow, serie.seasons[0]);
             this.setState({
                 pager: pager,
                 videos: pager.videos,
-                series: pager.title,
-                seasons: pager.seasons,
+                series: serie.title,
+                seasons: serie.seasons,
                 seriesId: tvShow
             })
         } catch(error) {
