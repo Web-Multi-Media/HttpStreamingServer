@@ -3,6 +3,7 @@ import '../style/style.scss';
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
 import fakeData from "../fakeData/videos";
 import {client} from "../api/djangoAPI";
+import SelectBar from "./SelectBar";
 
 
 class SeriesCarousel extends Component {
@@ -14,51 +15,40 @@ class SeriesCarousel extends Component {
             videos: this.props.videos,
             series: '',
             seriesPager: this.props.pager,
-            season: '',
-            seasonPager: null,
+            seasons: [],
             episode: '',
+            seriesId: 0
         };
     };
 
     getSeriesSeason = async (tvShow) => {
         try {
-            console.log('tvShow');
-            console.log(tvShow);
-
             const pager = await client.getSeason(tvShow);
             console.log(pager);
             console.log('pager');
             this.setState({
-                pager: fakeData.videos.seriesSeason,
-                videos: fakeData.videos.seriesSeason.videos,
-                seasonPager: fakeData.videos.seriesSeason,
-                series: tvShow
+                pager: pager,
+                videos: pager.videos,
+                series: pager.title,
+                seasons: pager.seasons,
+                seriesId: tvShow
             })
         } catch(error) {
             console.log(error);
         }
     };
 
-    getSeriesEpisodes = async (season) => {
-        try {
-            //TODO ADD METHOD TO QUERY SEASONS OF A SERIES
-            //const pager = await client.getEpisodes(season);
-            this.setState({
-                pager: fakeData.videos.seriesEpisodes,
-                videos: fakeData.videos.seriesEpisodes.videos,
-                season: season
-            })
-        } catch(error) {
-            console.log(error);
-        }
+    handleSeasonSelect = async (e) => {
+        const pager = await client.getEpisodes(this.state.seriesId, e.target.value);
+        this.setState({
+            pager: pager,
+            videos: pager.videos
+        })
     };
 
     handleSeriesSelect = async (video) => {
         if (this.state.series === '') {
             await this.getSeriesSeason(video.id);
-        }
-        else if(this.state.season === ''){
-            await this.getSeriesEpisodes(video.name);
         }
         else{
             this.props.handleVideoSelect(video);
@@ -82,15 +72,6 @@ class SeriesCarousel extends Component {
 
     };
 
-    resetEpisodes = () => {
-        this.props.handleVideoSelect();
-        this.setState({
-            pager: this.state.seasonPager,
-            videos: this.state.seasonPager.videos,
-            season: '',
-            episode: ''
-        })
-    };
 
 
     render() {
@@ -98,11 +79,15 @@ class SeriesCarousel extends Component {
             <div>
                 <h3 onClick={()=>this.resetSeries()}>SERIES</h3>
                 {this.state.series.length > 0 &&
-
-                        <span onClick={()=>this.resetEpisodes()}> > {this.state.series}</span>
-
+                    <div>
+                    <span> > {this.state.series}</span>
+                    <SelectBar
+                    seasons = {[1,2]}
+                    // seasons = {this.state.seasons}
+                    handleSeason= {this.handleSeasonSelect}
+                    />
+                    </div>
                 }
-                {this.state.season.length  > 0 &&  <span> > {this.state.season}</span>}
                 {this.state.episode.length  > 0 &&  <span> > {this.state.episode}</span>}
                 {this.state.videos.length > 0 &&
                 <div>

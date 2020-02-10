@@ -10,6 +10,7 @@ const http = axios.create({
 
 const VIDEOS_ENDPOINT = '/videos';
 const SERIES_ENDPOINT = '/series';
+const SEASON_ENDPOINT = '/season';
 const MOVIES_ENDPOINT = '/movies';
 
 
@@ -44,8 +45,15 @@ const client = {
 
     getSeason: async (id) => {
         var response = await http.get(`${SERIES_ENDPOINT}/${id}`);
-        return new Pager(response.data.video_set, response);
+        console.log(response);
+        var response2 = await http.get(`${SERIES_ENDPOINT}/${id}${SEASON_ENDPOINT}/${response.data.seasons[0]}`);
+        return new Pager(response2.data, response.data.seasons, response.data.title);
     },
+
+    getEpisodes: async (id, season) => {
+        var response = await http.get(`${SERIES_ENDPOINT}/${id}${SEASON_ENDPOINT}/${season}`);
+        return new Pager(response.data);
+    }
 
 
 };
@@ -73,12 +81,15 @@ function Video (response) {
     }
 }
 
-function Pager(response, seasons) {
+function Pager(response, seasons, title) {
     console.log(response);
     this.count = response.count;
     this.videos = response.results.map(video => new Video(video));
-    if(response.seasons){
-        this.seasons = response.seasons;
+    if(seasons){
+        this.seasons = seasons;
+    }
+    if(title){
+        this.title = title;
     }
     this.nextPageUrl = response.next;
     this.previewsPageUrl = response.previous;
