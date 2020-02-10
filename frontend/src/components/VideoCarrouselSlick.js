@@ -5,7 +5,7 @@ import SamplePrevArrow from "./SamplePrevArrow";
 import '../style/style.scss';
 
 
-class VideoCarrouselSlick extends Component {
+class   VideoCarrouselSlick extends Component {
 
     //this variable must be the same as PAGE_SIZE in settings.py
     SLIDES_OF_CAROUSEL = 5;

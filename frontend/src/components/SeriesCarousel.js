@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../style/style.scss';
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
 import fakeData from "../fakeData/videos";
+import {client} from "../api/djangoAPI";
 
 
 class SeriesCarousel extends Component {
@@ -21,8 +22,12 @@ class SeriesCarousel extends Component {
 
     getSeriesSeason = async (tvShow) => {
         try {
-            //TODO ADD METHOD TO QUERY A SERIES
-            //const pager = await client.getSeason(tvShow);
+            console.log('tvShow');
+            console.log(tvShow);
+
+            const pager = await client.getSeason(tvShow);
+            console.log(pager);
+            console.log('pager');
             this.setState({
                 pager: fakeData.videos.seriesSeason,
                 videos: fakeData.videos.seriesSeason.videos,
@@ -50,7 +55,7 @@ class SeriesCarousel extends Component {
 
     handleSeriesSelect = async (video) => {
         if (this.state.series === '') {
-            await this.getSeriesSeason(video.name);
+            await this.getSeriesSeason(video.id);
         }
         else if(this.state.season === ''){
             await this.getSeriesEpisodes(video.name);
@@ -92,7 +97,11 @@ class SeriesCarousel extends Component {
         return (
             <div>
                 <h3 onClick={()=>this.resetSeries()}>SERIES</h3>
-                {this.state.series.length > 0 &&  <span onClick={()=>this.resetEpisodes()}> > {this.state.series}</span>}
+                {this.state.series.length > 0 &&
+
+                        <span onClick={()=>this.resetEpisodes()}> > {this.state.series}</span>
+
+                }
                 {this.state.season.length  > 0 &&  <span> > {this.state.season}</span>}
                 {this.state.episode.length  > 0 &&  <span> > {this.state.episode}</span>}
                 {this.state.videos.length > 0 &&

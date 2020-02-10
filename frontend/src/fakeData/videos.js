@@ -6,33 +6,33 @@ export default {
         "videos":[
             {
                 "id":123,
-                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                 "name":"The Big Bang Theory",
             },
             {
                 "id":124,
-                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                 "name":"The Big Bang Theory 2",
             },
             {
                 "id":125,
-                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                 "name":"The Big Bang Theory 3",
             },
             {
                 "id":126,
-                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                 "name":"The Big Bang Theory 4",
 
             },
             {
                 "id":127,
-                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                 "name":"The Big Bang Theory 5",
             },
             {
                 "id":128,
-                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                 "name":"The Big Bang Theory 6",
             }
         ],
@@ -46,29 +46,29 @@ export default {
             "videos":[
                 {
                     "id":123,
-                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                     "name":"S01",
 
                 },
                 {
                     "id":124,
-                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                     "name":"S02",
                 },
                 {
                     "id":125,
-                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                     "name":"S03",
                 },
                 {
                     "id":126,
-                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                     "name":"S05",
 
                 },
                 {
                     "id":127,
-                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                     "name":"S06"
                 }
             ],
@@ -82,32 +82,32 @@ export default {
             "videos":[
                 {
                     "id":123,
-                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                     "videoUrl":"http://localhost:1337/Videos/folder1/canard (4th copy).mp4",
                     "name":"E01",
 
                 },
                 {
                     "id":124,
-                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                     "videoUrl":"http://localhost:1337/Videos/folder1/canard (4th copy).mp4",
                     "name":"E02",
                 },
                 {
                     "id":125,
-                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                     "videoUrl":"http://localhost:1337/Videos/folder1/canard (4th copy).mp4",
                     "name":"E03",
                 },
                 {
                     "id":126,
-                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                     "videoUrl":"http://localhost:1337/Videos/folder1/canard (4th copy).mp4",
                     "name":"E05",
                 },
                 {
                     "id":127,
-                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL (4th copy).jpg",
+                    "thumbnail":"http://localhost:1337/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpg",
                     "videoUrl":"http://localhost:1337/Videos/folder1/canard (4th copy).mp4",
                     "name":"E06"
                 }
