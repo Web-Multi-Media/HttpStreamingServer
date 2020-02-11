@@ -46,12 +46,14 @@ const client = {
     searchMovies: async searchQuery => {
         const params = searchQuery ? { search_query: searchQuery } : null;
         var response = await http.get(`${MOVIES_ENDPOINT}/`, { params: params});
+        response.data.results = response.data.results.map(result => {
+            return result.video_set.results[0];
+        });
         return new Pager(response.data);
     },
 
     getSeason: async (id) => {
         var response = await http.get(`${SERIES_ENDPOINT}/${id}`);
-        console.log(response);
         const serie = {
             seasons: response.data.seasons,
             title : response.data.title
@@ -91,7 +93,6 @@ function Video (response) {
 }
 
 function Pager(response, seasons, title) {
-    console.log(response);
     this.count = response.count;
     this.videos = response.results.map(video => new Video(video));
     this.nextPageUrl = response.next;

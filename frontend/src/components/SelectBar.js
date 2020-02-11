@@ -8,7 +8,7 @@ const SelectBar = (props) => {
         return <option  value={season}>S {season}</option>;
     });
     return (
-        <div>
+        <div className="seriesDisplay">
             <select onChange={handleSeason}>
                 {options}
             </select>

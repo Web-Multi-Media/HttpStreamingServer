@@ -38,10 +38,8 @@ class App extends React.Component {
      */
     getMoviesAndSeries = async () => {
         try {
-            //TODO ADD METHOD TO QUERY SERIES AND MOVIES
             const pager = await client.searchSeries();
             const pager2 = await client.searchMovies();
-            console.log(pager);
             this.setState({
                 pager: pager,
                 videos: pager.videos,

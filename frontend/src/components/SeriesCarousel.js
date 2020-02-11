@@ -76,10 +76,11 @@ class SeriesCarousel extends Component {
     render() {
         return (
             <div>
-                <h3 onClick={()=>this.resetSeries()}>SERIES</h3>
+                <div className="seriesDisplay">
+                <h3 onClick={()=>this.resetSeries()} className="seriesDisplay">SERIES</h3>
                 {this.state.series.length > 0 &&
-                    <div>
-                    <span> > {this.state.series}</span>
+                    <div className="seriesDisplay">
+                    <span className="seriesDisplay"> > {this.state.series} > </span>
                     <SelectBar
                     seasons = {this.state.seasons}
                     handleSeason= {this.handleSeasonSelect}
@@ -87,6 +88,7 @@ class SeriesCarousel extends Component {
                     </div>
                 }
                 {this.state.episode.length  > 0 &&  <span> > {this.state.episode}</span>}
+                </div>
                 {this.state.videos.length > 0 &&
                 <div>
                     <VideoCarrouselSlick
