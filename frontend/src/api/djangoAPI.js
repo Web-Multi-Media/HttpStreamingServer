@@ -40,7 +40,7 @@ const client = {
     searchSeries: async searchQuery => {
         const params = searchQuery ? { search_query: searchQuery } : null;
         var response = await http.get(`${SERIES_ENDPOINT}/`, { params: params});
-        return new Pager(response.data);
+        return new seriesPager(response.data);
     },
 
     searchMovies: async searchQuery => {
@@ -49,22 +49,8 @@ const client = {
         response.data.results = response.data.results.map(result => {
             return result.video_set.results[0];
         });
-        return new Pager(response.data);
+        return new moviesPager(response.data);
     },
-
-    getSeason: async (id) => {
-        var response = await http.get(`${SERIES_ENDPOINT}/${id}`);
-        const serie = {
-            seasons: response.data.seasons,
-            title : response.data.title
-        };
-        return serie;
-    },
-
-    getEpisodes: async (id, season) => {
-        var response = await http.get(`${SERIES_ENDPOINT}/${id}${SEASON_ENDPOINT}/${season}`);
-        return new Pager(response.data);
-    }
 
 
 };
@@ -72,38 +58,67 @@ const client = {
 
 function Video (response) {
     this.id = response.id;
-    this.name = response.name ?  response.name : response.title;
+    this.name = response.movie !== null ? response.movie : response.name;
     this.videoUrl = response.video_url;
     this.thumbnail = response.thumbnail;
     this.frSubtitleUrl = response.fr_subtitle_url;
     this.enSubtitleUrl = response.en_subtitle_url;
     this.ovSubtitleUrl = response.ov_subtitle_url;
-    if(response.movie){
-        this.movie = response.movie;
-    }
-    if(response.series){
-        this.series = response.series;
-    }
-    if(response.episode){
-        this.episode = response.episode;
-    }
-    if(response.season){
-        this.season = response.season;
-    }
+    this.series = response.series;
+    this.episode = response.episode;
+    this.season = response.season;
+    this.movie = response.movie;
 }
 
-function Pager(response, seasons, title) {
+function seriesPager(response) {
+    this.count = response.count;
+    this.series = response.results.map(serie => new Serie(serie));
+    this.nextPageUrl = response.next;
+    this.previewsPageUrl = response.previous;
+}
+
+seriesPager.prototype.getNextPage = async function () {
+    var response = await http.get(this.nextPageUrl);
+    return new seriesPager(response.data);
+};
+
+function Serie (serie) {
+    this.id = serie.id;
+    this.name = serie.title;
+    this.thumbnail = serie.thumbnail;
+}
+
+Serie.prototype.getSeason= async function() {
+    const response = await http.get(`${SERIES_ENDPOINT}/${this.id}`);
+    this.seasons = response.data.seasons;
+};
+
+Serie.prototype.getEpisodes= async function(season) {
+    const response = await http.get(`${SERIES_ENDPOINT}/${this.id}${SEASON_ENDPOINT}/${season}`);
+    this.videos = response.data.results.map(video => new Video(video));
+    this.nextPageUrl = response.data.next;
+};
+
+Serie.prototype.getNextPage = async function () {
+    var response = await http.get(this.nextPageUrl);
+    this.nextPageUrl = response.data.next;
+    this.videos = response.data.results.map(video => new Video(video));
+};
+
+
+function moviesPager(response) {
     this.count = response.count;
     this.videos = response.results.map(video => new Video(video));
     this.nextPageUrl = response.next;
     this.previewsPageUrl = response.previous;
-    this.seasons = seasons ? seasons : null;
 }
 
-Pager.prototype.getNextPage = async function () {
-    var response = await http.get(this.nextPageUrl);
-    return new Pager(response.data);
+moviesPager.prototype.getNextPage = async function () {
+    const response = await http.get(this.nextPageUrl);
+    response.data.results = response.data.results.map(result => {
+        return result.video_set.results[0];
+    });
+    return new moviesPager(response.data);
 };
-
 
 export {client}

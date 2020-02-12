@@ -21,16 +21,28 @@ class SeriesCarousel extends Component {
         };
     };
 
-    getSeriesSeason = async (tvShow) => {
-        try {
-            const serie = await client.getSeason(tvShow);
-            const pager = await client.getEpisodes(tvShow, serie.seasons[0]);
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.videos !== this.props.videos) {
             this.setState({
-                pager: pager,
-                videos: pager.videos,
-                series: serie.title,
+                pager: nextProps.pager,
+                videos: nextProps.videos,
+                reset: false
+            });
+        }
+    };
+
+    getSeriesSeason = async (serie) => {
+        try {
+            await serie.getSeason();
+            await serie.getEpisodes(serie.seasons[0]);
+            console.log(serie);
+            this.setState({
+                pager: serie,
+                videos: serie.videos,
+                series: serie.name,
                 seasons: serie.seasons,
-                seriesId: tvShow
+                seriesId: serie,
+                reset: false
             })
         } catch(error) {
             console.log(error);
@@ -38,16 +50,18 @@ class SeriesCarousel extends Component {
     };
 
     handleSeasonSelect = async (e) => {
-        const pager = await client.getEpisodes(this.state.seriesId, e.target.value);
+        const serie = this.state.pager;
+        await serie.getEpisodes(e.target.value);
         this.setState({
-            pager: pager,
-            videos: pager.videos
-        })
+             pager: serie,
+             videos: serie.videos,
+             reset: false
+         });
     };
 
     handleSeriesSelect = async (video) => {
         if (this.state.series === '') {
-            await this.getSeriesSeason(video.id);
+            await this.getSeriesSeason(video);
         }
         else{
             this.props.handleVideoSelect(video);
@@ -60,17 +74,16 @@ class SeriesCarousel extends Component {
     };
 
     resetSeries = () => {
-        this.props.handleVideoSelect();
         this.setState({
             pager: this.state.seriesPager,
-            videos: this.state.seriesPager.videos,
+            videos: this.state.seriesPager.series,
             series: '',
             season: '',
-            episode: ''
+            episode: '',
+            reset: true
         })
 
     };
-
 
 
     render() {
@@ -87,7 +100,7 @@ class SeriesCarousel extends Component {
                     />
                     </div>
                 }
-                {this.state.episode.length  > 0 &&  <span> > {this.state.episode}</span>}
+                {this.state.episode !== '' &&  <span> > {this.state.episode}</span>}
                 </div>
                 {this.state.videos.length > 0 &&
                 <div>
@@ -95,6 +108,7 @@ class SeriesCarousel extends Component {
                         pager={this.state.pager}
                         videos={this.state.videos}
                         handleVideoSelect={this.handleSeriesSelect}
+                        reset={this.state.reset}
                     />
                 </div>
                 }

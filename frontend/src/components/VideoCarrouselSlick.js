@@ -20,14 +20,21 @@ class   VideoCarrouselSlick extends Component {
     };
 
     componentWillReceiveProps(nextProps) {
+        const chooseIndex = (reset) =>{
+            if(reset === true){
+               return this.state.index;
+            }
+            return 0;
+        };
         if (nextProps.videos !== this.props.videos) {
+            const index = chooseIndex(nextProps.reset);
             this.setState({
                 pager: nextProps.pager,
                 videos: nextProps.videos
-            });
-            this.slider.slickGoTo(0, false);
+            }, () => this.slider.slickGoTo(index, false));
         }
     };
+
 
     /**
      * this method is called by react slick after the slider finish transition
@@ -36,11 +43,20 @@ class   VideoCarrouselSlick extends Component {
      * @returns {Promise<void>}
      */
     async afterChangeMethod(index) {
+        const setSeriePagerIndex = (index) =>{
+            if(this.state.pager.constructor.name === 'seriesPager'){
+                this.setState({
+                    index: index
+                });
+            }
+        };
         const isLastPage = (index + this.SLIDES_OF_CAROUSEL) === this.state.videos.length;
+        setSeriePagerIndex(index);
         if (isLastPage && this.state.pager.nextPageUrl){
             // API call to retrieve more videos when navigating through carousel
             try {
-                let pager = await this.state.pager.getNextPage();
+                let pager = this.state.pager;
+                await pager.getNextPage();
                 let videos = this.state.videos;
                 videos.push(...pager.videos);
                 this.setState({

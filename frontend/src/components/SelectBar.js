@@ -5,7 +5,7 @@ const SelectBar = (props) => {
 
     const { seasons, handleSeason} = props;
     const options = seasons.map(season => {
-        return <option  value={season}>S {season}</option>;
+        return <option key={season} value={season}>S {season}</option>;
     });
     return (
         <div className="seriesDisplay">
@@ -16,8 +16,3 @@ const SelectBar = (props) => {
     );
 };
 export default SelectBar;
-
-
-
-
-
