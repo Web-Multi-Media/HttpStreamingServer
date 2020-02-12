@@ -40,7 +40,7 @@ const client = {
     searchSeries: async searchQuery => {
         const params = searchQuery ? { search_query: searchQuery } : null;
         var response = await http.get(`${SERIES_ENDPOINT}/`, { params: params});
-        return new seriesPager(response.data);
+        return new SeriesPager(response.data);
     },
 
     searchMovies: async searchQuery => {
@@ -49,7 +49,7 @@ const client = {
         response.data.results = response.data.results.map(result => {
             return result.video_set.results[0];
         });
-        return new moviesPager(response.data);
+        return new MoviesPager(response.data);
     },
 
 
@@ -70,16 +70,16 @@ function Video (response) {
     this.movie = response.movie;
 }
 
-function seriesPager(response) {
+function SeriesPager(response) {
     this.count = response.count;
     this.series = response.results.map(serie => new Serie(serie));
     this.nextPageUrl = response.next;
     this.previewsPageUrl = response.previous;
 }
 
-seriesPager.prototype.getNextPage = async function () {
+SeriesPager.prototype.getNextPage = async function () {
     var response = await http.get(this.nextPageUrl);
-    return new seriesPager(response.data);
+    return new SeriesPager(response.data);
 };
 
 function Serie (serie) {
@@ -106,19 +106,20 @@ Serie.prototype.getNextPage = async function () {
 };
 
 
-function moviesPager(response) {
+function MoviesPager(response) {
     this.count = response.count;
     this.videos = response.results.map(video => new Video(video));
     this.nextPageUrl = response.next;
     this.previewsPageUrl = response.previous;
 }
 
-moviesPager.prototype.getNextPage = async function () {
+MoviesPager.prototype.getNextPage = async function () {
     const response = await http.get(this.nextPageUrl);
     response.data.results = response.data.results.map(result => {
         return result.video_set.results[0];
     });
-    return new moviesPager(response.data);
+    this.videos = response.data.results.map(video => new Video(video));
+    this.nextPageUrl = response.data.next;
 };
 
 export {client}
