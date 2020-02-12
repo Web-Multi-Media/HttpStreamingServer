@@ -79,7 +79,8 @@ function SeriesPager(response) {
 
 SeriesPager.prototype.getNextPage = async function () {
     var response = await http.get(this.nextPageUrl);
-    return new SeriesPager(response.data);
+    this.videos = response.data.results.map(video => new Serie(video));
+    this.nextPageUrl = response.data.next;
 };
 
 function Serie (serie) {

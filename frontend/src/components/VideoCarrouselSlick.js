@@ -44,7 +44,7 @@ class   VideoCarrouselSlick extends Component {
      */
     async afterChangeMethod(index) {
         const setSeriePagerIndex = (index) =>{
-            if(this.state.pager.constructor.name === 'seriesPager'){
+            if(this.state.pager.constructor.name === 'SeriesPager'){
                 this.setState({
                     index: index
                 });
