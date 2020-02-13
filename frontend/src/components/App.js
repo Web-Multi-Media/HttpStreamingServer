@@ -25,10 +25,10 @@ class App extends React.Component {
         try {
             const pager = await client.searchSeries(termFromSearchBar);
             const pager2 = await client.searchMovies(termFromSearchBar);
-            if (pager.videos.length > 0){
+            if (pager.series.length > 0){
                 this.setState({
                     seriesPager: pager,
-                    seriesVideos: pager.videos
+                    seriesVideos: pager.series
                 });
             }
             if (pager2.videos.length > 0){
