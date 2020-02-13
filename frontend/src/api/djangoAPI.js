@@ -5,8 +5,8 @@ import axios from 'axios';
  */
 const http = axios.create({
     baseURL: process.env.REACT_APP_DJANGO_API,
-    responseType: 'json'
-})
+    responseType: 'json',
+});
 
 const VIDEOS_ENDPOINT = '/videos';
 
@@ -17,32 +17,32 @@ const client = {
      *
      * @param id
      *          video's id
-     * @returns {Promise<void>}
+     * @returns {Promise<Video>}
      *          Video
      */
-    getVideoById: async id => {
-        var response = await http.get(`${VIDEOS_ENDPOINT}/${id}`);
+    getVideoById: async (id) => {
+        const response = await http.get(`${VIDEOS_ENDPOINT}/${id}`);
         return new Video(response.data);
     },
-    
+
     /**
      * performs GET request to retrieve videos list from searchbar entry
      * the param is optional, retrieve full video list instead if not provided
-     * 
-     * @param name 
+     *
+     * @param name
      *          searchbar query, optional
-     * @returns {Promise<void>}
+     * @returns {Promise<Pager>}
      *          Pager
      */
-    searchVideos: async searchQuery => {
+    searchVideos: async (searchQuery) => {
         const params = searchQuery ? { search_query: searchQuery } : null;
-        var response = await http.get(`${VIDEOS_ENDPOINT}/`, { params: params});
+        const response = await http.get(`${VIDEOS_ENDPOINT}/`, { params });
         return new Pager(response.data);
     },
 };
 
 
-function Video (response) {
+function Video(response) {
     this.id = response.id;
     this.name = response.name;
     this.videoUrl = response.video_url;
@@ -50,12 +50,24 @@ function Video (response) {
     this.frSubtitleUrl = response.fr_subtitle_url;
     this.enSubtitleUrl = response.en_subtitle_url;
     this.ovSubtitleUrl = response.ov_subtitle_url;
+    if (response.movie) {
+        this.movie = response.movie;
+    }
+    if (response.series) {
+        this.series = response.series;
+    }
+    if (response.episode) {
+        this.episode = response.episode;
+    }
+    if (response.season) {
+        this.season = response.season;
+    }
 }
 
 
 function Pager(response) {
     this.count = response.count;
-    this.videos = response.results.map(video => new Video(video));
+    this.videos = response.results.map((video) => new Video(video));
     this.numberOfPages = Math.ceil(response.count / response.results.length);
     this.videosPerPages = response.results.length;
     this.nextPageUrl = response.next;
@@ -63,9 +75,9 @@ function Pager(response) {
 }
 
 Pager.prototype.getNextPage = async function () {
-    var response = await http.get(this.nextPageUrl);
+    const response = await http.get(this.nextPageUrl);
     return new Pager(response.data);
 };
 
 
-export {client}
+export { client };
