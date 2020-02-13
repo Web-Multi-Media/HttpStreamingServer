@@ -21,6 +21,8 @@ class   VideoCarrouselSlick extends Component {
 
     componentWillReceiveProps(nextProps) {
         const chooseIndex = (reset) =>{
+            console.log(this.state.index);
+            console.log(reset);
             if(reset === true){
                return this.state.index;
             }
@@ -44,6 +46,8 @@ class   VideoCarrouselSlick extends Component {
      */
     async afterChangeMethod(index) {
         const setSeriePagerIndex = (index) =>{
+            console.log(this.state.pager.constructor.name);
+            console.log(index);
             if(this.state.pager.constructor.name === 'SeriesPager'){
                 this.setState({
                     index: index
