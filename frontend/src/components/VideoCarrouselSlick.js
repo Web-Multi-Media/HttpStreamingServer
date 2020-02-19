@@ -5,7 +5,7 @@ import SamplePrevArrow from "./SamplePrevArrow";
 import '../style/style.scss';
 
 
-class   VideoCarrouselSlick extends Component {
+export default  class VideoCarrouselSlick extends Component {
 
     //this variable must be the same as PAGE_SIZE in settings.py
     SLIDES_OF_CAROUSEL = 5;
@@ -21,8 +21,6 @@ class   VideoCarrouselSlick extends Component {
 
     componentWillReceiveProps(nextProps) {
         const chooseIndex = (reset) =>{
-            console.log(this.state.index);
-            console.log(reset);
             if(reset === true){
                return this.state.index;
             }
@@ -46,9 +44,7 @@ class   VideoCarrouselSlick extends Component {
      */
     async afterChangeMethod(index) {
         const setSeriePagerIndex = (index) =>{
-            console.log(this.state.pager.constructor.name);
-            console.log(index);
-            if(this.state.pager.constructor.name === 'SeriesPager'){
+            if(this.state.pager.type === 'Serie'){
                 this.setState({
                     index: index
                 });
@@ -105,4 +101,4 @@ class   VideoCarrouselSlick extends Component {
         );
     }
 }
-export default VideoCarrouselSlick;
+

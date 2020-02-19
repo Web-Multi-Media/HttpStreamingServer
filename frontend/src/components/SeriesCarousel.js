@@ -35,7 +35,6 @@ class SeriesCarousel extends Component {
         try {
             await serie.getSeason();
             await serie.getEpisodes(serie.seasons[0]);
-            console.log(serie);
             this.setState({
                 pager: serie,
                 videos: serie.videos,

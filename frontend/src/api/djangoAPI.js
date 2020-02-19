@@ -72,6 +72,7 @@ function Video (response) {
 
 function SeriesPager(response) {
     this.count = response.count;
+    this.type = "Serie";
     this.series = response.results.map(serie => new Serie(serie));
     this.nextPageUrl = response.next;
     this.previewsPageUrl = response.previous;

@@ -23,8 +23,11 @@ class App extends React.Component {
     handleSubmit = async (termFromSearchBar) => {
         // API call to retrieve videos from searchbar
         try {
-            const pager = await client.searchSeries(termFromSearchBar);
-            const pager2 = await client.searchMovies(termFromSearchBar);
+
+            const [pager, pager2] = await Promise.all([
+                client.searchSeries(termFromSearchBar),
+                client.searchMovies(termFromSearchBar)
+            ]);
             if (pager.series.length > 0){
                 this.setState({
                     seriesPager: pager,
@@ -50,8 +53,10 @@ class App extends React.Component {
      */
     getMoviesAndSeries = async () => {
         try {
-            const pager = await client.searchSeries();
-            const pager2 = await client.searchMovies();
+            const [pager, pager2] = await Promise.all([
+                client.searchSeries(),
+                client.searchMovies()
+            ]);
             this.setState({
                 pager: pager,
                 videos: pager.videos,
@@ -86,9 +91,10 @@ class App extends React.Component {
     }
 
     async componentDidMount() {
-        await this.getUrlVideo();
-        // API call to retrieve all videos
-        await this.getMoviesAndSeries();
+        await Promise.all([
+            this.getMoviesAndSeries(),
+            this.getUrlVideo()
+        ]);
     };
 
     handleVideoSelect = (video) => {
