@@ -13,12 +13,14 @@
     "react-scripts": "3.0.1",
     "react-slick": "^0.25.2",
     "react-bootstrap": "latest",
+    "react-router-dom": "^5.1.2",
     "@material-ui/core": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "lint": "eslint",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -37,6 +39,11 @@
     ]
   },
   "devDependencies": {
-    "react-router-dom": "^5.1.2"
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.18.0",
+    "eslint-plugin-react-hooks": "^1.7.0"
   }
 }

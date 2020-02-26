@@ -5,8 +5,8 @@ import axios from 'axios';
  */
 const http = axios.create({
     baseURL: process.env.REACT_APP_DJANGO_API,
-    responseType: 'json'
-})
+    responseType: 'json',
+});
 
 const VIDEOS_ENDPOINT = '/videos';
 const SERIES_ENDPOINT = '/series';
@@ -20,21 +20,21 @@ const client = {
      *
      * @param id
      *          video's id
-     * @returns {Promise<void>}
+     * @returns {Promise<Video>}
      *          Video
      */
-    getVideoById: async id => {
-        var response = await http.get(`${VIDEOS_ENDPOINT}/${id}`);
+    getVideoById: async (id) => {
+        const response = await http.get(`${VIDEOS_ENDPOINT}/${id}`);
         return new Video(response.data);
     },
-    
+
     /**
      * performs GET request to retrieve videos list from searchbar entry
      * the param is optional, retrieve full video list instead if not provided
-     * 
-     * @param name 
+     *
+     * @param name
      *          searchbar query, optional
-     * @returns {Promise<void>}
+     * @returns {Promise<Pager>}
      *          Pager
      */
     searchSeries: async searchQuery => {
@@ -56,7 +56,7 @@ const client = {
 };
 
 
-function Video (response) {
+function Video(response) {
     this.id = response.id;
     this.name = response.movie !== null ? response.movie : response.name;
     this.videoUrl = response.video_url;

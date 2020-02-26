@@ -3,8 +3,7 @@
 Intro
 -------------------
 
-This is a simple http media presentation server based on Django and React.
-It will display the Videos located in the Videos folder on the server side as a playlist in your webbrowser. Support is therefore limited to mp4 container with H264/AAC content. In case mkv files with H264/AAC codecs are present in the Videos folder, they will be transmuxed to mp4 without reencoding.
+The aim of the project is to create an easy to use http media presentation server based on Django Rest Framework and React. Support is currently limited to mp4/mkv container with H264/AAC content. 
 Subtitles are added automatically if an adequate match is found (after a conversion from .srt to webvtt).
 
 
@@ -41,6 +40,14 @@ If you want to reload videos while the app is running, you need to have a superu
     docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py createsuperuser
 
 then go to `http://localhost:1337/admin/`, select all Videos and check 'reload Videos' actions.
+
+The following variables can be configured in .env file:
+
+    DJANGO_DATABASE_URL=postgres://postgres:password@db/streaming_server
+    DJANGO_SECRET_KEY=fdj(re&lf87/qwm%jkiq78fdah346gsa
+    POSTGRES_PASSWORD=password
+    HTTPSTREAMING_HOST=www.foo.com
+
 
 #### Build Process and Debug
 
