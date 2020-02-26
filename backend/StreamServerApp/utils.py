@@ -16,6 +16,7 @@ import subprocess
 import traceback
 from datetime import timedelta
 import subliminal
+from django.db import transaction
 
 from StreamServerApp.models import Video, Series, Movie
 from StreamingServer.settings import customstderr, customstdout
@@ -71,41 +72,45 @@ def populate_db_from_local_folder(base_path, remote_url):
 
             if isfile(full_path) and (full_path.endswith(".mp4") or full_path.endswith(".mkv")):
                 try:
-                    # Print current working directory
-                    print ("Current working dir : %s" % root)
-                    video_infos = prepare_video(full_path, video_path, root, remote_url)
-                    if not video_infos:
-                        print("Dict is Empty")
-                        continue
+                    # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
+                    with transaction.atomic():
+                        # Print current working directory
+                        print ("Current working dir : %s" % root)
+                        video_infos = prepare_video(full_path, video_path, root, remote_url)
+                        if not video_infos:
+                            print("Dict is Empty")
+                            continue
 
-                    v = Video(name=filename, video_folder = root, \
-                                            video_url=video_infos['remote_video_url'],\
-                                            video_codec=video_infos['video_codec_type'], audio_codec=video_infos['audio_codec_type'],\
-                                            height=video_infos['video_height'], width=video_infos['video_width'], \
-                                            thumbnail=video_infos['remote_thumbnail_url'], \
-                                            fr_subtitle_url=video_infos['fr_subtitles_remote_path'], ov_subtitle_url = video_infos['ov_subtitles_remote_path'],\
-                                            en_subtitle_url=video_infos['en_subtitles_remote_path'])
-                    
-                    # parse movie or series, episode & season
-                    video_type_and_info = get_video_type_and_info(filename)
+                        v = Video(name=filename, 
+                                  video_folder = root,
+                                  video_url=video_infos['remote_video_url'],
+                                  video_codec=video_infos['video_codec_type'],
+                                  audio_codec=video_infos['audio_codec_type'],
+                                  height=video_infos['video_height'],
+                                  width=video_infos['video_width'],
+                                  thumbnail=video_infos['remote_thumbnail_url'],
+                                  en_subtitle_url=video_infos['en_subtitles_remote_path'])
+                        
+                        # parse movie or series, episode & season
+                        video_type_and_info = get_video_type_and_info(filename)
 
-                    if video_type_and_info:
-                        if video_type_and_info['type'] == 'Series':
-                            series, created = Series.objects.get_or_create(title=video_type_and_info['title'],
-                                                                           defaults={'thumbnail': video_infos['remote_thumbnail_url']})
-                            v.series = series
-                            v.season = video_type_and_info['season']
-                            v.episode = video_type_and_info['episode']
-                            if created:
-                                count_series += 1
+                        if video_type_and_info:
+                            if video_type_and_info['type'] == 'Series':
+                                series, created = Series.objects.get_or_create(title=video_type_and_info['title'],
+                                                                               defaults={'thumbnail': video_infos['remote_thumbnail_url']})
+                                v.series = series
+                                v.season = video_type_and_info['season']
+                                v.episode = video_type_and_info['episode']
+                                if created:
+                                    count_series += 1
 
-                        elif video_type_and_info['type'] == 'Movie':
-                            movie, created = Movie.objects.get_or_create(title=video_type_and_info['title'])
-                            v.movie = movie
-                            if created:
-                                count_movies += 1
-                                
-                    v.save()
+                            elif video_type_and_info['type'] == 'Movie':
+                                movie, created = Movie.objects.get_or_create(title=video_type_and_info['title'])
+                                v.movie = movie
+                                if created:
+                                    count_movies += 1
+                                    
+                        v.save()
 
                 except Exception as ex:
                     print ("An error occured")
