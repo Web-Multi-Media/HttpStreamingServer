@@ -60,12 +60,14 @@ class UtilsTest(TestCase):
         series_name3 = 'Futurama S02E10 Put Your Head On My Shoulders.mp4'
         series_name4 = 'Futurama.S01.E10.Fake_name*withçweird&cg!"%&/()@.mp4'
         series_name5 = 'Futurama [1x11] Fake_name_2*wasfqwef&cg!"%&/()@.mp4'
+        series_name6 = '02- Black Mirror[S1E2]Fifteen Million Merits.720p.x264-kmcrct.mp4'
         movie_name = 'The Blues Brothers (1980) [1080p]/The.Blues.Brothers.1980.1080p.BrRip.x264.bitloks.YIFY.jpg'
         series_info = get_video_type_and_info(series_name)
         series_info2 = get_video_type_and_info(series_name2)
         series_info3 = get_video_type_and_info(series_name3)
         series_info4 = get_video_type_and_info(series_name4)
         series_info5 = get_video_type_and_info(series_name5)
+        series_info6 = get_video_type_and_info(series_name6)
         movie_info = get_video_type_and_info(movie_name)
 
         self.assertEqual(series_info['type'], 'Series')
@@ -79,6 +81,9 @@ class UtilsTest(TestCase):
         self.assertEqual(series_info4['season'], 1)
         self.assertEqual(series_info5['season'], 1)
         self.assertEqual(series_info5['episode'], 11)
+
+        self.assertEqual(series_info6['title'], 'Black Mirror')
+        self.assertEqual(series_info6['episode'], 2)
 
         self.assertEqual(movie_info['type'], 'Movie')
         self.assertEqual(movie_info['title'], 'The Blues Brothers')
