@@ -113,9 +113,7 @@ class App extends React.Component {
                 <SearchBar handleFormSubmit={this.handleSubmit} />
                 <div className='ui grid'>
                     <div className="ui column">
-                        <div className="eleven wide row">
                             <VideoDetail video={this.state.selectedVideo} />
-                        </div>
                     </div>
                 </div>
                 {
