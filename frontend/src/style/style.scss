@@ -140,10 +140,7 @@ button:focus {
   outline: none !important;
 }
 
-.paragraph{
- margin-top: 3%;
-  overflow-wrap: break-word;
-}
+
 
 .img-cover{
   margin: 0;
@@ -157,5 +154,37 @@ button:focus {
 }
 
 .seriesDisplay{
-  display: inline !important;
+  display: flex!important;
+  flex: 1;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 1200px){
+ .container {
+   max-width: 1600px;
+ }
+}
+
+.carrouselContainer{
+  margin: 30px 0px;
+}
+
+.video-element{
+  width: 100%!important;
+  display: flex!important;
+  flex-direction: column!important;
+}
+
+.paragraph-element{
+  margin-top: 3%;
+  overflow-wrap: break-word;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.centerVer{
+  margin-bottom: auto;
+  margin-top: auto;
+  margin-right: 6px;
 }

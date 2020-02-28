@@ -120,7 +120,7 @@ class App extends React.Component {
                 </div>
                 {
                     this.state.seriesVideos.length > 0 &&
-                    <div>
+                    <div className="carrouselContainer">
                         <SeriesCarousel
                             pager={this.state.seriesPager}
                             videos={this.state.seriesVideos}
@@ -128,19 +128,19 @@ class App extends React.Component {
                         />
                     </div>
                 }
+                        <div className="carrouselContainer">
                 <h4>MOVIES</h4>
                 <div>
 
                     {
                         this.state.moviesVideos.length > 0 &&
-                        <div>
                             <VideoCarrouselSlick
                                 pager={this.state.moviesPager}
                                 videos={this.state.moviesVideos}
                                 handleVideoSelect={this.handleVideoSelect}
                             />
-                        </div>
                     }
+                        </div>
                 </div>
             </div>
         )

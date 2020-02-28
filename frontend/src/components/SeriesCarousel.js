@@ -89,17 +89,17 @@ class SeriesCarousel extends Component {
         return (
             <div>
                 <div className="seriesDisplay">
-                <h3 onClick={()=>this.resetSeries()} className="seriesDisplay">SERIES</h3>
+                <h3 className="centerVer" onClick={()=>this.resetSeries()}>SERIES</h3>
                 {this.state.series.length > 0 &&
-                    <div className="seriesDisplay">
-                    <span className="seriesDisplay"> > {this.state.series} > </span>
+                    <React.Fragment>
+                    <span className="centerVer"> > {this.state.series} > </span>
                     <SelectBar
                     seasons = {this.state.seasons}
                     handleSeason= {this.handleSeasonSelect}
                     />
-                    </div>
+                    </React.Fragment>
                 }
-                {this.state.episode !== '' &&  <span> > {this.state.episode}</span>}
+                {this.state.episode !== '' &&  <span className="centerVer"> > {this.state.episode}</span>}
                 </div>
                 {this.state.videos.length > 0 &&
                 <div>
