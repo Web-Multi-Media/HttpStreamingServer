@@ -17,6 +17,7 @@ import traceback
 from datetime import timedelta
 import subliminal
 from django.db import transaction
+import re
 
 from StreamServerApp.models import Video, Series, Movie
 from StreamingServer.settings import customstderr, customstdout
@@ -246,7 +247,11 @@ def get_video_type_and_info(video_path):
     Returns: dict containing video type and info
 
     """
-    video = subliminal.Video.fromname(video_path)
+
+    filename = os.path.basename(video_path)
+    if re.match(r'(\d*(\-|\.) .*)',  filename):
+        filename = re.sub(r'(\d*(\-|\.) )', '', filename, 1)
+    video = subliminal.Video.fromname(filename)
     if hasattr(video, 'series'):
         return {
             'type': 'Series',
