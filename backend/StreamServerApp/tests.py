@@ -58,8 +58,8 @@ class UtilsTest(TestCase):
         series_name = 'The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4'
         series_name2 = 'The.Big.Bang.Theory.S05E18.HDTV.x264-LOL.mp4'
         series_name3 = 'Futurama S02E10 Put Your Head On My Shoulders.mp4'
-        series_name4 = 'Futurama.S01.E10.Fake_name*withçweird&cg!"%&/()@.mp4'
-        series_name5 = 'Futurama [1x11] Fake_name_2*wasfqwef&cg!"%&/()@.mp4'
+        series_name4 = 'Futurama.S01.E10.Fake_name*withçweird&cg!"%&()@.mp4'
+        series_name5 = 'Futurama [1x11] Fake_name_2*wasfqwef&cg!"%&()@.mp4'
         series_name6 = '02- Black Mirror[S1E2]Fifteen Million Merits.720p.x264-kmcrct.mp4'
         movie_name = 'The Blues Brothers (1980) [1080p]/The.Blues.Brothers.1980.1080p.BrRip.x264.bitloks.YIFY.jpg'
         series_info = get_video_type_and_info(series_name)
