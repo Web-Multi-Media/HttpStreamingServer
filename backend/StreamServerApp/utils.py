@@ -207,7 +207,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
                     return {}
             #remove old mkv file
             os.remove(video_full_path)
-            relative_path =  os.path.relpath(temp_mp4, temp_mp4)
+            relative_path =  os.path.relpath(temp_mp4, video_path)
             video_full_path = temp_mp4
 
         subtitles_full_path = get_subtitles(video_full_path, ov_subtitles)
