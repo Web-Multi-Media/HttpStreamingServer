@@ -6,13 +6,14 @@ RUN apt-get install -y python3-pip python-dev build-essential
 RUN apt-get install -y software-properties-common
 RUN apt-get install -y python3-software-properties
 RUN apt-get install -y x264 x265 ffmpeg
-RUN apt-get install -y npm
+RUN  wget -qO- https://deb.nodesource.com/setup_12.x | apt install -y nodejs npm
 
 #Build the frontend
 
 COPY ./frontend/ /usr/src/frontend
-RUN npm --prefix /usr/src/frontend install
-RUN npm --prefix /usr/src/frontend run build
+WORKDIR /usr/src/frontend
+RUN npm install
+RUN npm run build
 
 #Build the backend
 
