@@ -20,6 +20,14 @@ Build the frontend:
 
     docker-compose -f docker-compose-prod.yml build
 
+Migrate the database:
+
+    docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py migrate
+
+Populate the database:
+
+    docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py populatedb
+
 Run the server:
 
     docker-compose -f docker-compose-prod.yml up
