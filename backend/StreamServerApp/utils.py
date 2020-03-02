@@ -170,7 +170,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
     audio_codec_type = audio_stream['codec_name']
 
     relative_path = os.path.relpath(video_full_path, video_path)
-    if(("h264" in video_codec_type) and ("aac" in audio_codec_type)):
+    if(("h264" in video_codec_type)):
         #Thumbnail creation
         thumbnail_fullpath=os.path.splitext(video_full_path)[0]+'.jpg'
         thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
@@ -180,22 +180,34 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
                             "-vframes", "1", thumbnail_fullpath], stdout=customstdout, stderr=customstderr)
 
         #if file is mkv, transmux to mp4
-        if(video_full_path.endswith(".mkv")):
-            temp_mp4 = os.path.splitext(video_full_path)[0]+'.mp4'
-            if(os.path.isfile(temp_mp4) == False):
+        if(video_full_path.endswith(".mkv") or ("aac" not in audio_codec_type)):
+            cmd = []
+            temp_mp4 = os.path.splitext(video_full_path)[0]+'-reencoded.mp4'
+            if "aac" not in audio_codec_type:
+                print(
+                    "Audio codec is not aac, audio reencoding is necessary (This might take a long time)")
                 cmd = ["ffmpeg", "-i", video_full_path,
-                       "-codec", "copy", temp_mp4]
+                       "-acodec", "aac", "-vcodec", "copy", temp_mp4]
+            else:
+                cmd = ["ffmpeg", "-i", video_full_path,
+                       "-codec", "copy",  temp_mp4]
+
+            if(os.path.isfile(temp_mp4) == False):
                 try:
-                    subprocess.run(cmd, stdout=customstdout,
-                                   stderr=customstderr)
-                except subprocess.CalledProcessError as e:
-                    print(e.returncode)
-                    print(e.cmd)
-                    print(e.output)
-                    raise
+                    completed_process_instance = subprocess.run(cmd, stdout=customstdout,
+                                                                stderr=customstderr)
+                    if completed_process_instance.returncode != 0:
+                        print("An error occured while transmux/reencoding")
+                        print(completed_process_instance.stderr)
+                        print(completed_process_instance.stdout)
+                        raise
+                except Exception as e:
+                    print("An Exception occured while transmux/reencoding")
+                    print(e)
+                    return {}
             #remove old mkv file
             os.remove(video_full_path)
-            relative_path = os.path.splitext(relative_path)[0]+'.mp4'
+            relative_path =  os.path.relpath(temp_mp4, temp_mp4)
             video_full_path = temp_mp4
 
         subtitles_full_path = get_subtitles(video_full_path, ov_subtitles)
