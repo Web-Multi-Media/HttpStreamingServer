@@ -247,7 +247,6 @@ def get_video_type_and_info(video_path):
     Returns: dict containing video type and info
 
     """
-
     filename = os.path.basename(video_path)
     if re.match(r'(\d*(\-|\.) .*)',  filename):
         filename = re.sub(r'(\d*(\-|\.) )', '', filename, 1)
