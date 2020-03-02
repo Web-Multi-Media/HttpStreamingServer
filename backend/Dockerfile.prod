@@ -11,6 +11,7 @@ RUN apt-get install -y npm
 #Build the frontend
 
 COPY ./frontend/ /usr/src/frontend
+RUN npm --prefix /usr/src/frontend install
 RUN npm --prefix /usr/src/frontend run build
 
 #Build the backend
