@@ -5,7 +5,7 @@ import SamplePrevArrow from "./SamplePrevArrow";
 import '../style/style.scss';
 
 
-class VideoCarrouselSlick extends Component {
+export default  class VideoCarrouselSlick extends Component {
 
     //this variable must be the same as PAGE_SIZE in settings.py
     SLIDES_OF_CAROUSEL = 5;
@@ -20,14 +20,21 @@ class VideoCarrouselSlick extends Component {
     };
 
     componentWillReceiveProps(nextProps) {
+        const chooseIndex = (reset) =>{
+            if(reset === true){
+               return this.state.index;
+            }
+            return 0;
+        };
         if (nextProps.videos !== this.props.videos) {
+            const index = chooseIndex(nextProps.reset);
             this.setState({
                 pager: nextProps.pager,
                 videos: nextProps.videos
-            });
-            this.slider.slickGoTo(0, false);
+            }, () => this.slider.slickGoTo(index, false));
         }
     };
+
 
     /**
      * this method is called by react slick after the slider finish transition
@@ -36,11 +43,20 @@ class VideoCarrouselSlick extends Component {
      * @returns {Promise<void>}
      */
     async afterChangeMethod(index) {
+        const setSeriePagerIndex = (index) =>{
+            if(this.state.pager.type === 'Serie'){
+                this.setState({
+                    index: index
+                });
+            }
+        };
         const isLastPage = (index + this.SLIDES_OF_CAROUSEL) === this.state.videos.length;
+        setSeriePagerIndex(index);
         if (isLastPage && this.state.pager.nextPageUrl){
             // API call to retrieve more videos when navigating through carousel
             try {
-                let pager = await this.state.pager.getNextPage();
+                let pager = this.state.pager;
+                await pager.getNextPage();
                 let videos = this.state.videos;
                 videos.push(...pager.videos);
                 this.setState({
@@ -66,13 +82,13 @@ class VideoCarrouselSlick extends Component {
         };
 
         const slider = this.state.videos.map((video) => {
-            return <div key={video.id}>
+            return <div className="video-element" key={video.id}>
                     <img
                         className='img-cover'
                         onClick={() => this.props.handleVideoSelect(video)}
                         src={video.thumbnail}
                     />
-                    <p className='paragraph'>{video.name}</p>
+                    <p className='paragraph-element'>{video.name}</p>
                    </div>
         });
 
@@ -85,4 +101,4 @@ class VideoCarrouselSlick extends Component {
         );
     }
 }
-export default VideoCarrouselSlick;
+
