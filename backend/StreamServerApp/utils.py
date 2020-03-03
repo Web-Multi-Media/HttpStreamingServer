@@ -240,6 +240,8 @@ def get_video_type_and_info(video_path):
     Subliminal tells us if the video is a serie or not.
     If not, we assume it to be a movie, which is not necesarly the case (e.g. documentary, simple video).
     We use string.capwords() on title strings for consistency of capitalization.
+    The subliminal fromname function as a bug when the input string begins with 1-, as a quick fix, we use a regular expression to
+    get rid of the problematic characters. A future fix coulb be to be use imdb api for disambiguation.
     
     Args:
     video_path: full path to the video (eg: /Videos/folder1/video.mp4)
