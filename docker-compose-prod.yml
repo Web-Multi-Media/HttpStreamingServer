@@ -15,6 +15,7 @@ services:
     volumes:
       - dbvolume:/var/lib/postgresql/data/
   web:
+    image: webmultimedia/http-streaming-server:latest
     build:
       context: .
       dockerfile: ./backend/Dockerfile.prod
