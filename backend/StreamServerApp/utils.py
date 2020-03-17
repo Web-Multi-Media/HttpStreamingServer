@@ -12,6 +12,7 @@ import sys
 import string
 from os.path import isfile, join
 import ffmpeg
+
 import subprocess
 import traceback
 from datetime import timedelta
@@ -20,8 +21,9 @@ from django.db import transaction
 import re
 
 from StreamServerApp.models import Video, Series, Movie
-from StreamingServer.settings import customstderr, customstdout
 from StreamServerApp.subtitles import get_subtitles, init_cache
+from StreamServerApp.media_processing import transmux_to_mp4
+from StreamingServer.settings import customstderr, customstdout
 
 
 def delete_DB_Infos():
@@ -181,31 +183,12 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
 
         #if file is mkv, transmux to mp4
         if(video_full_path.endswith(".mkv") or ("aac" not in audio_codec_type)):
-            cmd = []
             temp_mp4 = os.path.splitext(video_full_path)[0]+'-reencoded.mp4'
             if "aac" not in audio_codec_type:
-                print(
-                    "Audio codec is not aac, audio reencoding is necessary (This might take a long time)")
-                cmd = ["ffmpeg", "-i", video_full_path,
-                       "-acodec", "aac", "-vcodec", "copy", temp_mp4]
+                transmux_to_mp4(video_full_path, temp_mp4, True)
             else:
-                cmd = ["ffmpeg", "-i", video_full_path,
-                       "-codec", "copy",  temp_mp4]
+                transmux_to_mp4(video_full_path, temp_mp4, False)
 
-            if(os.path.isfile(temp_mp4) == False):
-                try:
-                    completed_process_instance = subprocess.run(cmd, stdout=customstdout,
-                                                                stderr=customstderr)
-                    if completed_process_instance.returncode != 0:
-                        print("An error occured while transmux/reencoding")
-                        print(completed_process_instance.stderr)
-                        print(completed_process_instance.stdout)
-                        raise
-                except Exception as e:
-                    print("An Exception occured while transmux/reencoding")
-                    print(e)
-                    return {}
-            #remove old mkv file
             os.remove(video_full_path)
             relative_path =  os.path.relpath(temp_mp4, video_path)
             video_full_path = temp_mp4
