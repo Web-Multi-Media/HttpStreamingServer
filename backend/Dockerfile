@@ -1,5 +1,5 @@
 
-FROM ubuntu:18.04
+FROM node:8
 
 RUN apt-get update -y
 RUN apt-get install -y python3-pip python-dev build-essential \

@@ -181,7 +181,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
                             "-an", "-vf", "scale=320:-1",
                             "-vframes", "1", thumbnail_fullpath], stdout=customstdout, stderr=customstderr)
 
-        #if file is mkv, transmux to mp4
+        #if file is mkv or has an audio codec different than AAC, transmux to mp4
         if(video_full_path.endswith(".mkv") or ("aac" not in audio_codec_type)):
             temp_mp4 = os.path.splitext(video_full_path)[0]+'-reencoded.mp4'
             if "aac" not in audio_codec_type:
