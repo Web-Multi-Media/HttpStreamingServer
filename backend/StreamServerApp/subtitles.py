@@ -5,6 +5,7 @@ from subliminal import Video, subtitle, list_subtitles, region, download_best_su
 import os
 import subprocess
 from StreamingServer.settings import customstderr, customstdout
+from StreamServerApp.media_processing import extract_subtitle
 
 #https://subliminal.readthedocs.io/en/latest/user/usage.html
 
@@ -31,9 +32,8 @@ def get_subtitles(video_path, ov_subtitles):
     webvtt_ov_fullpath = ''
 
     if ov_subtitles:
-        print(webvtt_ov_fullpath)
         webvtt_ov_fullpath = os.path.splitext(video_path)[0]+'_ov.vtt'
-        subprocess.run(["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", video_path,"-map", "0:s:0", webvtt_ov_fullpath])
+        extract_subtitle(video_path, webvtt_ov_fullpath)
 
     video = Video.fromname(video_path)
 

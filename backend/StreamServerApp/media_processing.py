@@ -2,6 +2,32 @@ import os
 import subprocess
 from StreamingServer.settings import customstderr, customstdout
 
+def run_ffmpeg_process(cmd):
+        completed_process_instance = subprocess.run(cmd, stdout=customstdout,
+                                                stderr=customstderr)
+        if completed_process_instance.returncode != 0:
+            print("An error occured while running ffmpeg subprocess")
+            print(completed_process_instance.stderr)
+            print(completed_process_instance.stdout)
+            raise
+
+
+
+def extract_subtitle(input_file, output_file):
+    """ # Uses ffmpeg subprocess to extract subtitles from a video and convert it to webvtt
+    
+    Args:
+    input_file: full path to the input video (eg: /Videos/folder1/video.mp4)
+    output_file: full path to the output video (eg: /Videos/folder1/sub.vtt)
+
+    Returns: dict containing video type and info
+
+    Throw an exception if the return value of the subprocess is different than 0
+
+    """
+    cmd = ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", input_file,"-map", "0:s:0", output_file]
+    run_ffmpeg_process(cmd)
+
 def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
     """ # Uses ffmpeg subprocess to transmux to mp4
     
@@ -24,10 +50,4 @@ def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
                 "-codec", "copy",  output_file]
 
     if(os.path.isfile(output_file) == False):
-        completed_process_instance = subprocess.run(cmd, stdout=customstdout,
-                                                    stderr=customstderr)
-        if completed_process_instance.returncode != 0:
-            print("An error occured while transmux/reencoding")
-            print(completed_process_instance.stderr)
-            print(completed_process_instance.stdout)
-            raise
+        run_ffmpeg_process(cmd)
