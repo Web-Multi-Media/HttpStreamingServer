@@ -5,7 +5,7 @@ from subliminal import Video, subtitle, list_subtitles, region, download_best_su
 import os
 import subprocess
 from StreamingServer.settings import customstderr, customstdout
-from StreamServerApp.media_processing import extract_subtitle
+from StreamServerApp.media_processing import extract_subtitle, convert_subtitles_to_webvtt
 
 #https://subliminal.readthedocs.io/en/latest/user/usage.html
 
@@ -44,32 +44,14 @@ def get_subtitles(video_path, ov_subtitles):
         best_subtitle = best_subtitles[video][0]
         value = save_subtitles(video, [best_subtitle], encoding='utf8')
         if len(value) > 0:
-            print("converting fr srt to vtt")
             srt_fullpath = subtitle.get_subtitle_path(
                 video_path, Language('fra'))
-            print(srt_fullpath)
             webvtt_fr_fullpath = os.path.splitext(srt_fullpath)[0]+'_fr.vtt'
             if(os.path.isfile(webvtt_fr_fullpath) == False and os.path.isfile(srt_fullpath)):
-                try:
-                    subprocess.run(
-                        ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", srt_fullpath, webvtt_fr_fullpath])
-                except subprocess.CalledProcessError as e:
-                    print(e.returncode)
-                    print(e.cmd)
-                    print(e.output)
-                    raise
-            print("converting eng srt to vtt")
+                convert_subtitles_to_webvtt(srt_fullpath, webvtt_fr_fullpath)
             srt_fullpath = subtitle.get_subtitle_path(
                 video_path, Language('eng'))
-            print(srt_fullpath)
             webvtt_en_fullpath = os.path.splitext(srt_fullpath)[0]+'_en.vtt'
-            if(os.path.isfile(webvtt_en_fullpath) == False and os.path.isfile(srt_fullpath)):
-                try:
-                    subprocess.run(
-                        ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", srt_fullpath, webvtt_en_fullpath])
-                except subprocess.CalledProcessError as e:
-                    print(e.returncode)
-                    print(e.cmd)
-                    print(e.output)
-                    raise
+            if(os.path.isfile(webvtt_en_fullpath) == False and os.path.isfile(srt_fullpath)): 
+                convert_subtitles_to_webvtt(srt_fullpath, webvtt_en_fullpath)
     return (webvtt_fr_fullpath, webvtt_en_fullpath, webvtt_ov_fullpath)
