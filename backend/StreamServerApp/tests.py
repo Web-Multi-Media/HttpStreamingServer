@@ -90,12 +90,12 @@ class UtilsTest(TestCase):
 
     def test_movies_series_added_to_db(self):
         # We check that only one Series instance is created (2 bing band theory episodes)
-        # and 3 Movie instances are created.
+        # and 4 Movie instances are created.
         # We also check that the video fields are set correctly.
         call_command('populatedb')
 
         self.assertEqual(Series.objects.count(), 1)
-        self.assertEqual(Movie.objects.count(), 3)
+        self.assertEqual(Movie.objects.count(), 4)
 
         video = Video.objects.get(name='The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4')
         series = Series.objects.first()
