@@ -66,7 +66,6 @@ def populate_db_from_local_folder(base_path, remote_url):
     count_series = 0
     count_movies = 0
 
-    print ("Get videos infos in dir: {} ".format(video_path))
 
     for root, directories, filenames in os.walk(video_path):
         idx += len(filenames)
@@ -136,8 +135,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
         this functions will only add videos to the database if 
         they are encoded with h264/AAC codec
     """
-    print(video_full_path)
-    print(video_path)
+    print("processing {}".format(video_full_path))
     try:
         probe = ffmpeg.probe(video_full_path)
     except ffmpeg.Error as e:

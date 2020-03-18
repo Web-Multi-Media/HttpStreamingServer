@@ -16,7 +16,7 @@ def convert_subtitles_to_webvtt(input_file, output_file):
     
     Args:
     input_file: full path to the input subtitle (eg: /Videos/folder1/sub.srt)
-    output_file: full path to the output video (eg: /Videos/folder1/sub.vtt)
+    output_file: full path to the output webvtt file (eg: /Videos/folder1/sub.vtt)
 
     Returns: dict containing video type and info
 
@@ -32,7 +32,7 @@ def extract_subtitle(input_file, output_file):
     
     Args:
     input_file: full path to the input video (eg: /Videos/folder1/video.mp4)
-    output_file: full path to the output video (eg: /Videos/folder1/sub.vtt)
+    output_file: full path to the output webvtt file (eg: /Videos/folder1/sub.vtt)
 
     Returns: dict containing video type and info
 
