@@ -11,6 +11,7 @@ def run_ffmpeg_process(cmd):
         print(completed_process_instance.stdout)
         raise Exception('ffmpeg_error', 'error')
 
+
 def convert_subtitles_to_webvtt(input_file, output_file):
     """ # Uses ffmpeg subprocess to convert subtitles to webvtt
     
@@ -27,6 +28,7 @@ def convert_subtitles_to_webvtt(input_file, output_file):
     if(os.path.isfile(output_file) == False):
         run_ffmpeg_process(cmd)
 
+
 def extract_subtitle(input_file, output_file):
     """ # Uses ffmpeg subprocess to extract subtitles from a video and convert it to webvtt
     
@@ -42,6 +44,7 @@ def extract_subtitle(input_file, output_file):
     cmd = ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", input_file,"-map", "0:s:0", output_file]
     if(os.path.isfile(output_file) == False):
         run_ffmpeg_process(cmd)
+
 
 def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
     """ # Uses ffmpeg subprocess to transmux to mp4

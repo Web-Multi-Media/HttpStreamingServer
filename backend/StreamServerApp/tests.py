@@ -7,6 +7,7 @@ from django.test import Client, TestCase
 from django.conf import settings
 from StreamServerApp.utils import get_num_videos, get_video_type_and_info
 from StreamServerApp.models import Video, Series, Movie
+from StreamServerApp.media_processing import extract_subtitle
 
 
 class CommandsTestCase(TestCase):
@@ -104,3 +105,10 @@ class UtilsTest(TestCase):
         self.assertEqual(video.series, series)
         self.assertNotEqual(series.thumbnail, "")
         self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt"), True)
+        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
+
+    def test_subtitles_extraction(self):
+        extract_subtitle("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4",
+                        "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
+        self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt"), True)
+        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
