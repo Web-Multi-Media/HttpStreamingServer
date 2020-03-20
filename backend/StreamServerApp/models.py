@@ -33,7 +33,7 @@ class Series(models.Model):
         return list(set(self.video_set.values_list('season', flat=True)))
 
     def return_season_episodes(self, season):
-        return self.video_set.filter(season=season)
+        return self.video_set.filter(season=season).order_by('episode')
 
 
 class Video(models.Model):
