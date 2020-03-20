@@ -71,11 +71,13 @@ def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
         run_ffmpeg_process(cmd)
 
 
-def generate_thumbnail(input_file, output_file):
+def generate_thumbnail(input_file, duration, output_file):
     """ # Uses ffmpeg subprocess to extract a thumbnail from a video
     
     Args:
     input_file: full path to the input video (eg: /Videos/folder1/video.mp4)
+    duration: Video duration (in seconds). The thumbnail is taken at half the movies duration
+     (to avoid black screen at the beginning or the end).
     output_file: full path to the output thumbnail file (eg: /Videos/folder1/thumb.jpeg)
 
     Returns: void

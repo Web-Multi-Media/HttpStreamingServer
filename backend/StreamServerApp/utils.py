@@ -175,7 +175,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
         thumbnail_fullpath=os.path.splitext(video_full_path)[0]+'.jpg'
         thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
         if(os.path.isfile(thumbnail_fullpath) == False):
-            generate_thumbnail(video_full_path, thumbnail_fullpath)
+            generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
         #if file is mkv or has an audio codec different than AAC, transmux to mp4
         if(video_full_path.endswith(".mkv") or ("aac" not in audio_codec_type)):
