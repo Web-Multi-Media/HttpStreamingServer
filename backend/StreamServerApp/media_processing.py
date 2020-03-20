@@ -19,7 +19,7 @@ def convert_subtitles_to_webvtt(input_file, output_file):
     input_file: full path to the input subtitle (eg: /Videos/folder1/sub.srt)
     output_file: full path to the output webvtt file (eg: /Videos/folder1/sub.vtt)
 
-    Returns: dict containing video type and info
+    Returns: void
 
     Throw an exception if the return value of the subprocess is different than 0
 
@@ -36,7 +36,7 @@ def extract_subtitle(input_file, output_file):
     input_file: full path to the input video (eg: /Videos/folder1/video.mp4)
     output_file: full path to the output webvtt file (eg: /Videos/folder1/sub.vtt)
 
-    Returns: dict containing video type and info
+    Returns: void
 
     Throw an exception if the return value of the subprocess is different than 0
 
@@ -53,7 +53,7 @@ def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
     input_file: full path to the input video (eg: /Videos/folder1/video.mp4)
     output_file: full path to the output video (eg: /Videos/folder1/video.mp4)
 
-    Returns: dict containing video type and info
+    Returns: void
 
     Throw an exception if the return value of the subprocess is different than 0
 
@@ -67,5 +67,23 @@ def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
         cmd = ["ffmpeg", "-i", input_file,
                 "-codec", "copy",  output_file]
 
+    if(os.path.isfile(output_file) == False):
+        run_ffmpeg_process(cmd)
+
+
+def generate_thumbnail(input_file, output_file):
+    """ # Uses ffmpeg subprocess to extract a thumbnail from a video
+    
+    Args:
+    input_file: full path to the input video (eg: /Videos/folder1/video.mp4)
+    output_file: full path to the output thumbnail file (eg: /Videos/folder1/thumb.jpeg)
+
+    Returns: void
+
+    Throw an exception if the return value of the subprocess is different than 0
+
+    """
+    cmd = ["ffmpeg", "-ss", str(duration/2.0), "-i", input_file, "-an", "-vf", "scale=320:-1",
+                            "-vframes", "1", output_file]
     if(os.path.isfile(output_file) == False):
         run_ffmpeg_process(cmd)
