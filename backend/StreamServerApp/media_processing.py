@@ -2,6 +2,7 @@ import os
 import subprocess
 from StreamingServer.settings import customstderr, customstdout
 
+
 def run_ffmpeg_process(cmd):
     completed_process_instance = subprocess.run(cmd, stdout=customstdout,
                                             stderr=customstderr)
