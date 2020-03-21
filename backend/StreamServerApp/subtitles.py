@@ -18,6 +18,22 @@ def init_cache():
         region.configure('dogpile.cache.dbm', arguments={
             'filename': 'cachefile.dbm'}, replace_existing_backend=True)
 
+def handle_subliminal_download(video, video_path, langage):
+    best_subtitles = download_best_subtitles([video], {Language(langage)})
+    print(best_subtitles)
+    if best_subtitles[video]:
+        best_subtitle = best_subtitles[video][0]
+        value = save_subtitles(video, [best_subtitle], encoding='utf8')
+        if len(value) > 0:
+            srt_fullpath = subtitle.get_subtitle_path(
+                video_path, Language(langage))
+            webvtt_en_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
+            if(os.path.isfile(webvtt_en_fullpath) == False and os.path.isfile(srt_fullpath)): 
+                convert_subtitles_to_webvtt(srt_fullpath, webvtt_en_fullpath)
+                return webvtt_en_fullpath
+    else:
+        return ''
+
 
 def get_subtitles(video_path, ov_subtitles):
     """ # get subtitles and convert them to web vtt
@@ -37,21 +53,7 @@ def get_subtitles(video_path, ov_subtitles):
 
     video = Video.fromname(video_path)
 
-    best_subtitles = download_best_subtitles(
-        [video], {Language('eng'), Language('fra')})
+    webvtt_en_fullpath = handle_subliminal_download(video, video_path, 'eng')
+    webvtt_fr_fullpath = handle_subliminal_download(video, video_path, 'fra')
 
-    if best_subtitles[video]:
-        best_subtitle = best_subtitles[video][0]
-        value = save_subtitles(video, [best_subtitle], encoding='utf8')
-        if len(value) > 0:
-            srt_fullpath = subtitle.get_subtitle_path(
-                video_path, Language('fra'))
-            webvtt_fr_fullpath = os.path.splitext(srt_fullpath)[0]+'_fr.vtt'
-            if(os.path.isfile(webvtt_fr_fullpath) == False and os.path.isfile(srt_fullpath)):
-                convert_subtitles_to_webvtt(srt_fullpath, webvtt_fr_fullpath)
-            srt_fullpath = subtitle.get_subtitle_path(
-                video_path, Language('eng'))
-            webvtt_en_fullpath = os.path.splitext(srt_fullpath)[0]+'_en.vtt'
-            if(os.path.isfile(webvtt_en_fullpath) == False and os.path.isfile(srt_fullpath)): 
-                convert_subtitles_to_webvtt(srt_fullpath, webvtt_en_fullpath)
     return (webvtt_fr_fullpath, webvtt_en_fullpath, webvtt_ov_fullpath)
