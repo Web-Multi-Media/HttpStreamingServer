@@ -18,9 +18,9 @@ def init_cache():
         region.configure('dogpile.cache.dbm', arguments={
             'filename': 'cachefile.dbm'}, replace_existing_backend=True)
 
+
 def handle_subliminal_download(video, video_path, langage):
     best_subtitles = download_best_subtitles([video], {Language(langage)})
-    print(best_subtitles)
     if best_subtitles[video]:
         best_subtitle = best_subtitles[video][0]
         value = save_subtitles(video, [best_subtitle], encoding='utf8')

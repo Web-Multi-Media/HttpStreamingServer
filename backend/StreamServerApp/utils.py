@@ -91,7 +91,10 @@ def populate_db_from_local_folder(base_path, remote_url):
                                   height=video_infos['video_height'],
                                   width=video_infos['video_width'],
                                   thumbnail=video_infos['remote_thumbnail_url'],
-                                  en_subtitle_url=video_infos['en_subtitles_remote_path'])
+                                  en_subtitle_url=video_infos['en_subtitles_remote_path'],
+                                  fr_subtitle_url=video_infos['fr_subtitles_remote_path'],
+                                  ov_subtitle_url=video_infos['ov_subtitles_remote_path']
+                                  )
                         
                         # parse movie or series, episode & season
                         video_type_and_info = get_video_type_and_info(filename)
