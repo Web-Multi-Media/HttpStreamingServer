@@ -12,6 +12,7 @@ import sys
 import string
 from os.path import isfile, join
 import ffmpeg
+
 import subprocess
 import traceback
 from datetime import timedelta
@@ -20,8 +21,9 @@ from django.db import transaction
 import re
 
 from StreamServerApp.models import Video, Series, Movie
-from StreamingServer.settings import customstderr, customstdout
 from StreamServerApp.subtitles import get_subtitles, init_cache
+from StreamServerApp.media_processing import transmux_to_mp4, generate_thumbnail
+from StreamingServer.settings import customstderr, customstdout
 
 
 def delete_DB_Infos():
@@ -64,7 +66,6 @@ def populate_db_from_local_folder(base_path, remote_url):
     count_series = 0
     count_movies = 0
 
-    print ("Get videos infos in dir: {} ".format(video_path))
 
     for root, directories, filenames in os.walk(video_path):
         idx += len(filenames)
@@ -90,7 +91,10 @@ def populate_db_from_local_folder(base_path, remote_url):
                                   height=video_infos['video_height'],
                                   width=video_infos['video_width'],
                                   thumbnail=video_infos['remote_thumbnail_url'],
-                                  en_subtitle_url=video_infos['en_subtitles_remote_path'])
+                                  en_subtitle_url=video_infos['en_subtitles_remote_path'],
+                                  fr_subtitle_url=video_infos['fr_subtitles_remote_path'],
+                                  ov_subtitle_url=video_infos['ov_subtitles_remote_path']
+                                  )
                         
                         # parse movie or series, episode & season
                         video_type_and_info = get_video_type_and_info(filename)
@@ -134,8 +138,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
         this functions will only add videos to the database if 
         they are encoded with h264/AAC codec
     """
-    print(video_full_path)
-    print(video_path)
+    print("processing {}".format(video_full_path))
     try:
         probe = ffmpeg.probe(video_full_path)
     except ffmpeg.Error as e:
@@ -170,32 +173,23 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
     audio_codec_type = audio_stream['codec_name']
 
     relative_path = os.path.relpath(video_full_path, video_path)
-    if(("h264" in video_codec_type) and ("aac" in audio_codec_type)):
+    if(("h264" in video_codec_type)):
         #Thumbnail creation
         thumbnail_fullpath=os.path.splitext(video_full_path)[0]+'.jpg'
         thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
         if(os.path.isfile(thumbnail_fullpath) == False):
-            subprocess.run(["ffmpeg", "-ss", str(duration/2.0), "-i", video_full_path,
-                            "-an", "-vf", "scale=320:-1",
-                            "-vframes", "1", thumbnail_fullpath], stdout=customstdout, stderr=customstderr)
+            generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
-        #if file is mkv, transmux to mp4
-        if(video_full_path.endswith(".mkv")):
-            temp_mp4 = os.path.splitext(video_full_path)[0]+'.mp4'
-            if(os.path.isfile(temp_mp4) == False):
-                cmd = ["ffmpeg", "-i", video_full_path,
-                       "-codec", "copy", temp_mp4]
-                try:
-                    subprocess.run(cmd, stdout=customstdout,
-                                   stderr=customstderr)
-                except subprocess.CalledProcessError as e:
-                    print(e.returncode)
-                    print(e.cmd)
-                    print(e.output)
-                    raise
-            #remove old mkv file
+        #if file is mkv or has an audio codec different than AAC, transmux to mp4
+        if(video_full_path.endswith(".mkv") or ("aac" not in audio_codec_type)):
+            temp_mp4 = os.path.splitext(video_full_path)[0]+'-reencoded.mp4'
+            if "aac" not in audio_codec_type:
+                transmux_to_mp4(video_full_path, temp_mp4, True)
+            else:
+                transmux_to_mp4(video_full_path, temp_mp4, False)
+
             os.remove(video_full_path)
-            relative_path = os.path.splitext(relative_path)[0]+'.mp4'
+            relative_path =  os.path.relpath(temp_mp4, video_path)
             video_full_path = temp_mp4
 
         subtitles_full_path = get_subtitles(video_full_path, ov_subtitles)

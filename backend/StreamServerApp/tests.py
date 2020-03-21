@@ -7,6 +7,8 @@ from django.test import Client, TestCase
 from django.conf import settings
 from StreamServerApp.utils import get_num_videos, get_video_type_and_info
 from StreamServerApp.models import Video, Series, Movie
+from StreamServerApp.media_processing import extract_subtitle, generate_thumbnail
+from StreamServerApp.subtitles import get_subtitles
 
 
 class CommandsTestCase(TestCase):
@@ -90,12 +92,12 @@ class UtilsTest(TestCase):
 
     def test_movies_series_added_to_db(self):
         # We check that only one Series instance is created (2 bing band theory episodes)
-        # and 3 Movie instances are created.
+        # and 4 Movie instances are created.
         # We also check that the video fields are set correctly.
         call_command('populatedb')
 
         self.assertEqual(Series.objects.count(), 1)
-        self.assertEqual(Movie.objects.count(), 3)
+        self.assertEqual(Movie.objects.count(), 4)
 
         video = Video.objects.get(name='The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4')
         series = Series.objects.first()
@@ -103,3 +105,25 @@ class UtilsTest(TestCase):
         self.assertEqual(video.season, 5)
         self.assertEqual(video.series, series)
         self.assertNotEqual(series.thumbnail, "")
+        self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt"), True)
+        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
+
+    def test_subtitles_extraction(self):
+        extract_subtitle("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4",
+                        "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
+        self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt"), True)
+        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
+
+    def test_subtitles_download(self):
+        subtitles = get_subtitles("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4", True)
+        self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.en.vtt"), True)
+        self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.fr.vtt"), True)
+        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.en.vtt")
+        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.fr.vtt")
+        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
+
+    def test_thumbnail_generation(self):
+        generate_thumbnail("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4", 1.0,
+                        "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpeg")
+        self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpeg"), True)
+        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpeg")

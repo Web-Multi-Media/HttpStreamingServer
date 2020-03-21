@@ -1,11 +1,10 @@
 
-FROM ubuntu:18.04
+FROM node:8
 
 RUN apt-get update -y
-RUN apt-get install -y python3-pip python-dev build-essential
-RUN apt-get install -y software-properties-common
-RUN apt-get install -y python3-software-properties
-RUN apt-get install -y x264 x265 ffmpeg
+RUN apt-get install -y python3-pip python-dev build-essential \
+    software-properties-common python3-software-properties \
+    x264 x265 ffmpeg && rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONUNBUFFERED 1
 COPY . /usr/src/app/

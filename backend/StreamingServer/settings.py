@@ -29,10 +29,12 @@ ALLOWED_HOSTS = ['web', 'localhost']
 
 if os.getenv('DEPLOY_ENV', 'dev') == 'production':
     DEBUG = False
+    VERBOSE_OUTPUT = False
     ALLOWED_HOSTS.append(os.getenv('HTTPSTREAMING_HOST', ''))
     VIDEO_URL = '/Videos/'
 else:
     DEBUG = True
+    VERBOSE_OUTPUT = True
     VIDEO_URL = 'http://localhost:1337/Videos/'
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
@@ -40,11 +42,11 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 
 VIDEO_ROOT = os.path.join(BASE_DIR, 'Videos/')
 
-VERBOSE_OUTPUT = False
+
 
 if (VERBOSE_OUTPUT == True):
-    customstdout=subprocess.STDOUT
-    customstderr=subprocess.STDOUT
+    customstdout=subprocess.PIPE
+    customstderr=subprocess.PIPE
 else:
     customstdout=subprocess.DEVNULL
     customstderr=subprocess.DEVNULL
