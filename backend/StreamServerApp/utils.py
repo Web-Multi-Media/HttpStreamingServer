@@ -180,6 +180,8 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
         if(os.path.isfile(thumbnail_fullpath) == False):
             generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
+        subtitles_full_path = get_subtitles(video_full_path, ov_subtitles)
+
         #if file is mkv or has an audio codec different than AAC, transmux to mp4
         if(video_full_path.endswith(".mkv") or ("aac" not in audio_codec_type)):
             temp_mp4 = os.path.splitext(video_full_path)[0]+'-reencoded.mp4'
@@ -192,7 +194,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             relative_path =  os.path.relpath(temp_mp4, video_path)
             video_full_path = temp_mp4
 
-        subtitles_full_path = get_subtitles(video_full_path, ov_subtitles)
+        
         fr_subtitles_remote_path = ''
         if(subtitles_full_path[0]):
             fr_subtitles_relative_path = os.path.relpath(subtitles_full_path[0], video_path)
