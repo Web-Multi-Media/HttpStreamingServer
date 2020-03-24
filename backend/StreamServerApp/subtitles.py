@@ -28,7 +28,8 @@ def handle_subliminal_download(video, video_path, langage):
             srt_fullpath = subtitle.get_subtitle_path(
                 video_path, Language(langage))
             webvtt_en_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
-            if(os.path.isfile(webvtt_en_fullpath) == True)
+            if(os.path.isfile(webvtt_en_fullpath) == True):
+                #return subtitles path even if subtitles are already downloaded/converted
                 return webvtt_en_fullpath
             if(os.path.isfile(srt_fullpath)): 
                 convert_subtitles_to_webvtt(srt_fullpath, webvtt_en_fullpath)
