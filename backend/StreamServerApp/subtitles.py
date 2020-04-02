@@ -51,12 +51,22 @@ def get_subtitles(video_path, ov_subtitles):
     webvtt_ov_fullpath = ''
 
     if ov_subtitles:
-        webvtt_ov_fullpath = os.path.splitext(video_path)[0]+'_ov.vtt'
-        extract_subtitle(video_path, webvtt_ov_fullpath)
+        try:
+            webvtt_ov_fullpath = os.path.splitext(video_path)[0]+'_ov.vtt'
+            extract_subtitle(video_path, webvtt_ov_fullpath)
+        except:
+            webvtt_ov_fullpath = ''
 
     video = Video.fromname(video_path)
 
-    webvtt_en_fullpath = handle_subliminal_download(video, video_path, 'eng')
-    webvtt_fr_fullpath = handle_subliminal_download(video, video_path, 'fra')
+    try:
+        webvtt_en_fullpath = handle_subliminal_download(video, video_path, 'eng')
+    except:
+        webvtt_en_fullpath = ''
+    
+    try:
+        webvtt_fr_fullpath = handle_subliminal_download(video, video_path, 'fra')
+    except:
+        webvtt_fr_fullpath = ''
 
     return (webvtt_fr_fullpath, webvtt_en_fullpath, webvtt_ov_fullpath)
