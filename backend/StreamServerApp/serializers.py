@@ -21,7 +21,8 @@ class VideoSerializer(serializers.ModelSerializer):
             'series', 
             'movie', 
             'episode', 
-            'season'
+            'season',
+            'next_episode',
         ]
 
 
