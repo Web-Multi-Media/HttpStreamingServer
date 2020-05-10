@@ -68,6 +68,6 @@ class Video(models.Model):
     def next_episode(self):
         if self.series:
             try:
-                return self.series.video_set.get(episode=self.episode+1).id
+                return self.series.video_set.get(episode=self.episode+1, season=self.season).id
             except ObjectDoesNotExist:
                 return None
