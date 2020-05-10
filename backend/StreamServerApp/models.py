@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.postgres.search import TrigramSimilarity
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class SearchManager(models.Manager):
@@ -62,3 +63,11 @@ class Video(models.Model):
     season = models.PositiveSmallIntegerField(default=None, null=True)
 
     objects = SearchManager()
+    
+    @property
+    def next_episode(self):
+        if self.series:
+            try:
+                return self.series.video_set.get(episode=self.episode+1).id
+            except ObjectDoesNotExist:
+                return None
