@@ -98,6 +98,7 @@ class App extends React.Component {
     };
 
     handleVideoSelect = (video) => {
+        console.log("handleVideoSelect"+video);
         this.setState({ selectedVideo: video });
         if(video){
             this.props.history.push("/streaming/?video=" + video.id);
@@ -113,7 +114,7 @@ class App extends React.Component {
                 <SearchBar handleFormSubmit={this.handleSubmit} />
                 <div className='ui grid'>
                     <div className="ui column">
-                            <VideoDetail video={this.state.selectedVideo} />
+                            <VideoDetail video={this.state.selectedVideo} handleVideoSelect={this.handleVideoSelect}/>
                     </div>
                 </div>
                 {

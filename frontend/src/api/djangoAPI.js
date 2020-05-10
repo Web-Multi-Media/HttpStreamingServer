@@ -68,6 +68,7 @@ function Video(response) {
     this.episode = response.episode;
     this.season = response.season;
     this.movie = response.movie;
+    this.nextEpisode = response.next_episode;
 }
 
 function SeriesPager(response) {
