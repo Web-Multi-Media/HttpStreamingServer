@@ -86,7 +86,7 @@ class SeriesSeaonViewSet(generics.ListAPIView):
     """
     This viewset provides listing of episodes of a season of a series.
     """
-    serializer_class = VideoListSerializer
+    serializer_class = VideoRetrieveSerializer
 
     def _allowed_methods(self):
         return ['GET']
