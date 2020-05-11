@@ -21,8 +21,10 @@ const VideoDetail = ({ video, handleVideoSelect }) => {
                     {video.enSubtitleUrl && <track label="English" kind="subtitles" srcLang="eng" src={video.enSubtitleUrl} />}
                     {video.ovSubtitleUrl && <track label="OV" kind="subtitles" srcLang="ov" src={video.ovSubtitleUrl} />}
                 </video>
+            </div>
+            <div className="ui segment">
                 {video.nextEpisode && <button onClick={() => {HandleNextEpisode(handleVideoSelect,video.nextEpisode);}
-            }>coucou</button>}
+            }>Next Episode</button>}
             </div>
             <div className="ui segment">
                 <h4 className="ui header">{video.name}</h4>
