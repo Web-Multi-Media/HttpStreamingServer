@@ -4,7 +4,7 @@ from StreamServerApp.models import Video, Series, Movie
 from StreamServerApp.fields import PaginatedRelationField
 
 
-class VideoListSerializer(serializers.ModelSerializer):
+class SimpleVideoSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField(many=False)
     series = serializers.StringRelatedField(many=False)
 
@@ -24,7 +24,7 @@ class VideoListSerializer(serializers.ModelSerializer):
             'season',
         ]
 
-class VideoRetrieveSerializer(serializers.ModelSerializer):
+class ExtendedVideoSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField(many=False)
     series = serializers.StringRelatedField(many=False)
 
@@ -61,7 +61,7 @@ class SeriesSerializer(serializers.ModelSerializer):
     This serializer is used for retrieving a series. 
     We list items from the video_set related field, and the seasons.
     """
-    video_set = PaginatedRelationField(VideoListSerializer)
+    video_set = PaginatedRelationField(ExtendedVideoSerializer)
     seasons = serializers.ReadOnlyField(source='season_list')
 
     class Meta:
@@ -70,7 +70,7 @@ class SeriesSerializer(serializers.ModelSerializer):
 
 
 class MoviesSerializer(serializers.ModelSerializer):
-    video_set = PaginatedRelationField(VideoListSerializer)
+    video_set = PaginatedRelationField(SimpleVideoSerializer)
 
     class Meta:
         model = Movie

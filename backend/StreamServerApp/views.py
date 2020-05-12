@@ -11,7 +11,7 @@ from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework import generics
 
-from StreamServerApp.serializers import VideoRetrieveSerializer, VideoListSerializer, SeriesSerializer, MoviesSerializer, SeriesListSerializer
+from StreamServerApp.serializers import ExtendedVideoSerializer, SimpleVideoSerializer, SeriesSerializer, MoviesSerializer, SeriesListSerializer
 from StreamServerApp.models import Video, Series, Movie
 from StreamServerApp import utils
 
@@ -33,9 +33,9 @@ class VideoViewSet(viewsets.ModelViewSet):
         Overwirte
         """
         if self.action == 'list':
-            return VideoListSerializer
+            return SimpleVideoSerializer
         if self.action == 'retrieve':
-            return VideoRetrieveSerializer
+            return ExtendedVideoSerializer
 
     def get_queryset(self):
         """
@@ -86,7 +86,7 @@ class SeriesSeaonViewSet(generics.ListAPIView):
     """
     This viewset provides listing of episodes of a season of a series.
     """
-    serializer_class = VideoRetrieveSerializer
+    serializer_class = ExtendedVideoSerializer
 
     def _allowed_methods(self):
         return ['GET']
