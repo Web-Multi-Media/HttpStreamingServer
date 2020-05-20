@@ -2,8 +2,12 @@
 
 Intro
 -------------------
+This project is a video presentation server based on Django Rest Framework and React. It provides automatic video indexing and classification.
 
-The aim of the project is to create an easy to use http media presentation server based on Django Rest Framework and React. Support is currently limited to mp4/mkv container with H264/AAC content. 
+![](doc/preview.jpeg )
+
+
+Support is currently limited to H264 encoded content.
 Subtitles are added automatically if an adequate match is found (after a conversion from .srt to webvtt).
 
 
