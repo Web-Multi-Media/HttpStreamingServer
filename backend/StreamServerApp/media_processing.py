@@ -63,10 +63,10 @@ def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
         print(
             "Audio codec is not aac, audio reencoding is necessary (This might take a long time)")
         cmd = ["ffmpeg", "-i", input_file,
-                "-acodec", "aac", "-vcodec", "copy", output_file]
+                "-acodec", "aac", "-vcodec", "copy", "-movflags", "+faststart", output_file]
     else:
         cmd = ["ffmpeg", "-i", input_file,
-                "-codec", "copy",  output_file]
+                "-codec", "copy", "-movflags", "+faststart", output_file]
 
     if(os.path.isfile(output_file) == False):
         run_ffmpeg_process(cmd)
