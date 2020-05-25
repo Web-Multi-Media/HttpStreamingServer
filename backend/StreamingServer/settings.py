@@ -70,6 +70,11 @@ INSTALLED_APPS = [
     'StreamServerApp',
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
 ]
 
 MIDDLEWARE = [
@@ -170,3 +175,6 @@ REST_FRAMEWORK = {
      # the page size must be greater (strictly) than SLIDES_OF_CAROUSEL in VideoCarouselSlick.js
     'PAGE_SIZE': 10
 }
+
+# https://django-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional
+SITE_ID = 1
