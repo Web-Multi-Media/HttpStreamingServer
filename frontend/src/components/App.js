@@ -5,8 +5,10 @@ import { withRouter } from "react-router-dom";
 import queryString from 'query-string'
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
 import { client } from '../api/djangoAPI';
-import  fakeData from '../fakeData/videos';
+import { AuthContext } from "./context/auth";
 import SeriesCarousel from "./SeriesCarousel";
+import PrivateRoute from './privateRoute';
+import User from './User';
 
 
 class App extends React.Component {
@@ -110,38 +112,41 @@ class App extends React.Component {
 
     render() {
         return (
-            <div className='ui container' style={{ marginTop: '1em' }}>
-                <SearchBar handleFormSubmit={this.handleSubmit} />
-                <div className='ui grid'>
-                    <div className="ui column">
-                            <VideoDetail video={this.state.selectedVideo} handleVideoSelect={this.handleVideoSelect}/>
+            <AuthContext.Provider value={false}>
+                <div className='ui container' style={{ marginTop: '1em' }}>
+                    <SearchBar handleFormSubmit={this.handleSubmit} />
+                    <div className='ui grid'>
+                        <div className="ui column">
+                                <VideoDetail video={this.state.selectedVideo} handleVideoSelect={this.handleVideoSelect}/>
+                        </div>
                     </div>
-                </div>
-                {
-                    this.state.seriesVideos.length > 0 &&
-                    <div className="carrouselContainer">
-                        <SeriesCarousel
-                            pager={this.state.seriesPager}
-                            videos={this.state.seriesVideos}
-                            handleVideoSelect={this.handleVideoSelect}
-                        />
-                    </div>
-                }
-                        <div className="carrouselContainer">
-                <h4>MOVIES</h4>
-                <div>
-
                     {
-                        this.state.moviesVideos.length > 0 &&
-                            <VideoCarrouselSlick
-                                pager={this.state.moviesPager}
-                                videos={this.state.moviesVideos}
+                        this.state.seriesVideos.length > 0 &&
+                        <div className="carrouselContainer">
+                            <SeriesCarousel
+                                pager={this.state.seriesPager}
+                                videos={this.state.seriesVideos}
                                 handleVideoSelect={this.handleVideoSelect}
                             />
-                    }
                         </div>
+                    }
+                            <div className="carrouselContainer">
+                    <h4>MOVIES</h4>
+                    <div>
+
+                        {
+                            this.state.moviesVideos.length > 0 &&
+                                <VideoCarrouselSlick
+                                    pager={this.state.moviesPager}
+                                    videos={this.state.moviesVideos}
+                                    handleVideoSelect={this.handleVideoSelect}
+                                />
+                        }
+                            </div>
+                    </div>
                 </div>
-            </div>
+                <PrivateRoute path="/user" component={User} />
+            </AuthContext.Provider>
         )
     }
 }

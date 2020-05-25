@@ -14,7 +14,8 @@
     "react-slick": "^0.25.2",
     "react-bootstrap": "latest",
     "react-router-dom": "^5.1.2",
-    "@material-ui/core": "latest"
+    "@material-ui/core": "latest",
+    "styled-components": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
