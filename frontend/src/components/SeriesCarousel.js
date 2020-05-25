@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import '../style/style.scss';
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
-import fakeData from "../fakeData/videos";
 import {client} from "../api/djangoAPI";
 import SelectBar from "./SelectBar";
 

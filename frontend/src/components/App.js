@@ -2,6 +2,7 @@ import React from 'react';
 import SearchBar from './Searchbar';
 import VideoDetail from './VideoDetail';
 import { withRouter } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 import queryString from 'query-string'
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
 import { client } from '../api/djangoAPI';
@@ -9,6 +10,8 @@ import { AuthContext } from "./context/auth";
 import SeriesCarousel from "./SeriesCarousel";
 import PrivateRoute from './privateRoute';
 import User from './User';
+import Login from "./login";
+import Signup from './signup';
 
 
 class App extends React.Component {
@@ -145,7 +148,9 @@ class App extends React.Component {
                             </div>
                     </div>
                 </div>
-                <PrivateRoute path="/user" component={User} />
+                <Route path="/login" component={Login} />
+                <Route path="/signup" component={Signup} />
+                <PrivateRoute path="/" component={User} />
             </AuthContext.Provider>
         )
     }
