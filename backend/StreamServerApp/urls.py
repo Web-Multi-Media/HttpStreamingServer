@@ -10,6 +10,7 @@ router = DefaultRouter()
 router.register(r'videos', views.VideoViewSet, basename='videos')
 router.register(r'series', views.SeriesViewSet, basename='series')
 router.register(r'movies', views.MoviesViewSet, basename='movie')
+router.register(r'history', views.HistoryViewSet, basename='history')
 
 
 urlpatterns = [

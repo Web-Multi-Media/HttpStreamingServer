@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 from StreamServerApp.serializers import ExtendedVideoSerializer, SimpleVideoSerializer, SeriesSerializer, MoviesSerializer, SeriesListSerializer
 from StreamServerApp.models import Video, Series, Movie
@@ -119,4 +120,18 @@ class MoviesViewSet(viewsets.ModelViewSet):
         else:
             queryset = Movie.objects.all()
         return queryset
+
+class HistoryViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides 
+    """
+
+    permission_classes = (IsAuthenticated,)
+
+    queryset = Video.objects.all()
+    serializer_class = ExtendedVideoSerializer
+
+    def _allowed_methods(self):
+        return ['GET', 'POST']
+
         
