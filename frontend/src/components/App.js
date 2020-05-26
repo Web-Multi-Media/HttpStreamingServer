@@ -14,8 +14,7 @@ import { client } from '../api/djangoAPI';
 import {getMoviesAndSeries, getUrlVideo} from '../utils/utils';
 
 function App(props) {
-    // const existingTokens = JSON.parse(localStorage.getItem('tokens'));
-    const existingTokens = '';
+    const existingTokens = JSON.parse(localStorage.getItem("tokens"));
     const [authTokens, setAuthTokens] = useState(existingTokens);
     const [pager, setPager] = useState(null);
     const [videos, setVideos] = useState([]);
