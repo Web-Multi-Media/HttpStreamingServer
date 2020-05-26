@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Route } from 'react-router-dom';
+import { Route, useHistory, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import SearchBar from './Searchbar';
 import VideoDetail from './VideoDetail';
@@ -23,6 +23,8 @@ function App(props) {
     const [seriesPager, setSeriesPager] = useState(null);
     const [moviesVideos, setMoviesVideos] = useState([]);
     const [seriesVideos, setSeriesVideos] = useState([]);
+    const location = useLocation();
+    const history = useHistory();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -39,7 +41,7 @@ function App(props) {
         console.log("handleVideoSelect"+video);
         setSelectedVideo(video);
         if(video){
-            // props.history.push("/streaming/?video=" + video.id);
+            history.push("/streaming/?video=" + video.id);
             document.title = video.name;
         }
         // change tab title with the name of the selected video
@@ -94,8 +96,7 @@ function App(props) {
      * @returns {Promise<void>}
      */
     const getUrlVideo = async () => {
-        // const values = queryString.parse(props.location.search);
-        const values = {};
+        const values = queryString.parse(location.search);
         if (values.video) {
             const id = parseInt(values.video);
             // API call to retrieve current video
