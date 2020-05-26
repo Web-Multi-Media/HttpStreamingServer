@@ -8,14 +8,20 @@ import { useAuth } from "./context/auth";
 function Login() {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [userName, setUserName] = useState("");
+  const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const email=""
   const { setAuthTokens } = useAuth();
 
   function postLogin() {
-    axios.post("https://www.somePlace.com/auth/login", {
-      userName,
-      password
+    const http = axios.create({
+      baseURL: process.env.REACT_APP_DJANGO_API,
+      responseType: 'json',
+    });
+    http.post("/rest-auth/login/", {
+      username,
+      password,
+      email,
     }).then(result => {
       if (result.status === 200) {
         setAuthTokens(result.data);
@@ -37,7 +43,7 @@ function Login() {
       <Form>
         <Input
           type="username"
-          value={userName}
+          value={username}
           onChange={e => {
             setUserName(e.target.value);
           }}
