@@ -13,8 +13,7 @@ import { AuthContext } from './context/auth';
 import { client } from '../api/djangoAPI';
 
 function App(props) {
-    // const existingTokens = JSON.parse(localStorage.getItem('tokens'));
-    const existingTokens = '';
+    const existingTokens = JSON.parse(localStorage.getItem("tokens"));
     const [authTokens, setAuthTokens] = useState(existingTokens);
     const [pager, setPager] = useState(null);
     const [videos, setVideos] = useState([]);
