@@ -1,5 +1,3 @@
-
-
 import shutil
 
 
@@ -17,8 +15,3 @@ for season in range(1,6):
     for episode in range(1,8):
         shutil.copyfile("/usr/src/app/Videos/folder1/Matrix.mp4",
          "/usr/src/app/Videos/folder1/Malcolm in the Middle S0{}E{:02d}.mp4".format(season, episode))
-
-
-
-
-

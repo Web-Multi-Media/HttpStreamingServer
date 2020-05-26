@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from StreamServerApp.models import Video, Series, Movie
+from StreamServerApp.models.videos import Video, Series, Movie
 from StreamServerApp.fields import PaginatedRelationField
 
 

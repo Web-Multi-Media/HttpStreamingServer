@@ -1,10 +1,7 @@
-from datetime import timedelta
-
-from babelfish import Language
-from subliminal import Video, subtitle, list_subtitles, region, download_best_subtitles, download_subtitles, save_subtitles, scan_videos, scan_video
 import os
-import subprocess
-from StreamingServer.settings import customstderr, customstdout
+from babelfish import Language
+from subliminal import Video, subtitle, region, download_best_subtitles, save_subtitles
+
 from StreamServerApp.media_processing import extract_subtitle, convert_subtitles_to_webvtt
 
 #https://subliminal.readthedocs.io/en/latest/user/usage.html
