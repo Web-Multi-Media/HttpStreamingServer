@@ -11,6 +11,7 @@ import PrivateRoute from './privateRoute';
 import User from './User';
 import { AuthContext } from './context/auth';
 import { client } from '../api/djangoAPI';
+import {getMoviesAndSeries, getUrlVideo} from '../utils/utils';
 
 function App(props) {
     // const existingTokens = JSON.parse(localStorage.getItem('tokens'));
@@ -29,25 +30,24 @@ function App(props) {
     useEffect(() => {
         const fetchData = async () => {
             await Promise.all([
-                getMoviesAndSeries(),
-                getUrlVideo(),
+                getMoviesAndSeries(setPager, setVideos, setSeriesPager,
+                    setSeriesVideos, setMoviesPager, setMoviesVideos),
+                getUrlVideo(location, setSelectedVideo)
             ]);
         };
-
         fetchData();
     }, []);
 
-    const  handleVideoSelect = (video) => {
-        console.log("handleVideoSelect"+video);
+    const handleVideoSelect = (video) => {
+        console.log(`handleVideoSelect${video}`);
         setSelectedVideo(video);
-        if(video){
-            history.push("/streaming/?video=" + video.id);
+        if (video) {
+            history.push(`/streaming/?video=${video.id}`);
             document.title = video.name;
         }
         // change tab title with the name of the selected video
         window.scrollTo(0, 0);
     };
-
 
 
     const handleSubmit = async (termFromSearchBar) => {
@@ -69,46 +69,9 @@ function App(props) {
             console.log(error);
         }
     };
-    /**
-     * retrieve movies and series
-     * @returns {Promise<void>}
-     */
-    const getMoviesAndSeries = async () => {
-        try {
-            const [fetchPager, fetchPager2] = await Promise.all([
-                client.searchSeries(),
-                client.searchMovies(),
-            ]);
-            setPager(fetchPager);
-            setVideos(fetchPager.videos);
-            setSeriesPager(fetchPager);
-            setSeriesVideos(fetchPager.series);
-            setMoviesPager(fetchPager2);
-            setMoviesVideos(fetchPager2.videos);
-        } catch (error) {
-            console.log(error);
-        }
-    };
 
-    /**
-     * check in the url if a video is specified
-     * load it in the player if exist
-     * @returns {Promise<void>}
-     */
-    const getUrlVideo = async () => {
-        const values = queryString.parse(location.search);
-        if (values.video) {
-            const id = parseInt(values.video);
-            // API call to retrieve current video
-            // We look here if a query string for the video is provided, if so load the video
-            try {
-                const video = await client.getVideoById(id);
-                setSelectedVideo(video);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    };
+
+
 
     const setTokens = (data) => {
         localStorage.setItem('tokens', JSON.stringify(data));
