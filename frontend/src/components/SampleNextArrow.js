@@ -1,14 +1,10 @@
 import React from 'react';
-
+import './SampleNextArrow.css'
 
 const SampleNextArrow = (props) => {
-    const { className, style, onClick } = props;
+    const { onClick } = props;
     return (
-        <div
-            className={className}
-            style={{ ...style, display: 'block' }}
-            onClick={onClick}
-        />
+        <label className="arrow back" onClick={onClick}>› </label>
     );
 };
 export default SampleNextArrow;
