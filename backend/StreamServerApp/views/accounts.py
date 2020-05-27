@@ -13,10 +13,10 @@ class History(APIView):
     Get, create and update user history
     """
     def get(self, request):
-        user_token = request.data.get('headers').get('Authorization')
+        user_token = request.data.get('headers', {}).get('Authorization')
         user = User.objects.get(auth_token=user_token)
 
-        queryset = Video.objects.filter(history__user=user).order_by('-updated_at')
+        queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
         serializer = ExtendedVideoSerializer(queryset, many=True)
         return Response(serializer.data)
         
