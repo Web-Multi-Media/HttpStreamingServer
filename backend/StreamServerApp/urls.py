@@ -11,13 +11,14 @@ router = DefaultRouter()
 router.register(r'videos', videos.VideoViewSet, basename='videos')
 router.register(r'series', videos.SeriesViewSet, basename='series')
 router.register(r'movies', videos.MoviesViewSet, basename='movie')
-router.register(r'history', accounts.HistoryViewSet, basename='history')
+# router.register(r'history', accounts.HistoryViewSet, basename='history')
 
 
 urlpatterns = [
     path('', videos.index, name='index'),
     url(r'^', include(router.urls)),
     url('^series/(?P<series>.+)/season/(?P<season>.+)$', videos.SeriesSeaonViewSet.as_view()),
+    url(r'^history/', accounts.History.as_view()),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^rest-auth/registration/', include('rest_auth.registration.urls'))
 ]
