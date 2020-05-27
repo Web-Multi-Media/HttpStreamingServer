@@ -93,6 +93,7 @@ function App(props) {
                         <VideoDetail
                             video={selectedVideo}
                             handleVideoSelect={handleVideoSelect}
+                            token ={authTokens.key}
                         />
                     </div>
                 </div>

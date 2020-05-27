@@ -12,6 +12,7 @@ const VIDEOS_ENDPOINT = '/videos';
 const SERIES_ENDPOINT = '/series';
 const SEASON_ENDPOINT = '/season';
 const MOVIES_ENDPOINT = '/movies';
+const HISTORY_ENDPOINT = '/history';
 
 
 const client = {
@@ -26,6 +27,27 @@ const client = {
     getVideoById: async (id) => {
         const response = await http.get(`${VIDEOS_ENDPOINT}/${id}`);
         return new Video(response.data);
+    },
+
+
+    /**
+     * performs GET request to retrieve a single video by it's ID
+     *
+     * @param id
+     *          video's id
+     * @returns {Promise<Video>}
+     *          Video
+     */
+    updateHistory: async (token, id) => {
+        const response = await http.post(`${HISTORY_ENDPOINT}/`, {
+            headers: {
+                Authorization: 'Bearer ' + token //the token is a variable which holds the token
+            },
+            body:{
+                "video-id": id
+            }
+        });
+        console.log(response);
     },
 
     /**

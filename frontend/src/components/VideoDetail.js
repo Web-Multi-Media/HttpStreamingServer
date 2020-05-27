@@ -7,7 +7,11 @@ async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
     handleVideoSelect(video);
 }
 
-const VideoDetail = ({ video, handleVideoSelect }) => {
+async function updateHistory(token, id) {
+    await client.updateHistory (token, id);
+}
+
+function VideoDetail  ({ video, handleVideoSelect, token }) {
     if (!video) {
         return null;
     }
@@ -15,7 +19,7 @@ const VideoDetail = ({ video, handleVideoSelect }) => {
 
         <div>
             <div className="ui embed">
-                <video preload="auto" controls width="320" height="240" key={video.id}>
+                <video preload="auto" controls width="320" height="240" key={video.id} onPlay={()=>{updateHistory(token, video.id)}}>
                     <source src={video.videoUrl} title='Video player' />
                     {video.frSubtitleUrl && <track label="French" kind="subtitles" srcLang="fr" src={video.frSubtitleUrl} />}
                     {video.enSubtitleUrl && <track label="English" kind="subtitles" srcLang="eng" src={video.enSubtitleUrl} />}
