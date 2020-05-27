@@ -7,11 +7,12 @@ async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
     handleVideoSelect(video);
 }
 
-async function updateHistory(token, id) {
+async function updateHistory(authTokens, id) {
+    const token = authTokens ? authTokens.key : "";
     await client.updateHistory (token, id);
 }
 
-function VideoDetail  ({ video, handleVideoSelect, token }) {
+function VideoDetail  ({ video, handleVideoSelect, authTokens }) {
     if (!video) {
         return null;
     }
@@ -19,7 +20,7 @@ function VideoDetail  ({ video, handleVideoSelect, token }) {
 
         <div>
             <div className="ui embed">
-                <video preload="auto" controls width="320" height="240" key={video.id} onPlay={()=>{updateHistory(token, video.id)}}>
+                <video preload="auto" controls width="320" height="240" key={video.id} onPlay={()=>{updateHistory(authTokens, video.id)}}>
                     <source src={video.videoUrl} title='Video player' />
                     {video.frSubtitleUrl && <track label="French" kind="subtitles" srcLang="fr" src={video.frSubtitleUrl} />}
                     {video.enSubtitleUrl && <track label="English" kind="subtitles" srcLang="eng" src={video.enSubtitleUrl} />}
