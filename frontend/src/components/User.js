@@ -9,7 +9,7 @@ function UserInfo(props) {
     setAuthTokens();
   }
 
-  console.log(props);
+  console.log(props.Token["key"]);
 
   return (
     <div>
