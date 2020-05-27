@@ -41,7 +41,7 @@ const client = {
     updateHistory: async (token, id) => {
         const response = await http.post(`${HISTORY_ENDPOINT}/`, {
             headers: {
-                Authorization: 'Bearer ' + token //the token is a variable which holds the token
+                Authorization: token //the token is a variable which holds the token
             },
             body:{
                 "video-id": id
