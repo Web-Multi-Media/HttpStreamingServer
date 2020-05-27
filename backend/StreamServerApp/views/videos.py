@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from StreamServerApp.serializers.videos import ExtendedVideoSerializer, SimpleVideoSerializer, \
      SeriesSerializer, MoviesSerializer, SeriesListSerializer
-from StreamServerApp.models.videos import Video, Series, Movie
+from StreamServerApp.models import Video, Series, Movie
 from StreamServerApp import utils
 
 

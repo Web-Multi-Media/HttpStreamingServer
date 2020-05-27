@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -62,6 +63,8 @@ class Video(models.Model):
     episode = models.PositiveSmallIntegerField(default=None, null=True)
     season = models.PositiveSmallIntegerField(default=None, null=True)
 
+    history = models.ManyToManyField(User, through='UserVideoHistory')
+
     objects = SearchManager()
     
     @property
@@ -71,3 +74,9 @@ class Video(models.Model):
                 return self.series.video_set.get(episode=self.episode+1, season=self.season).id
             except ObjectDoesNotExist:
                 return None
+
+
+class UserVideoHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    time =  models.IntegerField()   # time in ms

@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from StreamServerApp.serializers.videos import ExtendedVideoSerializer
-from StreamServerApp.models.videos import Video
+from StreamServerApp.models import Video
 
 
 class HistoryViewSet(viewsets.ModelViewSet):

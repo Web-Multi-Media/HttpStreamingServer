@@ -17,7 +17,7 @@ import subliminal
 from django.db import transaction
 import re
 
-from StreamServerApp.models.videos import Video, Series, Movie
+from StreamServerApp.models import Video, Series, Movie
 from StreamServerApp.subtitles import get_subtitles, init_cache
 from StreamServerApp.media_processing import transmux_to_mp4, generate_thumbnail
 

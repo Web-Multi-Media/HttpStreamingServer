@@ -7,7 +7,7 @@ from django.test import Client, TestCase
 from django.conf import settings
 
 from StreamServerApp.utils import get_num_videos, get_video_type_and_info
-from StreamServerApp.models.videos import Video, Series, Movie
+from StreamServerApp.models import Video, Series, Movie
 from StreamServerApp.media_processing import extract_subtitle, generate_thumbnail
 from StreamServerApp.subtitles import get_subtitles
 
