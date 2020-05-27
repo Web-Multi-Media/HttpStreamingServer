@@ -14,7 +14,13 @@ import { client } from '../api/djangoAPI';
 import {getMoviesAndSeries, getUrlVideo} from '../utils/utils';
 
 function App(props) {
-    const existingTokens = JSON.parse(localStorage.getItem("tokens"));
+    var existingTokens;
+    try{
+        existingTokens = JSON.parse(localStorage.getItem("tokens"));
+    }
+    catch{
+        existingTokens = '';
+    }
     const [authTokens, setAuthTokens] = useState(existingTokens);
     const [pager, setPager] = useState(null);
     const [videos, setVideos] = useState([]);
@@ -121,7 +127,7 @@ function App(props) {
             </div>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
-            <PrivateRoute path="/" component={User} />
+            <PrivateRoute path="/" component={User}  Token={authTokens}/>
         </AuthContext.Provider>
     );
 }
