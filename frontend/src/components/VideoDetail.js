@@ -9,7 +9,9 @@ async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
 
 async function updateHistory(authTokens, id) {
     const token = authTokens ? authTokens.key : "";
-    await client.updateHistory (token, id);
+    if(token !== "") {
+        await client.updateHistory (token, id);
+    }
 }
 
 function VideoDetail  ({ video, handleVideoSelect, authTokens }) {

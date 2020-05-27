@@ -43,6 +43,18 @@ function App(props) {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        // Create an scoped async function in the hook
+        async function anyNameFunction() {
+            if(authTokens && authTokens.key !== ""){
+                console.log('salut ', authTokens.key);
+                const history = await client.getHistory(authTokens.key);
+                console.log(history)
+            }
+        }    // Execute the created function directly
+        anyNameFunction(authTokens);
+    }, [authTokens]);
+
     const handleVideoSelect = (video) => {
         console.log(`handleVideoSelect${video}`);
         setSelectedVideo(video);

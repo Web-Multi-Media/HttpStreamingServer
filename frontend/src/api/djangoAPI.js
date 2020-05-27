@@ -51,6 +51,24 @@ const client = {
     },
 
     /**
+     * performs GET request to retrieve a single video by it's ID
+     *
+     * @param id
+     *          video's id
+     * @returns {Promise<Video>}
+     *          Video
+     */
+    getHistory: async (token) => {
+        const response = await http.get(`${HISTORY_ENDPOINT}/`, {
+            headers: {
+                Authorization: token //the token is a variable which holds the token
+            }
+        });
+        console.log(response);
+    },
+
+
+    /**
      * performs GET request to retrieve videos list from searchbar entry
      * the param is optional, retrieve full video list instead if not provided
      *
