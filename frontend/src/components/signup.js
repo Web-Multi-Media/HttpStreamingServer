@@ -20,11 +20,10 @@ function Signup() {
     });
     http.post("/rest-auth/registration/", {
       username,
-      email,
       password1,
       password2,
     }).then(result => {
-      if (result.status === 200) {
+      if (result.status === 201) {
         setAuthTokens(result.data);
         setLoggedIn(true);
       } else {
