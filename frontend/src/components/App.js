@@ -104,6 +104,7 @@ function App(props) {
                         <VideoDetail
                             video={selectedVideo}
                             handleVideoSelect={handleVideoSelect}
+                            setHistoryPager={setHistoryPager}
                             authTokens ={authTokens}
                         />
                     </div>

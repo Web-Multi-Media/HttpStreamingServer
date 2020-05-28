@@ -38,16 +38,17 @@ const client = {
      * @returns {Promise<Video>}
      *          Video
      */
-    updateHistory: async (token, id) => {
+    updateHistory: async (token, id, timeStamp = 0) => {
         const response = await http.post(`${HISTORY_ENDPOINT}/`, {
             headers: {
                 Authorization: token //the token is a variable which holds the token
             },
             body:{
-                "video-id": id
+                "video-id": id,
+                "video-time" : timeStamp
             }
         });
-        console.log(response);
+        return new MoviesPager(response.data);
     },
 
     /**
