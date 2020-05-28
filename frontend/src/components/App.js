@@ -135,20 +135,18 @@ function App(props) {
                             )
                         }
                     </div>
+                        {(historyPager &&  historyPager.videos.length > 0) &&
+                            <>
                     <h4>History</h4>
                     <div>
-
-                        {
-                            (historyPager &&  historyPager.videos.length > 0)
-                            && (
                                 <VideoCarrouselSlick
                                     pager={historyPager}
                                     videos={historyPager.videos}
                                     handleVideoSelect={handleVideoSelect}
                                 />
-                            )
-                        }
                     </div>
+                            </>
+                        }
 
                 </div>
             </div>

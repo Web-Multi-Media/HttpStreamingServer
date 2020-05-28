@@ -65,7 +65,9 @@ function Signup() {
           }}
           placeholder="confirm password"
         />
-        <Button onClick={postSignup}>Sign Up</Button>
+        <Button onClick={postSignup} variant="contained" color="primary">
+          Sign Up
+        </Button>
       </Form>
       <Link to="/login">Already have an account?</Link>
       { isError &&<Error>The username or password provided were incorrect!</Error> }

@@ -1,35 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
+import TextField from '@material-ui/core/TextField';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import './Searchbar.css';
 
+export default function Searchbar(props) {
+    const useStyles = makeStyles((theme) => ({
 
-class Searchbar extends React.Component {
-    state = {
-        term: ''
+        input: {
+            backgroundColor: "white",
+            color: "white",
+            padding: 0
+        }
+    }));
+
+    const inputProps = {
+        color: "white | white ",
     };
-    
-    handleChange = (event) => {
-        this.setState({
-            term: event.target.value
-        });
-        this.props.handleFormSubmit(event.target.value);
+
+    const classes = useStyles();
+    const [term, setTerm] = useState('');
+
+    const handleChange = (event) => {
+        setTerm(event.target.value);
+        props.handleFormSubmit(event.target.value);
     };
-    
-    handleSubmit = event => {
+
+    const handleSubmit = (event) => {
         event.preventDefault();
-        this.props.handleFormSubmit(this.state.term);
+        props.handleFormSubmit(this.state.term);
     };
 
-    render() {
-        return (
-            <div className='search-bar ui segment'>
-                <form onSubmit={this.handleSubmit} className='ui form'>
-                    <div className='field'>
-                        <label htmlFor="video-search">Video Search</label>
-                        <input onChange={this.handleChange} name='video-search' type="text" placeholder='Search here' value={this.state.term}/>
-                    </div>
-                </form>
 
-            </div>
-        )
-    }
+    return (
+        <div className="search-bar ui segment">
+            <form onSubmit={handleSubmit} >
+                <div className="field">
+                    <label className="searchElement" htmlFor="video-search">Video Search</label>
+                    <TextField className={classes.input}
+                               onChange={handleChange}
+                               placeholder="Search here"
+                               value={term}
+                    />
+                </div>
+            </form>
+        </div>
+    );
 }
-export default Searchbar;

@@ -1,0 +1,9 @@
+.field{
+    display: flex;
+    flex-direction: row;
+}
+
+.searchElement{
+    margin-block-start: auto;
+    margin-right: 10px;
+}

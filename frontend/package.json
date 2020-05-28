@@ -3,18 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.10.0",
     "axios": "^0.18.0",
     "bootstrap": "4.3.1",
     "node-sass": "^4.12.0",
     "pure-react-carousel": "^1.23.3",
     "query-string": "^6.8.3",
     "react": "^16.8.6",
+    "react-bootstrap": "latest",
     "react-dom": "^16.8.6",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",
     "react-slick": "^0.25.2",
-    "react-bootstrap": "latest",
-    "react-router-dom": "^5.1.2",
-    "@material-ui/core": "latest",
     "styled-components": "latest"
   },
   "scripts": {
