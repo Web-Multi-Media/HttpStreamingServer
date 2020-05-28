@@ -39,12 +39,18 @@ class History(APIView, LimitOffsetPagination):
             user = User.objects.get(auth_token=user_token)
             video = Video.objects.get(id=video_id)
 
+            # For series we only keep one video history
+            if video.series:
+                UserVideoHistory.objects.filter(user=user, video__series=video.series).delete()
+            
+            # We still get or create here because there can be existing movie histories
             history, created = UserVideoHistory.objects.get_or_create(
                 user=user,
                 video=video,
                 defaults={'time': time},
             )
 
+            # We update the time when recieving new history for an existing history
             if not created:
                 history.time = time
                 history.save()
