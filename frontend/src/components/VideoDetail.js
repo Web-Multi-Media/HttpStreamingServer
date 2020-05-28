@@ -1,5 +1,6 @@
 import React from 'react';
 import { client } from '../api/djangoAPI';
+import Button from "@material-ui/core/Button";
 
 
 async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
@@ -30,11 +31,14 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens }) {
                 </video>
             </div>
             <div className="ui segment">
-                {video.nextEpisode && <button onClick={() => {HandleNextEpisode(handleVideoSelect,video.nextEpisode);}
-            }>Next Episode</button>}
+                <h4 className="ui header">{video.name}</h4>
             </div>
             <div className="ui segment">
-                <h4 className="ui header">{video.name}</h4>
+                {video.nextEpisode &&
+                    <Button  onClick={() => HandleNextEpisode(handleVideoSelect,video.nextEpisode)} variant="contained" color="primary">
+                        Next Episode
+                    </Button>
+                }
             </div>
         </div>
     );
