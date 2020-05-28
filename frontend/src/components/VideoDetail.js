@@ -15,11 +15,14 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
         handleVideoSelect(video);
     }
 
-    async function updateHistory(authTokens, id, setHistoryPager) {
+    async function startVideo(authTokens, video, setHistoryPager) {
         setTimer(true);
         const token = authTokens ? authTokens.key : "";
+        if (video.time > 0){
+            document.getElementById("myVideo").currentTime = video.time;
+        }
         if(token !== "") {
-            const newHistory = await client.updateHistory (token, id);
+            const newHistory = await client.updateHistory (token, video.id);
             setHistoryPager(newHistory);
         }
     }
@@ -30,7 +33,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                 setInterval(async () =>{
                     setCount(count + 1);
                     await client.updateHistory (authTokens.key, video.id, document.getElementById("myVideo").currentTime);
-                }, 100);
+                }, 10000);
             return () => {
                 clearInterval(theThimer);
             }
@@ -45,7 +48,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
 
         <div>
             <div className="ui embed">
-                <video id="myVideo" preload="auto" controls width="320" height="240" key={video.id} onPlay={()=>{updateHistory(authTokens, video.id, setHistoryPager)} } onPause={() => setTimer(false)}>
+                <video id="myVideo" preload="auto" controls width="320" height="240" key={video.id} onPlay={()=>{startVideo(authTokens, video, setHistoryPager)} } onPause={() => setTimer(false)}>
                     <source src={video.videoUrl} title='Video player' />
                     {video.frSubtitleUrl && <track label="French" kind="subtitles" srcLang="fr" src={video.frSubtitleUrl} />}
                     {video.enSubtitleUrl && <track label="English" kind="subtitles" srcLang="eng" src={video.enSubtitleUrl} />}
