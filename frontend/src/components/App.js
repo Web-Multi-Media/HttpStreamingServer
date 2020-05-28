@@ -26,6 +26,7 @@ function App(props) {
     const [videos, setVideos] = useState([]);
     const [selectedVideo, setSelectedVideo] = useState(null);
     const [moviesPager, setMoviesPager] = useState(null);
+    const [historyPager, setHistoryPager] = useState(null);
     const [seriesPager, setSeriesPager] = useState(null);
     const [moviesVideos, setMoviesVideos] = useState([]);
     const [seriesVideos, setSeriesVideos] = useState([]);
@@ -35,8 +36,7 @@ function App(props) {
     useEffect(() => {
         const fetchData = async () => {
             await Promise.all([
-                getMoviesAndSeries(setPager, setVideos, setSeriesPager,
-                    setSeriesVideos, setMoviesPager, setMoviesVideos),
+                getMoviesAndSeries(setPager, setVideos, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos),
                 getUrlVideo(location, setSelectedVideo)
             ]);
         };
@@ -47,9 +47,9 @@ function App(props) {
         // Create an scoped async function in the hook
         async function anyNameFunction() {
             if(authTokens && authTokens.key !== ""){
-                console.log('salut ', authTokens.key);
                 const history = await client.getHistory(authTokens.key);
-                console.log(history)
+                setHistoryPager(history)
+
             }
         }    // Execute the created function directly
         anyNameFunction(authTokens);
@@ -95,7 +95,6 @@ function App(props) {
         setAuthTokens(data);
     };
 
-
     return (
         <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
             <div className="ui container" style={{ marginTop: '1em' }}>
@@ -136,6 +135,21 @@ function App(props) {
                             )
                         }
                     </div>
+                    <h4>History</h4>
+                    <div>
+
+                        {
+                            (historyPager &&  historyPager.videos.length > 0)
+                            && (
+                                <VideoCarrouselSlick
+                                    pager={historyPager}
+                                    videos={historyPager.videos}
+                                    handleVideoSelect={handleVideoSelect}
+                                />
+                            )
+                        }
+                    </div>
+
                 </div>
             </div>
             <Route path="/login" component={Login} />

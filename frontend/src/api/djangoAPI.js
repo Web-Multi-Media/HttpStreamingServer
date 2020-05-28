@@ -64,7 +64,7 @@ const client = {
                 Authorization: token //the token is a variable which holds the token
             }
         });
-        console.log(response);
+       return new MoviesPager(response.data);
     },
 
 
@@ -164,5 +164,6 @@ MoviesPager.prototype.getNextPage = async function () {
     this.videos = response.data.results.map(video => new Video(video));
     this.nextPageUrl = response.data.next;
 };
+
 
 export {client}

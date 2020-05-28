@@ -7,13 +7,13 @@ import { client } from '../api/djangoAPI';
  */
 export const getMoviesAndSeries = async (setPager, setVideos, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos) => {
     try {
-        const [fetchPager, fetchPager2] = await Promise.all([client.searchSeries(), client.searchMovies()]);
-        setPager(fetchPager);
-        setVideos(fetchPager.videos);
-        setSeriesPager(fetchPager);
-        setSeriesVideos(fetchPager.series);
-        setMoviesPager(fetchPager2);
-        setMoviesVideos(fetchPager2.videos);
+        const [seriesPager, moviePager] = await Promise.all([client.searchSeries(), client.searchMovies()]);
+        setPager(seriesPager);
+        setVideos(seriesPager.videos);
+        setSeriesPager(seriesPager);
+        setSeriesVideos(seriesPager.series);
+        setMoviesPager(moviePager);
+        setMoviesVideos(moviePager.videos);
     } catch (error) {
         console.log(error);
     }
