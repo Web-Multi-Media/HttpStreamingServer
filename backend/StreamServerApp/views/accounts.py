@@ -15,14 +15,17 @@ class History(APIView, LimitOffsetPagination):
     """
     Get, create and update user history
     """
+    def get_history(self, request, user_token):
+        user = User.objects.get(auth_token=user_token)
+        queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
+        results = self.paginate_queryset(queryset, request, view=self)
+        serializer = ExtendedVideoSerializer(results, many=True)
+        return self.get_paginated_response(serializer.data)
+
     def get(self, request):
         try:
             user_token = request.headers.get('Authorization')
-            user = User.objects.get(auth_token=user_token)
-            queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
-            results = self.paginate_queryset(queryset, request, view=self)
-            serializer = ExtendedVideoSerializer(results, many=True)
-            return self.get_paginated_response(serializer.data)
+            return self.get_history(request, user_token)
 
         except ObjectDoesNotExist:
             print('User not found, token recieved: {}'.format(user_token))
@@ -55,7 +58,8 @@ class History(APIView, LimitOffsetPagination):
                 history.time = time
                 history.save()
 
-            return Response({}, status=status.HTTP_200_OK)
+            # We send the history back to the client
+            return self.get_history(request, user_token)
 
         except ObjectDoesNotExist:
             print('User not found, token recieved: {}'.format(user_token))
