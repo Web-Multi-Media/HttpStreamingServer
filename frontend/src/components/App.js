@@ -135,7 +135,7 @@ function App(props) {
                             )
                         }
                     </div>
-                        {(historyPager &&  historyPager.videos.length > 0) &&
+                        {(historyPager &&  historyPager.videos.length > 0 && authTokens) &&
                             <>
                     <h4>History</h4>
                     <div>
