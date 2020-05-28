@@ -66,7 +66,6 @@ class SeriesViewSet(viewsets.ModelViewSet):
         Optionally performs search on the series, by using the `search_query` 
         query parameter in the URL.
         """
-        print(self.request.user)
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
             queryset = Series.objects.search_trigramm('title', search_query)
