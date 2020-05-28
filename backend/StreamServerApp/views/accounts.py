@@ -3,12 +3,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
+from rest_framework.pagination import LimitOffsetPagination
 
 from StreamServerApp.serializers.videos import ExtendedVideoSerializer
 from StreamServerApp.models import Video, UserVideoHistory
 
 
-class History(APIView):
+class History(APIView, LimitOffsetPagination):
     """
     Get, create and update user history
     """
@@ -17,8 +18,10 @@ class History(APIView):
         user = User.objects.get(auth_token=user_token)
 
         queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
-        serializer = ExtendedVideoSerializer(queryset, many=True)
-        return Response(serializer.data)
+        results = self.paginate_queryset(queryset, request, view=self)
+        serializer = ExtendedVideoSerializer(results, many=True)
+        
+        return self.get_paginated_response(serializer.data)
         
     def post(self, request):
         user_token = request.data.get('headers').get('Authorization')
