@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from StreamServerApp.models import Video, Series, Movie
 from StreamServerApp.fields import PaginatedRelationField
@@ -27,6 +29,16 @@ class SimpleVideoSerializer(serializers.ModelSerializer):
 class ExtendedVideoSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField(many=False)
     series = serializers.StringRelatedField(many=False)
+    time = serializers.SerializerMethodField('get_video_time_history')
+
+    def get_video_time_history(self, obj):
+        user_token = self.context['request'].headers.get('Authorization')
+        try:
+            user = User.objects.get(auth_token=user_token)
+            return obj.return_user_time_history(user)
+
+        except ObjectDoesNotExist:
+            print('User not found, token recieved: {}'.format(user_token))
 
     class Meta:
         model = Video
@@ -43,6 +55,7 @@ class ExtendedVideoSerializer(serializers.ModelSerializer):
             'episode', 
             'season',
             'next_episode',
+            'time',
         ]
 
 

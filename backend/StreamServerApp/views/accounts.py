@@ -19,7 +19,7 @@ class History(APIView, LimitOffsetPagination):
         user = User.objects.get(auth_token=user_token)
         queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
         results = self.paginate_queryset(queryset, request, view=self)
-        serializer = ExtendedVideoSerializer(results, many=True)
+        serializer = ExtendedVideoSerializer(results, many=True, context={"request": self.request})
         return self.get_paginated_response(serializer.data)
 
     def get(self, request):

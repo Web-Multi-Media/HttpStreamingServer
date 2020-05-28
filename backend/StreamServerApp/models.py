@@ -75,10 +75,17 @@ class Video(models.Model):
             except ObjectDoesNotExist:
                 return None
 
+    def return_user_time_history(self, user):
+        video_history = self.uservideohistory_set.filter(user=user)
+        if video_history.count() > 0:
+            return video_history.first().time
+        else:
+            return 0
+
 
 class UserVideoHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
-    time =  models.IntegerField()   # time in ms
+    time =  models.IntegerField()   # time in sec
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
