@@ -21,12 +21,8 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
         if (video.time > 0){
             document.getElementById("myVideo").currentTime = video.time;
         }
-        if(token !== "") {
-            const newHistory = await client.updateHistory (token, video.id);
-            setHistoryPager(newHistory);
-        }
     }
-    console.log("detail", video)
+
 
     useEffect(() => {
         if(timer){
