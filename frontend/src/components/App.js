@@ -34,17 +34,13 @@ function App(props) {
     const history = useHistory();
 
     useEffect(() => {
+        // Create an scoped async function in the hook
         const fetchData = async () => {
             await Promise.all([
                 getMoviesAndSeries(setPager, setVideos, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos),
                 getUrlVideo(location, setSelectedVideo)
             ]);
         };
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        // Create an scoped async function in the hook
         async function anyNameFunction() {
             // Set the token for the API client
             client.setToken(authTokens);
@@ -54,10 +50,10 @@ function App(props) {
             }
         }    // Execute the created function directly
         anyNameFunction(authTokens);
+        fetchData();
     }, [authTokens]);
 
     const handleVideoSelect = (video) => {
-        console.log(`handleVideoSelect${video}`);
         setSelectedVideo(video);
         if (video) {
             history.push(`/streaming/?video=${video.id}`);

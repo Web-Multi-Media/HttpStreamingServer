@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import '../style/style.scss';
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
-import {client} from "../api/djangoAPI";
 import SelectBar from "./SelectBar";
 
 

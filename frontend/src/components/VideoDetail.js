@@ -26,13 +26,15 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
             setHistoryPager(newHistory);
         }
     }
+    console.log("detail", video)
 
     useEffect(() => {
         if(timer){
             const theThimer =
                 setInterval(async () =>{
                     setCount(count + 1);
-                    await client.updateHistory (authTokens.key, video.id, document.getElementById("myVideo").currentTime);
+                    const newHistory =  await client.updateHistory (authTokens.key, video.id, document.getElementById("myVideo").currentTime);
+                    setHistoryPager(newHistory);
                 }, 10000);
             return () => {
                 clearInterval(theThimer);

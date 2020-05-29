@@ -25,7 +25,7 @@ function Client() {
      *          user API token
      */
     this.setToken = (token) => {
-        this.token = token.key;
+        this.token = token ? token.key : "";
     };
 
     /**
