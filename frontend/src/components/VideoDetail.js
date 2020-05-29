@@ -15,9 +15,13 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
         handleVideoSelect(video);
     }
 
-    async function startVideo(authTokens, video, setHistoryPager) {
+    function startVideo() {
         setTimer(true);
-        const token = authTokens ? authTokens.key : "";
+
+    }
+
+    function canPlay(video) {
+        console.log('canPlay')
         if (video.time > 0){
             document.getElementById("myVideo").currentTime = video.time;
         }
@@ -46,7 +50,9 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
 
         <div>
             <div className="ui embed">
-                <video id="myVideo" preload="auto" controls width="320" height="240" key={video.id} onPlay={()=>{startVideo(authTokens, video, setHistoryPager)} } onPause={() => setTimer(false)}>
+                <video
+                    id="myVideo"
+                    preload="auto" controls width="320" height="240" key={video.id} onLoadedData={()=>{canPlay(video)} } onPlay={()=>{startVideo()} } onPause={() => setTimer(false)}>
                     <source src={video.videoUrl} title='Video player' />
                     {video.frSubtitleUrl && <track label="French" kind="subtitles" srcLang="fr" src={video.frSubtitleUrl} />}
                     {video.enSubtitleUrl && <track label="English" kind="subtitles" srcLang="eng" src={video.enSubtitleUrl} />}
