@@ -1,0 +1,24 @@
+
+
+@media all and (min-width: 720px) {
+    .headerBar{
+        display: flex;
+        flex-direction: row;
+        margin: 40px;
+        font-family: 'Balsamiq Sans', cursive;
+        justify-content: space-between;
+    }
+
+}
+
+@media all and (max-width: 720px) {
+
+    .headerBar{
+        display: flex;
+        flex-direction: column;
+        margin: 40px;
+        font-family: 'Balsamiq Sans', cursive;
+        justify-content: space-between;
+    }
+
+}

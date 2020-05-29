@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { client } from '../api/djangoAPI';
 import Button from "@material-ui/core/Button";
+import './VideoDetail.css'
 
 
 
@@ -35,8 +36,9 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     setCount(count + 1);
                     const newHistory =  await client.updateHistory (authTokens.key, video.id, document.getElementById("myVideo").currentTime);
                     setHistoryPager(newHistory);
-                }, 10000);
+                }, 1000);
             return () => {
+                console.log('clear');
                 clearInterval(theThimer);
             }
         }
@@ -52,7 +54,11 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
             <div className="ui embed">
                 <video
                     id="myVideo"
-                    preload="auto" controls width="320" height="240" key={video.id} onLoadedData={()=>{canPlay(video)} } onPlay={()=>{startVideo()} } onPause={() => setTimer(false)}>
+                    preload="auto"
+                    controls
+                    key={video.id}
+                    onLoadedData={()=>{canPlay(video)} } onPlay={()=>{startVideo()} }
+                    onPause={() => setTimer(false)}>
                     <source src={video.videoUrl} title='Video player' />
                     {video.frSubtitleUrl && <track label="French" kind="subtitles" srcLang="fr" src={video.frSubtitleUrl} />}
                     {video.enSubtitleUrl && <track label="English" kind="subtitles" srcLang="eng" src={video.enSubtitleUrl} />}
@@ -61,7 +67,6 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
             </div>
             <div className="ui segment">
                 <h4 className="ui header">{video.name}</h4>
-                <h4 className="ui header">{count}</h4>
             </div>
             <div className="ui segment">
                 {video.nextEpisode &&

@@ -1,0 +1,15 @@
+
+@media all and (min-width: 720px) {
+    #myVideo{
+        width:640px;
+        height:480px;
+    }
+}
+
+@media all and (max-width: 720px) {
+
+    video{
+        width:320px;
+        height:240px;
+    }
+}

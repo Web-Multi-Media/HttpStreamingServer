@@ -12,6 +12,8 @@ import User from './User';
 import { AuthContext } from './context/auth';
 import { client } from '../api/djangoAPI';
 import {getMoviesAndSeries, getUrlVideo} from '../utils/utils';
+import Header from "./header/Header";
+import './App.css'
 
 function App(props) {
     var existingTokens;
@@ -94,8 +96,10 @@ function App(props) {
 
     return (
         <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
+            <Header
+                handleFormSubmit={handleSubmit}
+            />
             <div className="ui container" style={{ marginTop: '1em' }}>
-                <SearchBar handleFormSubmit={handleSubmit} />
                 <div className="ui grid">
                     <div className="ui column">
                         <VideoDetail
@@ -106,6 +110,18 @@ function App(props) {
                         />
                     </div>
                 </div>
+                {(historyPager &&  historyPager.videos.length > 0 && authTokens) &&
+                    <div className="carrouselContainer">
+                        <h4>RECENTLY WATCHED</h4>
+                        <div>
+                            <VideoCarrouselSlick
+                                pager={historyPager}
+                                videos={historyPager.videos}
+                                handleVideoSelect={handleVideoSelect}
+                            />
+                        </div>
+                    </div>
+                }
                 {
                     seriesVideos.length > 0
                     && (
@@ -133,18 +149,6 @@ function App(props) {
                             )
                         }
                     </div>
-                        {(historyPager &&  historyPager.videos.length > 0 && authTokens) &&
-                            <>
-                    <h4>History</h4>
-                    <div>
-                                <VideoCarrouselSlick
-                                    pager={historyPager}
-                                    videos={historyPager.videos}
-                                    handleVideoSelect={handleVideoSelect}
-                                />
-                    </div>
-                            </>
-                        }
 
                 </div>
             </div>

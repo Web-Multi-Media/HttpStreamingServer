@@ -38,7 +38,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Balsamiq Sans', cursive;
 }
 
 p {
@@ -165,8 +165,9 @@ button:focus {
  }
 }
 
-.carrouselContainer{
-  margin: 30px 0px;
+.ui .grid{
+  margin-bottom: 50px!important;
+  text-align: center;
 }
 
 .video-element{
