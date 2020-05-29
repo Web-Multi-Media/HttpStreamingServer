@@ -3,7 +3,7 @@ from django.conf import settings
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 
-from StreamServerApp.serializers.videos import ExtendedVideoSerializer, SimpleVideoSerializer, \
+from StreamServerApp.serializers.videos import VideoSerializer, \
      SeriesSerializer, MoviesSerializer, SeriesListSerializer
 from StreamServerApp.models import Video, Series, Movie
 from StreamServerApp import utils
@@ -17,18 +17,10 @@ class VideoViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `search` actions for Videos
     """
+    serializer_class = VideoSerializer
 
     def _allowed_methods(self):
         return ['GET']
-
-    def get_serializer_class(self):
-        """
-        Overwirte
-        """
-        if self.action == 'list':
-            return SimpleVideoSerializer
-        if self.action == 'retrieve':
-            return ExtendedVideoSerializer
 
     def get_queryset(self):
         """
@@ -78,7 +70,7 @@ class SeriesSeaonViewSet(generics.ListAPIView):
     """
     This viewset provides listing of episodes of a season of a series.
     """
-    serializer_class = ExtendedVideoSerializer
+    serializer_class = VideoSerializer
 
     def _allowed_methods(self):
         return ['GET']

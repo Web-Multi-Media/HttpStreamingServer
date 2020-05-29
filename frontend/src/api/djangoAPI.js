@@ -8,18 +8,6 @@ const http = axios.create({
     responseType: 'json',
 });
 
-const createAxiosGetRequest = (endPoint, token) => http.get(`${endPoint}/`, {
-    headers: {
-        Authorization: token, // the token is a variable which holds the token
-    },
-});
-
-const createAxiosPostRequest = (endPoint, token, body) => http.post(`${endPoint}/`, {
-    headers: {
-        Authorization: token, // the token is a variable which holds the token
-    },
-    body,
-});
 const VIDEOS_ENDPOINT = '/videos';
 const SERIES_ENDPOINT = '/series';
 const SEASON_ENDPOINT = '/season';
@@ -27,7 +15,52 @@ const MOVIES_ENDPOINT = '/movies';
 const HISTORY_ENDPOINT = '/history';
 
 
-const client = {
+function Client() {
+    this.token = null;
+
+    /**
+     * Procedure to set the user API token in the axios http client
+     *
+     * @param token
+     *          user API token
+     */
+    this.setToken = (token) => {
+        this.token = token.key;
+    };
+
+    /**
+     * Wrapper for sending GET request to server using axios http client
+     *
+     * @param endPoint
+     *          API endpoint to which send the GET request
+     * @returns {Response}
+     * 
+     */
+    this.getRequest = (endPoint, params={}) => http.get(`${endPoint}/`, {
+        ...params, 
+        headers: {
+            Authorization: this.token, // the token is a variable which holds the token
+        },
+    });
+
+    /**
+     * Wrapper for sending POST request to server using axios http client
+     *
+     * @param endPoint
+     *          API endpoint to which send the POST request
+     * @param body
+     *          Body of the POST reuqest
+     * @returns {Response}
+     * 
+     */
+    this.postRequest = (endPoint, body={}, params={}) => http.post(`${endPoint}/`, {
+        ...params,
+        headers: {
+            Authorization: this.token, // the token is a variable which holds the token
+        },
+        body,
+    });
+
     /**
      * performs GET request to retrieve a single video by it's ID
      *
@@ -36,11 +69,10 @@ const client = {
      * @returns {Promise<Video>}
      *          Video
      */
-    getVideoById: async (id) => {
-        const response = await http.get(`${VIDEOS_ENDPOINT}/${id}`);
+    this.getVideoById = async (id) => {
+        const response = await this.getRequest(`${VIDEOS_ENDPOINT}/${id}`);
         return new Video(response.data);
-    },
-
+    };
 
     /**
      * performs GET request to retrieve a single video by it's ID
@@ -50,14 +82,14 @@ const client = {
      * @returns {Promise<Video>}
      *          Video
      */
-    updateHistory: async (token, id, timeStamp = 0) => {
+    this.updateHistory = async (token, id, timeStamp = 0) => {
         const body = {
             'video-id': id,
             'video-time': timeStamp,
         };
-        const response = await createAxiosPostRequest(HISTORY_ENDPOINT, token, body);
+        const response = await this.postRequest(HISTORY_ENDPOINT, body);
         return new MoviesPager(response.data);
-    },
+    };
 
     /**
      * performs GET request to retrieve a single video by it's ID
@@ -67,10 +99,10 @@ const client = {
      * @returns {Promise<Video>}
      *          Video
      */
-    getHistory: async (token) => {
-        const response = await createAxiosGetRequest(HISTORY_ENDPOINT, token);
+    this.getHistory = async (token) => {
+        const response = await this.getRequest(HISTORY_ENDPOINT);
         return new MoviesPager(response.data);
-    },
+    };
 
 
     /**
@@ -82,21 +114,22 @@ const client = {
      * @returns {Promise<Pager>}
      *          Pager
      */
-    searchSeries: async (searchQuery) => {
+    this.searchSeries = async (searchQuery) => {
         const params = searchQuery ? { search_query: searchQuery } : null;
-        const response = await http.get(`${SERIES_ENDPOINT}/`, { params });
-        return new SeriesPager(response.data);
-    },
+        const response = await this.getRequest(SERIES_ENDPOINT, { params });
 
-    searchMovies: async (searchQuery) => {
+        return new SeriesPager(response.data);
+    };
+
+    this.searchMovies = async (searchQuery) => {
         const params = searchQuery ? { search_query: searchQuery } : null;
-        const response = await http.get(`${MOVIES_ENDPOINT}/`, { params });
+        const response = await this.getRequest(MOVIES_ENDPOINT, { params });
         response.data.results = response.data.results.map((result) => result.video_set.results[0]);
         return new MoviesPager(response.data);
-    },
-
-
+    };
 };
+
+var client = new Client();
 
 
 function Video(response) {
@@ -124,7 +157,7 @@ function SeriesPager(response) {
 }
 
 SeriesPager.prototype.getNextPage = async function () {
-    const response = await http.get(this.nextPageUrl);
+    const response = await client.getRequest(this.nextPageUrl);
     this.videos = response.data.results.map((video) => new Serie(video));
     this.nextPageUrl = response.data.next;
 };
@@ -136,18 +169,18 @@ function Serie(serie) {
 }
 
 Serie.prototype.getSeason = async function () {
-    const response = await http.get(`${SERIES_ENDPOINT}/${this.id}`);
+    const response = await client.getRequest(`${SERIES_ENDPOINT}/${this.id}`);
     this.seasons = response.data.seasons;
 };
 
 Serie.prototype.getEpisodes = async function (season) {
-    const response = await http.get(`${SERIES_ENDPOINT}/${this.id}${SEASON_ENDPOINT}/${season}`);
+    const response = await client.getRequest(`${SERIES_ENDPOINT}/${this.id}${SEASON_ENDPOINT}/${season}`);
     this.videos = response.data.results.map((video) => new Video(video));
     this.nextPageUrl = response.data.next;
 };
 
 Serie.prototype.getNextPage = async function () {
-    const response = await http.get(this.nextPageUrl);
+    const response = await client.getRequest(this.nextPageUrl);
     this.nextPageUrl = response.data.next;
     this.videos = response.data.results.map((video) => new Video(video));
 };
@@ -161,7 +194,7 @@ function MoviesPager(response) {
 }
 
 MoviesPager.prototype.getNextPage = async function () {
-    const response = await http.get(this.nextPageUrl);
+    const response = await client.getRequest(this.nextPageUrl);
     response.data.results = response.data.results.map((result) => result.video_set.results[0]);
     this.videos = response.data.results.map((video) => new Video(video));
     this.nextPageUrl = response.data.next;

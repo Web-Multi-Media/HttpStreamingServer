@@ -17,7 +17,7 @@ router.register(r'movies', videos.MoviesViewSet, basename='movie')
 urlpatterns = [
     path('', videos.index, name='index'),
     url(r'^', include(router.urls)),
-    url('^series/(?P<series>.+)/season/(?P<season>.+)$', videos.SeriesSeaonViewSet.as_view()),
+    url('^series/(?P<series>.+)/season/(?P<season>.+)/$', videos.SeriesSeaonViewSet.as_view()),
     url(r'^history/', accounts.History.as_view()),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^rest-auth/registration/', include('rest_auth.registration.urls'))

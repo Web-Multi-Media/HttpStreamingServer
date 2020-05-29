@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.pagination import LimitOffsetPagination
 
-from StreamServerApp.serializers.videos import ExtendedVideoSerializer
+from StreamServerApp.serializers.videos import VideoSerializer
 from StreamServerApp.models import Video, UserVideoHistory
 
 
@@ -19,7 +19,7 @@ class History(APIView, LimitOffsetPagination):
         user = User.objects.get(auth_token=user_token)
         queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
         results = self.paginate_queryset(queryset, request, view=self)
-        serializer = ExtendedVideoSerializer(results, many=True, context={"request": self.request})
+        serializer = VideoSerializer(results, many=True, context={"request": self.request})
         return self.get_paginated_response(serializer.data)
 
     def get(self, request):
@@ -27,11 +27,12 @@ class History(APIView, LimitOffsetPagination):
             user_token = request.headers.get('Authorization')
             return self.get_history(request, user_token)
 
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist as ex:
             print('User not found, token recieved: {}'.format(user_token))
+            traceback.print_exception(type(ex), ex, ex.__traceback__)
             return Response({'error': 'Check the user token!'}, status=status.HTTP_404_NOT_FOUND)
-        except:
-            traceback.print_exc()
+        except Exception as ex:
+            traceback.print_exception(type(ex), ex, ex.__traceback__)
             return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def post(self, request):
@@ -61,9 +62,10 @@ class History(APIView, LimitOffsetPagination):
             # We send the history back to the client
             return self.get_history(request, user_token)
 
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist as ex:
             print('User not found, token recieved: {}'.format(user_token))
+            traceback.print_exception(type(ex), ex, ex.__traceback__)
             return Response({'error': 'Check the user token!'}, status=status.HTTP_404_NOT_FOUND)
-        except:
-            traceback.print_exc()
+        except Exception as ex:
+            traceback.print_exception(type(ex), ex, ex.__traceback__)
             return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

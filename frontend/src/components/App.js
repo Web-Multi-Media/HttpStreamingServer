@@ -46,10 +46,11 @@ function App(props) {
     useEffect(() => {
         // Create an scoped async function in the hook
         async function anyNameFunction() {
+            // Set the token for the API client
+            client.setToken(authTokens);
             if(authTokens && authTokens.key !== ""){
                 const history = await client.getHistory(authTokens.key);
                 setHistoryPager(history)
-
             }
         }    // Execute the created function directly
         anyNameFunction(authTokens);
