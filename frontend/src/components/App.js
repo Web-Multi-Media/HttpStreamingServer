@@ -14,6 +14,7 @@ import { client } from '../api/djangoAPI';
 import {getMoviesAndSeries, getUrlVideo} from '../utils/utils';
 import Header from "./header/Header";
 import './App.css'
+import Carousels from "./Carousels/Carousels";
 
 function App(props) {
     var existingTokens;
@@ -99,59 +100,17 @@ function App(props) {
             <Header
                 handleFormSubmit={handleSubmit}
             />
-            <div className="ui container" style={{ marginTop: '1em' }}>
-                <div className="ui grid">
-                    <div className="ui column">
-                        <VideoDetail
-                            video={selectedVideo}
-                            handleVideoSelect={handleVideoSelect}
-                            setHistoryPager={setHistoryPager}
-                            authTokens ={authTokens}
-                        />
-                    </div>
-                </div>
-                {(historyPager &&  historyPager.videos.length > 0 && authTokens) &&
-                    <div className="carrouselContainer">
-                        <h4>RECENTLY WATCHED</h4>
-                        <div>
-                            <VideoCarrouselSlick
-                                pager={historyPager}
-                                videos={historyPager.videos}
-                                handleVideoSelect={handleVideoSelect}
-                            />
-                        </div>
-                    </div>
-                }
-                {
-                    seriesVideos.length > 0
-                    && (
-                        <div className="carrouselContainer">
-                            <SeriesCarousel
-                                pager={seriesPager}
-                                videos={seriesVideos}
-                                handleVideoSelect={handleVideoSelect}
-                            />
-                        </div>
-                    )
-                }
-                <div className="carrouselContainer">
-                    <h4>MOVIES</h4>
-                    <div>
-
-                        {
-                            moviesVideos.length > 0
-                            && (
-                                <VideoCarrouselSlick
-                                    pager={moviesPager}
-                                    videos={moviesVideos}
-                                    handleVideoSelect={handleVideoSelect}
-                                />
-                            )
-                        }
-                    </div>
-
-                </div>
-            </div>
+            <Carousels
+                video={selectedVideo}
+                handleVideoSelect={handleVideoSelect}
+                setHistoryPager={setHistoryPager}
+                authTokens={authTokens}
+                historyPager={historyPager}
+                seriesPager={seriesPager}
+                seriesVideos={seriesVideos}
+                moviesPager={moviesPager}
+                moviesVideos={moviesVideos}
+            />
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
             <PrivateRoute path="/" component={User}  Token={authTokens}/>
