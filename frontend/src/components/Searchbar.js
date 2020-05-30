@@ -26,13 +26,13 @@ export default function Searchbar(props) {
                 <div className="field">
                     <h2 className="searchElement">Video Search</h2>
                     <div className="group">
-                        <input
+                        <input className="searchInput"
                             onChange={handleChange}
                             type="text" required
                         />
                             <span className="highlight"></span>
                             <span className="bar"></span>
-                            <label>Movie, Serie</label>
+                            <label className="searchLabel">Movie, Serie</label>
                     </div>
                 </div>
 

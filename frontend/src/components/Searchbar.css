@@ -8,20 +8,14 @@
     align-self: center;
 }
 
-/* basic stylings ------------------------------------------ */
 
-
-
-
-.footer 	{ text-align:center; }
-.footer a  { color:#53B2C8; }
 
 /* form starting stylings ------------------------------- */
 .group 			  {
     position:relative;
 
 }
-input 				{
+.searchInput{
     font-size:18px;
     padding:10px 10px 10px 5px;
     display:block;
@@ -29,10 +23,12 @@ input 				{
     border:none;
     border-bottom:1px solid #757575;
 }
-input:focus 		{ outline:none; }
+.searchInput input:focus  {
+    outline:none;
+}
 
 /* LABEL ======================================= */
-label 				 {
+.searchLabel {
     color:#999;
     font-size:18px;
     font-weight:normal;

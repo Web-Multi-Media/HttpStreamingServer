@@ -1,12 +1,20 @@
+.headerBar{
+    display: flex;
+    margin: 40px;
+    font-family: 'Balsamiq Sans', cursive;
+    justify-content: space-between;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 20px;
+    z-index: 100;
+
+}
+
 
 
 @media all and (min-width: 720px) {
     .headerBar{
-        display: flex;
         flex-direction: row;
-        margin: 40px;
-        font-family: 'Balsamiq Sans', cursive;
-        justify-content: space-between;
     }
 
 }
@@ -14,11 +22,7 @@
 @media all and (max-width: 720px) {
 
     .headerBar{
-        display: flex;
         flex-direction: column;
-        margin: 40px;
-        font-family: 'Balsamiq Sans', cursive;
-        justify-content: space-between;
     }
 
 }
