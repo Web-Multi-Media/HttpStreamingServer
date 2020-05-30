@@ -3,6 +3,9 @@ import axios from 'axios';
 /**
  * initialize the client with the base url
  */
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
 const http = axios.create({
     baseURL: process.env.REACT_APP_DJANGO_API,
     responseType: 'json',
@@ -26,6 +29,28 @@ function Client() {
      */
     this.setToken = (token) => {
         this.token = token ? token.key : "";
+    };
+
+    /**
+     * Returns the csrf cookie
+     *
+     * @returns {str}
+     *          csrf cookie value
+     */
+    this.csrfcookie = () => {  // for django csrf protection
+        let cookieValue = null,
+            name = "csrftoken";
+        if (document.cookie && document.cookie !== "") {
+            let cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) == (name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     };
 
     /**
@@ -57,6 +82,7 @@ function Client() {
         ...params,
         headers: {
             Authorization: this.token, // the token is a variable which holds the token
+            'X-CSRFToken': this.csrfcookie(),
         },
         body,
     });
