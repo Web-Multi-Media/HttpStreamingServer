@@ -83,6 +83,7 @@ export default  class VideoCarrouselSlick extends Component {
 
         const slider = this.state.videos.map((video) => {
             return <div className="video-element" key={video.id}>
+             <div className="video-element2" >
                     <img
                         className='img-cover'
                         onClick={() => this.props.handleVideoSelect(video)}
@@ -90,6 +91,7 @@ export default  class VideoCarrouselSlick extends Component {
                     />
                     <p className='paragraph-element'>{video.name}</p>
                    </div>
+            </div>
         });
 
         return (

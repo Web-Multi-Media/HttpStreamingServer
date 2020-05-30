@@ -151,8 +151,14 @@ button:focus {
 }
 
 .img-cover:hover{
-  border: 2px solid white;
+    border: 2px solid white;
 }
+
+.img-cover:hover ~ .paragraph-element{
+  background-color: rgba(141,141,141,0.65);
+  font-weight: bold;
+}
+
 
 
 .selectBar{
@@ -178,20 +184,30 @@ button:focus {
 }
 
 .video-element{
+
+  padding: 0 2px;
+
+}
+.video-element2{
   position: relative;
   width: 100%!important;
-  padding: 0 2px;
   display: flex!important;
-  height: 26vh;
+  height: 200px;
   flex-direction: column!important;
 }
 
 .paragraph-element{
+  text-transform: uppercase;
   position: absolute;
   width: 100%;
-  bottom: 3%;
-  text-align: center;
-
+  bottom: 2px;
+  text-align:center;
+  vertical-align: middle;
+  display: table-cell;
+  left: 2px;
+  margin: auto;
+  background-color: rgba(141,141,141,0.35);
+  width: calc(100% - 4px);
 }
 
 .centerVer{
