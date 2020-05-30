@@ -147,16 +147,17 @@ button:focus {
   width: 100%!important;
   overflow: hidden;
   object-fit: cover;
+}
+
+
+.video-element2{
   border: 2px solid transparent;
 }
 
-.img-cover:hover{
-    border: 2px solid white;
-}
-
-.img-cover:hover ~ .paragraph-element{
-  background-color: rgba(141,141,141,0.65);
+.video-element2:hover{
   font-weight: bold;
+  cursor: pointer;
+  border: 2px solid white;
 }
 
 
@@ -200,11 +201,8 @@ button:focus {
   text-transform: uppercase;
   position: absolute;
   width: 100%;
-  bottom: 2px;
+  bottom: 0px;
   text-align:center;
-  vertical-align: middle;
-  display: table-cell;
-  left: 2px;
   margin: auto;
   background-color: rgba(141,141,141,0.35);
   width: calc(100% - 4px);

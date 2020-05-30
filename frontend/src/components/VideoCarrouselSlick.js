@@ -19,6 +19,8 @@ export default  class VideoCarrouselSlick extends Component {
         this.afterChangeMethod = this.afterChangeMethod.bind(this);
     };
 
+
+
     componentWillReceiveProps(nextProps) {
         const chooseIndex = (reset) =>{
             if(reset === true){
@@ -83,13 +85,15 @@ export default  class VideoCarrouselSlick extends Component {
 
         const slider = this.state.videos.map((video) => {
             return <div className="video-element" key={video.id}>
-             <div className="video-element2" >
+             <div className="video-element2"
+                  onClick={() => this.props.handleVideoSelect(video)}>
                     <img
-                        className='img-cover'
-                        onClick={() => this.props.handleVideoSelect(video)}
+                        className={`img-cover`}
                         src={video.thumbnail}
                     />
-                    <p className='paragraph-element'>{video.name}</p>
+                    <p
+                        className={`paragraph-element`}
+                    >{video.name}</p>
                    </div>
             </div>
         });
