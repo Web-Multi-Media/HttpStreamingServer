@@ -131,8 +131,8 @@ function App(props) {
             <Signup
                 toggleModalBox={toggleModalBox}
                 setDisplayModal={setDisplayModal}
-            />}
-            <PrivateRoute path="/" component={User}  Token={authTokens}/>
+           />}
+
         </AuthContext.Provider>
     );
 }
