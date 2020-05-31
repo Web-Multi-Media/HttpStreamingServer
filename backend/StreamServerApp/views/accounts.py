@@ -16,20 +16,25 @@ class History(APIView, LimitOffsetPagination):
     Get, create and update user history
     """
     def get_history(self, request, user_token):
-        user = User.objects.get(auth_token=user_token)
-        queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
-        results = self.paginate_queryset(queryset, request, view=self)
-        serializer = VideoSerializer(results, many=True, context={"request": self.request})
-        return self.get_paginated_response(serializer.data)
+        if user_token:
+            user = User.objects.get(auth_token=user_token)
+            request.user = user  # ideally this should be done in a middleware
+            queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
+            results = self.paginate_queryset(queryset, request, view=self)
+            serializer = VideoSerializer(results, many=True, context={"request": self.request})
+            return self.get_paginated_response(serializer.data)
 
     def get(self, request):
         try:
             user_token = request.headers.get('Authorization')
-            return self.get_history(request, user_token)
+            user_history = self.get_history(request, user_token)
+            if user_history:
+                return user_history
+            else:
+                return Response({'error': 'Check the user token!'}, status=status.HTTP_404_NOT_FOUND)
 
         except ObjectDoesNotExist as ex:
             print('User not found, token recieved: {}'.format(user_token))
-            traceback.print_exception(type(ex), ex, ex.__traceback__)
             return Response({'error': 'Check the user token!'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             traceback.print_exception(type(ex), ex, ex.__traceback__)
@@ -64,7 +69,6 @@ class History(APIView, LimitOffsetPagination):
 
         except ObjectDoesNotExist as ex:
             print('User not found, token recieved: {}'.format(user_token))
-            traceback.print_exception(type(ex), ex, ex.__traceback__)
             return Response({'error': 'Check the user token!'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             traceback.print_exception(type(ex), ex, ex.__traceback__)

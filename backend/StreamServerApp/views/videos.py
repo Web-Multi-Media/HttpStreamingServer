@@ -5,13 +5,30 @@ from rest_framework.permissions import IsAuthenticated
 
 from StreamServerApp.serializers.videos import VideoSerializer, \
      SeriesSerializer, MoviesSerializer, SeriesListSerializer
-from StreamServerApp.models import Video, Series, Movie
+from StreamServerApp.models import Video, Series, Movie, User
 from StreamServerApp import utils
 
 
 def index(request):
     return render(request, "index.html")
 
+
+def get_authenticated_user(request):
+    """
+    Returns the user instance from the databse.
+
+    It is used here to add the user in the request so we can get it from the serializer,
+    ideally it should be done in a middleware...
+    """
+    if request.method == 'GET':
+        user_token = request.headers.get('Authorization')
+    elif request.method == 'POST':
+        user_token = request.data.get('headers').get('Authorization')
+
+    if user_token:
+        user = User.objects.get(auth_token=user_token)
+        return user
+    
 
 class VideoViewSet(viewsets.ModelViewSet):
     """
@@ -22,12 +39,18 @@ class VideoViewSet(viewsets.ModelViewSet):
     def _allowed_methods(self):
         return ['GET']
 
+    def get_serializer_context(self):
+        context = super(VideoViewSet, self).get_serializer_context()
+        user = get_authenticated_user(self.request)
+        self.request.user = user  # ideally this should be done in a middleware
+        context.update({"request": self.request})
+        return context
+
     def get_queryset(self):
         """
         Optionally performs search on the videos, by using the `search_query` 
         query parameter in the URL.
         """
-        
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
             queryset = Video.objects.search_trigramm('name', search_query)
@@ -77,6 +100,8 @@ class SeriesSeaonViewSet(generics.ListAPIView):
 
     def get_serializer_context(self):
         context = super(SeriesSeaonViewSet, self).get_serializer_context()
+        user = get_authenticated_user(self.request)
+        self.request.user = user  # ideally this should be done in a middleware
         context.update({"request": self.request})
         return context
 
@@ -98,6 +123,8 @@ class MoviesViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         context = super(MoviesViewSet, self).get_serializer_context()
+        user = get_authenticated_user(self.request)
+        self.request.user = user  # ideally this should be done in a middleware
         context.update({"request": self.request})
         return context
 

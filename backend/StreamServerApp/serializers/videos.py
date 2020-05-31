@@ -13,18 +13,7 @@ class VideoSerializer(serializers.ModelSerializer):
     time = serializers.SerializerMethodField('get_video_time_history')
 
     def get_video_time_history(self, obj):
-        if self.context['request'].method == 'GET':
-            user_token = self.context['request'].headers.get('Authorization')
-        elif self.context['request'].method == 'POST':
-            user_token = self.context['request'].data.get('headers').get('Authorization')
-
-        try:
-            user = User.objects.get(auth_token=user_token)
-            return obj.return_user_time_history(user)
-
-        except ObjectDoesNotExist as ex:
-            print('User not found, token recieved: {}'.format(user_token))
-            traceback.print_exception(type(ex), ex, ex.__traceback__)
+        return obj.return_user_time_history(self.context['request'].user)
 
     class Meta:
         model = Video
