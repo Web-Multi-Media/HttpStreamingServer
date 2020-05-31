@@ -26,6 +26,8 @@ function App(props) {
     }
     const [authTokens, setAuthTokens] = useState(existingTokens);
     const [pager, setPager] = useState(null);
+    const [displayModal, setDisplayModal] = useState(false);
+    const [toggleModal, setToggleModal] = useState(true);
     const [videos, setVideos] = useState([]);
     const [selectedVideo, setSelectedVideo] = useState(null);
     const [moviesPager, setMoviesPager] = useState(null);
@@ -67,6 +69,14 @@ function App(props) {
     };
 
 
+    const displayModalBox = () =>{
+        setDisplayModal(true);
+    }
+    const toggleModalBox = () =>{
+        setToggleModal(!toggleModal);
+    }
+
+
     const handleSubmit = async (termFromSearchBar) => {
         // API call to retrieve videos from searchbar
         try {
@@ -99,6 +109,7 @@ function App(props) {
         <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
             <Header
                 handleFormSubmit={handleSubmit}
+                displayModal={displayModalBox}
             />
             <Carousels
                 video={selectedVideo}
@@ -111,8 +122,14 @@ function App(props) {
                 moviesPager={moviesPager}
                 moviesVideos={moviesVideos}
             />
-            <Route path="/login" component={Login} />
-            <Route path="/signup" component={Signup} />
+            {(displayModal && toggleModal) &&
+            <Login
+                toggleModalBox={toggleModalBox}
+            />}
+            {(displayModal && !toggleModal) &&
+            <Signup
+                toggleModalBox={toggleModalBox}
+            />}
             <PrivateRoute path="/" component={User}  Token={authTokens}/>
         </AuthContext.Provider>
     );
