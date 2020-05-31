@@ -91,9 +91,11 @@ export default  class VideoCarrouselSlick extends Component {
                         className={`img-cover`}
                         src={video.thumbnail}
                     />
-                    <p
-                        className={`paragraph-element`}
-                    >{video.name}</p>
+                    <div className={`shadow-element`}>
+                        <p
+                            className={`paragraph-element`}
+                        >{video.name}</p>
+                    </div>
                    </div>
             </div>
         });

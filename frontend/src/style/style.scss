@@ -5,7 +5,7 @@
 
 $dark: #373737;
 $light: #191515;
-$white: #fefefe;
+$white: #eeeeee;
 $highlight1: #c0b283;
 $highlight2: #dcd0c0;
 $font-size--large-headline--mobile: 4rem;
@@ -155,8 +155,9 @@ button:focus {
 }
 
 .video-element2:hover{
-  font-weight: bold;
+  // font-weight: bold;
   cursor: pointer;
+  color: white;
   border: 2px solid white;
 }
 
@@ -202,10 +203,23 @@ button:focus {
   position: absolute;
   width: 100%;
   bottom: 0px;
+  margin-top: auto;
   text-align:center;
-  margin: auto;
-  background-color: rgba(141,141,141,0.35);
-  width: calc(100% - 4px);
+  padding: auto;
+  width: calc(100%);
+}
+
+.shadow-element{
+  height: 100px;
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  background-image: linear-gradient(rgba(5, 5, 5, 0), rgba(5, 5, 5, 1));
+}
+
+.video-element2:hover .shadow-element{
+  background-image: linear-gradient(rgba(136, 136, 136, 0), rgb(0, 0, 0));
+  height: 130px;
 }
 
 .centerVer{
