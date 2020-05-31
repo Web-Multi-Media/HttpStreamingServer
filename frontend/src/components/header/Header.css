@@ -9,7 +9,15 @@
     z-index: 100;
 
 }
+.leftBarElement{
+    margin: 0 15px;
+    color: red;
+}
 
+.leftBar{
+    display: flex;
+    flex-direction: row;
+}
 
 
 @media all and (min-width: 720px) {

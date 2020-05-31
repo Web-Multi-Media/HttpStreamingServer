@@ -2,18 +2,26 @@ import styled from 'styled-components';
 
 const Card = styled.div`
   box-sizing: border-box;
-  max-width: 410px;
-  margin: 0 auto;
-  padding: 0 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index:100;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  position: fixed;
+  height: 40rem;
+  width: 60rem;
+  left: calc((100% - 60rem) / 2) ;
+  top: calc((100% - 40rem) / 2) ;
+  z-index: 100;
+  border-radius: 20px;
 `;
 
 const Form = styled.div`
+  margin: 50px;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 50%;
 `;
 
 const Input = styled.input`
@@ -30,7 +38,8 @@ const Button = styled.button`
   padding: 1rem;
   color: white;
   font-weight: 700;
-  width: 100%;
+  width: 50%;
+  margin: 0 auto;
   margin-bottom: 1rem;
   font-size: 0.8rem;
 `;

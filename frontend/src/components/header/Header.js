@@ -1,9 +1,8 @@
 import React from "react";
 import SearchBar from "../Searchbar";
 import './Header.css'
-import SearchIcon from '@material-ui/icons/Search';
 
-export default function Header({handleFormSubmit}) {
+export default function Header({handleFormSubmit, displayModal}) {
 
     return (
         <header className="headerBar">
@@ -12,11 +11,14 @@ export default function Header({handleFormSubmit}) {
                     HOMEMADE NETFLIX
                 </h1>
 
-            <div>
-                <SearchBar
-                    handleFormSubmit={handleFormSubmit}
-                />
-
+            <div className="leftBar">
+                <div className="leftBarElement">
+                    <SearchBar
+                        handleFormSubmit={handleFormSubmit}
+                    />
+                </div>
+                    <button className="leftBarElement" onClick={displayModal}>Login
+                    </button>
             </div>
         </header>
     );

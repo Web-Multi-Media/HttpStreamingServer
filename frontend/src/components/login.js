@@ -1,12 +1,12 @@
-
 import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import axios from 'axios';
 import { Card, Form, Input, Error } from "./AuthForm";
 import { useAuth } from "./context/auth";
 import Button from "@material-ui/core/Button";
+import './Modal.css'
 
-function Login() {
+function Login({toggleModalBox}) {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
   const [username, setUserName] = useState("");
@@ -42,6 +42,7 @@ function Login() {
   return (
     <Card>
       <Form>
+          <svg className="cross" viewBox="0 0 24 24"><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z"/><path d="M0 0h24v24h-24z" fill="none"/></svg>
         <Input
           type="username"
           value={username}
@@ -62,7 +63,7 @@ function Login() {
           Sign In
         </Button>
       </Form>
-      <Link to="/signup">Don't have an account?</Link>
+      <Link onClick={toggleModalBox}>Don't have an account?</Link>
         { isError &&<Error>The username or password provided were incorrect!</Error> }
     </Card>
   );
