@@ -2,6 +2,7 @@ import React from 'react';
 import VideoDetail from '../VideoDetail';
 import VideoCarrouselSlick from '../VideoCarrouselSlick';
 import SeriesCarousel from '../SeriesCarousel';
+import './Carousels.css';
 import { AuthContext } from '../context/auth';
 
 export default function Carousels({

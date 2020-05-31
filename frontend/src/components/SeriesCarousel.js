@@ -87,7 +87,7 @@ class SeriesCarousel extends Component {
         return (
             <div>
                 <div className="seriesDisplay">
-                <h3 className="centerVer" onClick={()=>this.resetSeries()}>SERIES</h3>
+                <h4 className="centerVer hover-hilight" onClick={()=>this.resetSeries()}>SERIES</h4>
                 {this.state.series.length > 0 &&
                     <React.Fragment>
                     <span className="centerVer"> > {this.state.series} > </span>
