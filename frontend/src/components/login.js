@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import axios from 'axios';
-import { Card, Form, Input, Error } from "./AuthForm";
+import { Card, Form, Input, Button, Error } from "./AuthForm";
 import { useAuth } from "./context/auth";
-import Button from "@material-ui/core/Button";
 import './Modal.css'
 
 function Login({toggleModalBox, setDisplayModal}) {
@@ -48,6 +47,7 @@ function Login({toggleModalBox, setDisplayModal}) {
   return (
     <Card>
       <Form>
+          <h1 className="modal__header">  Login</h1>
         <div className="crossContainer">
           <svg className="cross"
                viewBox="0 0 24 24"
@@ -55,6 +55,7 @@ function Login({toggleModalBox, setDisplayModal}) {
           ><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z"/><path d="M0 0h24v24h-24z" fill="none"/></svg>
         </div>
         <Input
+          className="modal__section"
           type="username"
           value={username}
           onChange={e => {setUserName(e.target.value)}}
@@ -62,12 +63,14 @@ function Login({toggleModalBox, setDisplayModal}) {
           onKeyDown={search}
         />
         <Input
+          className="modal__section"
           type="password"
           value={password}
           onChange={e => {setPassword(e.target.value)}}
           placeholder="password"
           onKeyDown={search}
         />
+
         <Button onClick={postLogin} variant="contained" color="primary">
           Sign In
         </Button>
