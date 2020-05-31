@@ -7,7 +7,6 @@ import Button from "@material-ui/core/Button";
 
 export default function Header({ handleFormSubmit, displayModal }) {
     const { authTokens } = useAuth();
-    console.log('salut', authTokens);
     return (
         <header className="headerBar">
 
@@ -22,11 +21,14 @@ export default function Header({ handleFormSubmit, displayModal }) {
                     />
                 </div>
                 {!authTokens && (
-                    <Button variant="contained" color="primary" className="leftBarElement" onClick={displayModal}>
+                    <Button variant="contained" color="primary" className="leftBarElement" onClick={() => displayModal(true)}>
                         Login
                     </Button>
                 )}
-                {authTokens && <User />}
+                {authTokens &&
+                    <User
+                        displayModal={displayModal}
+                    />}
             </div>
         </header>
     );

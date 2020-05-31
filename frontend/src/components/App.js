@@ -38,6 +38,7 @@ function App(props) {
     const location = useLocation();
     const history = useHistory();
 
+    console.log(displayModal, toggleModal);
     useEffect(() => {
         // Create an scoped async function in the hook
         const fetchData = async () => {
@@ -69,8 +70,8 @@ function App(props) {
     };
 
 
-    const displayModalBox = () =>{
-        setDisplayModal(true);
+    const displayModalBox = (isDisplay) =>{
+        setDisplayModal(isDisplay);
     }
     const toggleModalBox = () =>{
         setToggleModal(!toggleModal);

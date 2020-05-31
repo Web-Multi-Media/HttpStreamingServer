@@ -3,11 +3,12 @@ import { useAuth } from "./context/auth";
 import Button from "@material-ui/core/Button";
 import './User.css'
 
-function UserInfo(props) {
+function UserInfo({displayModal}) {
   const { setAuthTokens } = useAuth();
 
   function logOut() {
     setAuthTokens();
+    displayModal(false);
   }
 
 
