@@ -125,10 +125,12 @@ function App(props) {
             {(displayModal && toggleModal) &&
             <Login
                 toggleModalBox={toggleModalBox}
+                setDisplayModal={setDisplayModal}
             />}
             {(displayModal && !toggleModal) &&
             <Signup
                 toggleModalBox={toggleModalBox}
+                setDisplayModal={setDisplayModal}
             />}
             <PrivateRoute path="/" component={User}  Token={authTokens}/>
         </AuthContext.Provider>

@@ -6,7 +6,7 @@ import { useAuth } from "./context/auth";
 import Button from "@material-ui/core/Button";
 import './Modal.css'
 
-function Login({toggleModalBox}) {
+function Login({toggleModalBox, setDisplayModal}) {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
   const [username, setUserName] = useState("");
@@ -35,6 +35,12 @@ function Login({toggleModalBox}) {
     });
   }
 
+  function search(event) {
+    if(event.keyCode == 13) {
+      postLogin();
+    }
+  }
+
   if (isLoggedIn) {
     return <Redirect to="/" />;
   }
@@ -42,22 +48,25 @@ function Login({toggleModalBox}) {
   return (
     <Card>
       <Form>
-          <svg className="cross" viewBox="0 0 24 24"><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z"/><path d="M0 0h24v24h-24z" fill="none"/></svg>
+        <div className="crossContainer">
+          <svg className="cross"
+               viewBox="0 0 24 24"
+               onClick={() => setDisplayModal(false)}
+          ><path d="M19 6.41l-1.41-1.41-5.59 5.59-5.59-5.59-1.41 1.41 5.59 5.59-5.59 5.59 1.41 1.41 5.59-5.59 5.59 5.59 1.41-1.41-5.59-5.59z"/><path d="M0 0h24v24h-24z" fill="none"/></svg>
+        </div>
         <Input
           type="username"
           value={username}
-          onChange={e => {
-            setUserName(e.target.value);
-          }}
-          placeholder="email"
+          onChange={e => {setUserName(e.target.value)}}
+          placeholder="username"
+          onKeyDown={search}
         />
         <Input
           type="password"
           value={password}
-          onChange={e => {
-            setPassword(e.target.value);
-          }}
+          onChange={e => {setPassword(e.target.value)}}
           placeholder="password"
+          onKeyDown={search}
         />
         <Button onClick={postLogin} variant="contained" color="primary">
           Sign In
