@@ -1,21 +1,25 @@
 .headerBar{
     display: flex;
-    margin: 40px;
+    padding: 5%;
     font-family: 'Balsamiq Sans', cursive;
     justify-content: space-between;
     position: -webkit-sticky;
     position: sticky;
-    top: 20px;
+    top: 0px;
     z-index: 100;
+    background-color: #191515;
 
 }
 .leftBarElement{
-    margin: 0 15px;
+    margin: auto 15px;
 }
 
 .leftBar{
     display: flex;
     flex-direction: row;
+}
+.headerButton{
+    margin: auto;
 }
 
 
@@ -28,8 +32,24 @@
 
 @media all and (max-width: 720px) {
 
+    .leftBar {
+        flex-direction: column;
+        margin: auto;
+    }
     .headerBar{
         flex-direction: column;
+    }
+    .headerBar h1{
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .searchInput{
+        width: 200px;
+        margin: 0;
+    }
+    .leftBarElement{
+        align-self: auto;
+        width: 100%;
     }
 
 }

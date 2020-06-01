@@ -21,14 +21,19 @@ export default function Header({ handleFormSubmit, displayModal }) {
                     />
                 </div>
                 {!authTokens && (
-                    <Button variant="contained" color="primary" className="leftBarElement" onClick={() => displayModal(true)}>
-                        Login
-                    </Button>
+                    <div className="headerButton">
+                        <Button variant="contained" color="primary" className="leftBarElement" onClick={() => displayModal(true)}>
+                            Login
+                        </Button>
+                    </div>
                 )}
                 {authTokens &&
-                    <User
-                        displayModal={displayModal}
-                    />}
+                    <div className="headerButton">
+                        <User
+                            displayModal={displayModal}
+                        />
+                    </div>
+                        }
             </div>
         </header>
     );
