@@ -117,18 +117,6 @@ function Client() {
         return new MoviesPager(response.data);
     };
 
-    /**
-     * performs GET request to retrieve a single video history by it's ID
-     *
-     * @param id
-     *          video's id
-     * @returns {Promise<Video>}
-     *          Video
-     */
-    this.getVideoHistory = async (id) => {
-        const response = await this.getRequest(VIDEOS_ENDPOINT, {}, id);
-        return response;
-    };
 
     /**
      * performs GET request to retrieve a single video by it's ID

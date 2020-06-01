@@ -59,9 +59,9 @@ function App(props) {
     }, [authTokens]);
 
     const handleVideoSelect  = async (video) => {
-        const videoHistory = await client.getVideoHistory(video.id);
-        video.time = videoHistory.data.time;
-        video.nextEpisode = videoHistory.data.next_episode;
+        const videoHistory = await client.getVideoById(video.id);
+        video.time = videoHistory.time;
+        video.nextEpisode = videoHistory.nextEpisode;
         setSelectedVideo(video);
         if (video) {
             history.push(`/streaming/?video=${video.id}`);
