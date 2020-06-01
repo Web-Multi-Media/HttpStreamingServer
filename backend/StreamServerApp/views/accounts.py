@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.pagination import LimitOffsetPagination
 
-from StreamServerApp.serializers.videos import VideoSerializer
+from StreamServerApp.serializers.videos import VideoListSerializer
 from StreamServerApp.models import Video, UserVideoHistory
 
 
@@ -18,7 +18,7 @@ class History(APIView, LimitOffsetPagination):
     def get_history(self, request, user):
         queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
         results = self.paginate_queryset(queryset, request, view=self)
-        serializer = VideoSerializer(results, many=True, context={"request": self.request})
+        serializer = VideoListSerializer(results, many=True, context={"request": self.request})
         return self.get_paginated_response(serializer.data)
 
     def get(self, request):
