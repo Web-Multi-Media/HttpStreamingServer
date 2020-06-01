@@ -61,7 +61,7 @@ function Client() {
      * @returns {Response}
      * 
      */
-    this.getRequest = (endPoint, params={}, request = '') => http.get(`${endPoint}/${request}`, {
+    this.getRequest = (endPoint, params={}) => http.get(`${endPoint}`, {
         ...params, 
         headers: {
             Authorization: this.token, // the token is a variable which holds the token
