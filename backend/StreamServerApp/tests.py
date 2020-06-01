@@ -4,10 +4,14 @@ from os.path import isfile
 from django.urls import reverse
 from django.core.management import call_command
 from django.test import Client, TestCase
+from django.contrib.auth.models import User
 from django.conf import settings
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIRequestFactory
+from rest_framework.test import APIClient
 
 from StreamServerApp.utils import get_num_videos, get_video_type_and_info
-from StreamServerApp.models import Video, Series, Movie
+from StreamServerApp.models import Video, Series, Movie, UserVideoHistory
 from StreamServerApp.media_processing import extract_subtitle, generate_thumbnail
 from StreamServerApp.subtitles import get_subtitles
 
@@ -128,3 +132,77 @@ class UtilsTest(TestCase):
                         "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpeg")
         self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpeg"), True)
         os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpeg")
+
+
+class AuthenticationTest(TestCase):
+    def test_signup(self):
+        # TODO
+        pass
+
+    def test_login(self):
+        # TODO
+        pass
+
+    def test_logout(self):
+        # TODO
+        pass
+
+
+class HistoryTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.factory = APIRequestFactory()
+        self.user = User.objects.create_user(
+            username='test_user', password='top_secret')
+        self.token = Token.objects.create(user=self.user)
+        self.token.save()
+        self.client.defaults['HTTP_AUTHORIZATION'] = str(self.token)
+
+    def test_get_empty_history(self):
+        response = self.client.get(reverse('history'))
+        self.assertEqual(response.status_code, 200)
+
+        results = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(results['results'], [])
+        
+    def test_write_history(self):
+        video = Video.objects.create()
+        response = self.client.post(
+            reverse('history'), 
+            content_type='application/json', 
+            data=json.dumps({
+                'body': {
+                    'video-id': video.id,
+                    'video-time': 10,
+                },
+                'headers': {
+                    'Authorization': str(self.token)
+                }
+            })
+        )
+        self.assertEqual(response.status_code, 200)
+
+        results = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(len(results['results']), 1)
+
+        h = UserVideoHistory.objects.first()
+        self.assertEqual(h.time, 10)
+        self.assertEqual(h.video.id, video.id)
+        self.assertEqual(h.user, self.user)
+
+    def test_read_history(self):
+        video = Video.objects.create()
+        h = UserVideoHistory.objects.create(user=self.user, video=video, time=5)
+
+        response = self.client.get(reverse('history'))
+        results = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(len(results['results']), 1)
+
+    def test_read_one_video_history_detail(self):
+        video = Video.objects.create()
+        h = UserVideoHistory.objects.create(user=self.user, video=video, time=5)
+
+        response = self.client.get(reverse('videos-detail', args=[video.id]))
+        results = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(results['time'], 5)
+        self.assertEqual(results['id'], video.id)
