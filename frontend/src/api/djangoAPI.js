@@ -96,7 +96,7 @@ function Client() {
      *          Video
      */
     this.getVideoById = async (id) => {
-        const response = await this.getRequest(`${VIDEOS_ENDPOINT}/${id}`);
+        const response = await this.getRequest(`${VIDEOS_ENDPOINT}/${id}/`);
         return new Video(response.data);
     };
 
