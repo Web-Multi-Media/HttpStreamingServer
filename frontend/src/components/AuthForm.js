@@ -9,16 +9,15 @@ const Card = styled.div`
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
   position: fixed;
-  height: 40rem;
-  width: 60rem;
-  left: calc((100% - 60rem) / 2) ;
-  top: calc((100% - 40rem) / 2) ;
+  height: 35rem;
+  width: 35rem;
+  left: calc((100% - 35rem) / 2) ;
+  top: calc((100% - 35rem) / 2) ;
   z-index: 100;
   border-radius: 20px;
 `;
 
 const Form = styled.div`
-  margin: 50px;
   display: flex;
   flex-direction: column;
   width: 50%;
@@ -44,13 +43,8 @@ const Button = styled.button`
   font-size: 0.8rem;
 `;
 
-const Logo = styled.img`
-  width: 50%;
-  margin-bottom: 1rem;
-`;
-
 const Error = styled.div`
   background-color: red;
 `;
 
-export { Form, Input, Button, Logo, Card, Error };
+export { Form, Input, Button, Card, Error };
