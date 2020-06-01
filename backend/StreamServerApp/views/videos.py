@@ -105,9 +105,9 @@ class MoviesViewSet(viewsets.ModelViewSet):
         query parameter in the URL.
         """
         
-        seriesname = self.request.query_params.get('search_query', None)
-        if seriesname:
-            queryset = Movie.objects.search_trigramm('title', seriesname)
+        search_query = self.request.query_params.get('search_query', None)
+        if search_query:
+            queryset = Movie.objects.search_trigramm('title', search_query)
         else:
             queryset = Movie.objects.all()
         return queryset
