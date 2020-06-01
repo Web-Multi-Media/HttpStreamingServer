@@ -37,7 +37,7 @@ function Client() {
      * @returns {str}
      *          csrf cookie value
      */
-    this.csrfcookie = () => {  // for django csrf protection
+    this.getCsrfcookie = () => {  // for django csrf protection
         let cookieValue = null,
             name = "csrftoken";
         if (document.cookie && document.cookie !== "") {
@@ -52,6 +52,8 @@ function Client() {
         }
         return cookieValue;
     };
+
+    this.csrfcookie = this.getCsrfcookie();
 
     /**
      * Wrapper for sending GET request to server using axios http client
@@ -82,7 +84,7 @@ function Client() {
         ...params,
         headers: {
             Authorization: this.token, // the token is a variable which holds the token
-            'X-CSRFToken': this.csrfcookie(),
+            'X-CSRFToken': this.csrfcookie,
         },
         body,
     });
