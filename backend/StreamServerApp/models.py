@@ -60,8 +60,8 @@ class Video(models.Model):
     movie = models.ForeignKey(Movie, null=True, on_delete=models.SET_NULL)
 
     # For series & movie episodes and series seasons
-    episode = models.PositiveSmallIntegerField(default=None, null=True)
-    season = models.PositiveSmallIntegerField(default=None, null=True)
+    episode = models.PositiveSmallIntegerField(default=None, null=True, db_index=True)
+    season = models.PositiveSmallIntegerField(default=None, null=True, db_index=True)
 
     history = models.ManyToManyField(User, through='UserVideoHistory')
 
@@ -88,4 +88,4 @@ class UserVideoHistory(models.Model):
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
     time =  models.IntegerField()   # time in sec
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True, db_index=True)
