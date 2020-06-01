@@ -38,7 +38,6 @@ function App(props) {
     const location = useLocation();
     const history = useHistory();
 
-    console.log(displayModal, toggleModal);
     useEffect(() => {
         // Create an scoped async function in the hook
         const fetchData = async () => {
@@ -59,7 +58,10 @@ function App(props) {
         fetchData();
     }, [authTokens]);
 
-    const handleVideoSelect = (video) => {
+    const handleVideoSelect  = async (video) => {
+        const videoHistory = await client.getVideoHistory(video.id);
+        video.time = videoHistory.data.time;
+        video.nextEpisode = videoHistory.data.next_episode;
         setSelectedVideo(video);
         if (video) {
             history.push(`/streaming/?video=${video.id}`);

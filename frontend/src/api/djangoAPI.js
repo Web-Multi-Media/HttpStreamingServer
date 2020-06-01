@@ -61,7 +61,7 @@ function Client() {
      * @returns {Response}
      * 
      */
-    this.getRequest = (endPoint, params={}) => http.get(`${endPoint}/`, {
+    this.getRequest = (endPoint, params={}, request = '') => http.get(`${endPoint}/${request}`, {
         ...params, 
         headers: {
             Authorization: this.token, // the token is a variable which holds the token
@@ -118,6 +118,19 @@ function Client() {
     };
 
     /**
+     * performs GET request to retrieve a single video history by it's ID
+     *
+     * @param id
+     *          video's id
+     * @returns {Promise<Video>}
+     *          Video
+     */
+    this.getVideoHistory = async (id) => {
+        const response = await this.getRequest(VIDEOS_ENDPOINT, {}, id);
+        return response;
+    };
+
+    /**
      * performs GET request to retrieve a single video by it's ID
      *
      * @param id
@@ -129,7 +142,6 @@ function Client() {
         const response = await this.getRequest(HISTORY_ENDPOINT);
         return new MoviesPager(response.data);
     };
-
 
     /**
      * performs GET request to retrieve videos list from searchbar entry
