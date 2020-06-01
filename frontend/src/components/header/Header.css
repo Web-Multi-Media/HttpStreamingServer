@@ -1,17 +1,20 @@
 .headerBar{
     display: flex;
-    padding: 5%;
+    padding: 10px;
     font-family: 'Balsamiq Sans', cursive;
     justify-content: space-between;
     position: -webkit-sticky;
     position: sticky;
     top: 0px;
     z-index: 100;
-    background-color: #191515;
-
+    background-image: linear-gradient(#000000, rgba(37, 37, 37, 0.7));
 }
 .leftBarElement{
     margin: auto 15px;
+}
+
+.headerBar h1 {
+    margin: auto 0;
 }
 
 .leftBar{
