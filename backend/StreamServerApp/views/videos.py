@@ -75,11 +75,6 @@ class SeriesSeaonViewSet(generics.ListAPIView):
     def _allowed_methods(self):
         return ['GET']
 
-    def get_serializer_context(self):
-        context = super(SeriesSeaonViewSet, self).get_serializer_context()
-        context.update({"request": self.request})
-        return context
-
     def get_queryset(self):
         series_pk = int(self.kwargs['series'])
         season_number = int(self.kwargs['season'])
@@ -95,11 +90,6 @@ class MoviesViewSet(viewsets.ModelViewSet):
 
     def _allowed_methods(self):
         return ['GET']
-
-    def get_serializer_context(self):
-        context = super(MoviesViewSet, self).get_serializer_context()
-        context.update({"request": self.request})
-        return context
 
     def get_queryset(self):
         """

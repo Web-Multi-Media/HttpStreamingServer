@@ -15,8 +15,7 @@ class History(APIView, LimitOffsetPagination):
     """
     Get, create and update user history
     """
-    def get_history(self, request, user_token):
-        user = User.objects.get(auth_token=user_token)
+    def get_history(self, request, user):
         queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
         results = self.paginate_queryset(queryset, request, view=self)
         serializer = VideoSerializer(results, many=True, context={"request": self.request})
@@ -24,23 +23,18 @@ class History(APIView, LimitOffsetPagination):
 
     def get(self, request):
         try:
-            user_token = request.headers.get('Authorization')
-            return self.get_history(request, user_token)
+            user = request.api_user
+            return self.get_history(request, user)
 
-        except ObjectDoesNotExist as ex:
-            print('User not found, token recieved: {}'.format(user_token))
-            traceback.print_exception(type(ex), ex, ex.__traceback__)
-            return Response({'error': 'Check the user token!'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             traceback.print_exception(type(ex), ex, ex.__traceback__)
             return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def post(self, request):
         try:
-            user_token = request.data.get('headers').get('Authorization')
             video_id = request.data.get('body').get('video-id')
             time = request.data.get('body').get('video-time', 0)
-            user = User.objects.get(auth_token=user_token)
+            user = request.api_user
             video = Video.objects.get(id=video_id)
 
             # For series we only keep one video history
@@ -60,12 +54,8 @@ class History(APIView, LimitOffsetPagination):
                 history.save()
 
             # We send the history back to the client
-            return self.get_history(request, user_token)
+            return self.get_history(request, user)
 
-        except ObjectDoesNotExist as ex:
-            print('User not found, token recieved: {}'.format(user_token))
-            traceback.print_exception(type(ex), ex, ex.__traceback__)
-            return Response({'error': 'Check the user token!'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as ex:
             traceback.print_exception(type(ex), ex, ex.__traceback__)
             return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
