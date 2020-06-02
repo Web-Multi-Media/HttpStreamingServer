@@ -193,3 +193,20 @@ class HistoryTest(TestCase):
         results = json.loads(str(response.content, encoding='utf8'))
         self.assertEqual(results['time'], 5)
         self.assertEqual(results['id'], video.id)
+
+
+class MoviesTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.factory = APIRequestFactory()
+
+    def test_get_empty_movies(self):
+        response = APIClient().get(reverse('movies-list'))
+        decoded_content = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(decoded_content['results'], [])
+
+    def test_read_one_movie(self):
+        fixtures = ['Videos.json', 'Movies.json']
+        pass
+

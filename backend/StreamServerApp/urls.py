@@ -10,7 +10,7 @@ from .views import accounts
 router = DefaultRouter()
 router.register(r'videos', videos.VideoViewSet, basename='videos')
 router.register(r'series', videos.SeriesViewSet, basename='series')
-router.register(r'movies', videos.MoviesViewSet, basename='movie')
+router.register(r'movies', videos.MoviesViewSet, basename='movies')
 # router.register(r'history', accounts.HistoryViewSet, basename='history')
 
 
