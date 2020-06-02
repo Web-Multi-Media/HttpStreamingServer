@@ -76,7 +76,7 @@ class Video(models.Model):
                 return None
 
     def return_user_time_history(self, user):
-        video_history = self.uservideohistory_set.filter(user=user)
+        video_history = self.uservideohistory_set.filter(user=user).select_related('time')
         if video_history.count() > 0:
             return video_history.first().time
         else:
