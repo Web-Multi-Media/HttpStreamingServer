@@ -135,20 +135,6 @@ class UtilsTest(TestCase):
         os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.jpeg")
 
 
-class AuthenticationTest(TestCase):
-    def test_signup(self):
-        # TODO
-        pass
-
-    def test_login(self):
-        # TODO
-        pass
-
-    def test_logout(self):
-        # TODO
-        pass
-
-
 class HistoryTest(TestCase):
     def setUp(self):
         self.client = APIClient()
