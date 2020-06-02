@@ -74,12 +74,11 @@ class SeriesSerializer(serializers.ModelSerializer):
     This serializer is used for retrieving a series. 
     We list items from the video_set related field, and the seasons.
     """
-    video_set = PaginatedRelationField(VideoListSerializer)
     seasons = serializers.ReadOnlyField(source='season_list')
 
     class Meta:
         model = Series
-        fields = ['id', 'title', 'video_set', 'seasons']
+        fields = ['id', 'title', 'seasons']
 
 
 class MoviesSerializer(serializers.ModelSerializer):

@@ -59,7 +59,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             return SeriesListSerializer
         if self.action == 'retrieve':
-            return SeriesSerializer          
+            return SeriesSerializer
 
     def get_queryset(self):
         """
