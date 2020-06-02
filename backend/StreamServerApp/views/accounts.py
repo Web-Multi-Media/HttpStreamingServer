@@ -16,7 +16,7 @@ class History(APIView, LimitOffsetPagination):
     Get, create and update user history
     """
     def get_history(self, request, user):
-        queryset = Video.objects.filter(history=user).order_by('-uservideohistory__updated_at')
+        queryset = Video.objects.select_related('movie', 'series').filter(history=user).order_by('-uservideohistory__updated_at')
         results = self.paginate_queryset(queryset, request, view=self)
         serializer = VideoListSerializer(results, many=True, context={"request": self.request})
         return self.get_paginated_response(serializer.data)

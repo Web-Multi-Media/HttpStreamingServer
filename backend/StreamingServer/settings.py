@@ -21,9 +21,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, '../frontend/build/static/'),  # update the STATICFILES_DIRS
-)
+# STATICFILES_DIRS = (
+#     os.path.join(BASE_DIR, '../frontend/build/static/'),  # update the STATICFILES_DIRS
+# )
 
 ALLOWED_HOSTS = ['web', 'localhost']
 
@@ -36,6 +36,30 @@ else:
     DEBUG = True
     VERBOSE_OUTPUT = True
     VIDEO_URL = 'http://localhost:1337/Videos/'
+    INTERNAL_IPS = ['127.0.0.1']
+
+    # Normally django debug toolbar uses `INTERNAL_IPS` to check if it should show, but in
+    # docker request.META.REMOTE_ADDR is set to an internal docker IP instead of 127.0.0.1.
+    # We hard-code it on for development.
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+    }
+
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+        'debug_toolbar.panels.profiling.ProfilingPanel'
+    ]
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 
@@ -75,9 +99,11 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'rest_auth.registration',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

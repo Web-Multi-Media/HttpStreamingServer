@@ -38,9 +38,9 @@ class VideoViewSet(viewsets.ModelViewSet):
         
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
-            queryset = Video.objects.search_trigramm('name', search_query)
+            queryset = Video.objects.search_trigramm('name', search_query).select_related('movie', 'series')
         else:
-            queryset = Video.objects.all()
+            queryset = Video.objects.select_related('movie', 'series').all()
         return queryset
 
 
@@ -107,7 +107,7 @@ class MoviesViewSet(viewsets.ModelViewSet):
         
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
-            queryset = Movie.objects.search_trigramm('title', search_query)
+            queryset = Movie.objects.search_trigramm('title', search_query).prefetch_related('video_set')
         else:
-            queryset = Movie.objects.all()
+            queryset = Movie.objects.prefetch_related('video_set').all()
         return queryset
