@@ -233,6 +233,7 @@ class MoviesTest(TestCase):
         self.assertEqual(decoded_content['count'], 2)
         self.assertEqual(decoded_content['results'][0]['video_set']['count'], 1)
 
+
 class VideoTestLoggedout(TestCase):
     def setUp(self):
         self.client = APIClient()
