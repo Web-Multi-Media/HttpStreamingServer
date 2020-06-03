@@ -1,6 +1,6 @@
 from django.contrib import admin
 from StreamServerApp.models import Video
-from StreamServerApp.database_utils import delete_DB_Infos, populate_db_from_local_folder
+from StreamServerApp.database_utils import delete_DB_Infos, populate_db_from_local_folder, update_db_from_local_folder
 from django.conf import settings
 
 
@@ -11,7 +11,7 @@ def populate_videos(modeladmin, request, queryset):
 
 
 def update_videos(modeladmin, request, queryset):
-    populate_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL)
+    update_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL)
     update_videos.short_description = "Update videos database"
 
 class VideoAdmin(admin.ModelAdmin):
