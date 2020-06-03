@@ -7,7 +7,6 @@ from django.test import Client, TestCase
 from django.contrib.auth.models import User
 from django.conf import settings
 from rest_framework.authtoken.models import Token
-from rest_framework.test import APIRequestFactory
 from rest_framework.test import APIClient
 
 from StreamServerApp.utils import get_num_videos, get_video_type_and_info
@@ -138,7 +137,6 @@ class UtilsTest(TestCase):
 class HistoryTest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.factory = APIRequestFactory()
         self.user = User.objects.create_user(
             username='test_user', password='top_secret')
         self.token = Token.objects.create(user=self.user)
@@ -198,7 +196,6 @@ class HistoryTest(TestCase):
 class MoviesTest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.factory = APIRequestFactory()
 
     def test_get_empty_movies(self):
         response = self.client.get(reverse('movies-list'))
@@ -234,12 +231,11 @@ class MoviesTest(TestCase):
         self.assertEqual(decoded_content['results'][0]['video_set']['count'], 1)
 
 
-class VideoTestLoggedout(TestCase):
+class VideosTest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.factory = APIRequestFactory()
 
-    def test_video_detail(self):
+    def test_video_detail_not_logged_in(self):
         serie = Series.objects.create(title='The best test title ever')
         video1 = Video.objects.create(
             series=serie,
@@ -267,4 +263,3 @@ class VideoTestLoggedout(TestCase):
         self.assertEqual(decoded_content['name'], 'test_name1')
         self.assertIsNotNone(decoded_content['next_episode'])
         self.assertIsNone(decoded_content['time'])
-
