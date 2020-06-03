@@ -235,31 +235,43 @@ class VideosTest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
+    def add_series_videos(self, num_videos=2):
+        self.videos = []
+        self.serie = Series.objects.create(title='The best test title ever')
+        for video_num in range(1, num_videos+1):
+            video = Video.objects.create(
+                series=self.serie,
+                name='test_name_{}'.format(video_num),
+                video_url='test_url',
+                thumbnail='test_image',
+                fr_subtitle_url='test_fr_sub',
+                en_subtitle_url='test_eng_sub',
+                episode = video_num,
+                season = 1
+            )
+            self.videos.append(video)
+
     def test_video_detail_not_logged_in(self):
-        serie = Series.objects.create(title='The best test title ever')
-        video1 = Video.objects.create(
-            series=serie,
-            name='test_name1',
-            video_url='test_url',
-            thumbnail='test_image',
-            fr_subtitle_url='test_fr_sub',
-            en_subtitle_url='test_eng_sub',
-            episode = 10,
-            season = 1
-        )
-        video2 = Video.objects.create(
-            series=serie,
-            name='test_name2',
-            video_url='test_url',
-            thumbnail='test_image',
-            fr_subtitle_url='test_fr_sub',
-            en_subtitle_url='test_eng_sub',
-            episode = 11,
-            season = 1
-        )
-        response = self.client.get(reverse('videos-detail', args=[video1.id]))
+        self.add_series_videos()
+        response = self.client.get(reverse('videos-detail', args=[self.videos[0].id]))
         decoded_content = json.loads(str(response.content, encoding='utf8'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(decoded_content['name'], 'test_name1')
+        self.assertEqual(decoded_content['name'], 'test_name_1')
         self.assertIsNotNone(decoded_content['next_episode'])
         self.assertIsNone(decoded_content['time'])
+
+    def test_videos_list_pagination(self):
+        self.add_series_videos(15)
+        response = self.client.get(reverse('videos-list'))
+        decoded_content = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(decoded_content['count'], 15)
+        self.assertEqual(len(decoded_content['results']), settings.REST_FRAMEWORK['PAGE_SIZE'])
+        
+        # perform request on next page
+        next_page_url = decoded_content['next']
+        response = self.client.get(next_page_url)
+        decoded_content = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(decoded_content['count'], 15)
+        self.assertEqual(len(decoded_content['results']), 15-settings.REST_FRAMEWORK['PAGE_SIZE'])
