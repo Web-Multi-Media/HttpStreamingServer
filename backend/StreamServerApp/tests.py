@@ -230,6 +230,13 @@ class MoviesTest(TestCase):
         self.assertEqual(decoded_content['count'], 2)
         self.assertEqual(decoded_content['results'][0]['video_set']['count'], 1)
 
+    def test_search_movies(self):
+        data = {
+            'search_query': 'random query test'
+        }
+        response = self.client.get(reverse('movies-list'), data=data)
+        self.assertEqual(response.status_code, 200)
+
 
 class VideosTest(TestCase):
     def setUp(self):
