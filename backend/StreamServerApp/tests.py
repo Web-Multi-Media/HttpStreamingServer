@@ -287,3 +287,14 @@ class VideosTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(decoded_content['count'], 15)
         self.assertEqual(len(decoded_content['results']), 15-settings.REST_FRAMEWORK['PAGE_SIZE'])
+
+
+class ModelsTest(TestCase):
+    def test_delete_video_removes_history(self):
+        video = Video.objects.create(name='test_name')
+        user = User.objects.create_user(username='test_user', password='top_secret')
+        h = UserVideoHistory.objects.create(user=user, video=video, time=0)
+
+        video.delete()
+        self.assertEqual(UserVideoHistory.objects.count(), 0)
+        
