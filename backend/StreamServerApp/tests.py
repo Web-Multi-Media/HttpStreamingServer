@@ -15,6 +15,24 @@ from StreamServerApp.media_processing import extract_subtitle, generate_thumbnai
 from StreamServerApp.subtitles import get_subtitles
 
 
+def add_series_videos(num_videos=2):
+    videos = []
+    serie = Series.objects.create(title='The best test title ever')
+    for video_num in range(1, num_videos+1):
+        video = Video.objects.create(
+            series=serie,
+            name='test_name_{}'.format(video_num),
+            video_url='test_url',
+            thumbnail='test_image',
+            fr_subtitle_url='test_fr_sub',
+            en_subtitle_url='test_eng_sub',
+            episode = video_num,
+            season = 1
+        )
+        videos.append(video)
+    return serie, videos
+
+
 class CommandsTestCase(TestCase):
     def test_database_populate_command(self):
         " Test database creation."
@@ -247,25 +265,9 @@ class VideosTest(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def add_series_videos(self, num_videos=2):
-        self.videos = []
-        self.serie = Series.objects.create(title='The best test title ever')
-        for video_num in range(1, num_videos+1):
-            video = Video.objects.create(
-                series=self.serie,
-                name='test_name_{}'.format(video_num),
-                video_url='test_url',
-                thumbnail='test_image',
-                fr_subtitle_url='test_fr_sub',
-                en_subtitle_url='test_eng_sub',
-                episode = video_num,
-                season = 1
-            )
-            self.videos.append(video)
-
     def test_video_detail_not_logged_in(self):
-        self.add_series_videos()
-        response = self.client.get(reverse('videos-detail', args=[self.videos[0].id]))
+        serie, videos = add_series_videos()
+        response = self.client.get(reverse('videos-detail', args=[videos[0].id]))
         decoded_content = json.loads(str(response.content, encoding='utf8'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(decoded_content['name'], 'test_name_1')
@@ -273,7 +275,7 @@ class VideosTest(TestCase):
         self.assertIsNone(decoded_content['time'])
 
     def test_videos_list_pagination(self):
-        self.add_series_videos(15)
+        serie, videos = add_series_videos(15)
         response = self.client.get(reverse('videos-list'))
         decoded_content = json.loads(str(response.content, encoding='utf8'))
         self.assertEqual(response.status_code, 200)
@@ -297,4 +299,23 @@ class ModelsTest(TestCase):
 
         video.delete()
         self.assertEqual(UserVideoHistory.objects.count(), 0)
+
+    def test_series_next_episode(self):
+        serie, videos = add_series_videos(2)
+        self.assertEqual(videos[0].next_episode, videos[1].id)
+
+    def test_season_list(self):
+        serie = Series.objects.create(title='The best test title ever')
+        Video.objects.create(series=serie, season=1)
+        Video.objects.create(series=serie, season=2)
+        Video.objects.create(series=serie, season=3)
+
+        self.assertEqual(set(serie.season_list), {1,2,3})
+
+    def test_return_season_episodes(self):
+        serie, videos = add_series_videos(2)
+        episodes = serie.return_season_episodes(1)
+
+        self.assertEqual(episodes.count(), 2)
+        self.assertEqual(list(episodes.values_list('episode', flat=True)), [1, 2])
         
