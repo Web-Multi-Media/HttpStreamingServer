@@ -1,9 +1,0 @@
-[
-    {
-        "model": "StreamServerApp.Movie",
-        "pk": 1,
-        "fields": {
-            "title": "The Big Lebowski"
-        }
-    }
-]

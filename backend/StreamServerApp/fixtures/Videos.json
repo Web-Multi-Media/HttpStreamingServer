@@ -25,15 +25,5 @@
             "video_url": "http://localhost:8000/static/test/folder2/singe.mp4",
             "video_codec": "h264"
         }
-    },
-    {
-        "model": "StreamServerApp.Video",
-        "pk": 4,
-        "fields": {
-            "name": "The Big Lebowsky",
-            "video_url": "http://localhost:8000/static/test/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            "movie":1,
-            "video_codec": "h264"
-        }
     }
 ]

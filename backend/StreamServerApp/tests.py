@@ -201,12 +201,53 @@ class MoviesTest(TestCase):
         self.factory = APIRequestFactory()
 
     def test_get_empty_movies(self):
-        response = APIClient().get(reverse('movies-list'))
+        response = self.client.get(reverse('movies-list'))
         decoded_content = json.loads(str(response.content, encoding='utf8'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(decoded_content['results'], [])
 
     def test_read_one_movie(self):
-        fixtures = ['Videos.json', 'Movies.json']
-        pass
+        movie = Movie.objects.create(title='The best test title ever')
+        video = Video.objects.create(
+            movie=movie,
+            name='test_name',
+            video_url='test_url',
+            thumbnail='test_image',
+            fr_subtitle_url='test_fr_sub',
+            en_subtitle_url='test_eng_sub'
+        )
+        response = self.client.get(reverse('movies-detail'), args=[movie])
+        decoded_content = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(decoded_content['results'][0]['title'], 'The best test title ever')
+        self.assertEqual(decoded_content['previous'], None)
+        self.assertEqual(decoded_content['count'], 1)
+        self.assertEqual(decoded_content['results'][0]['video_set']['count'], 1)
+
+    def test_list_movies(self):
+        movie = Movie.objects.create(title='The best test title ever')
+        movie2 = Movie.objects.create(title='The best test title ever II')
+        video = Video.objects.create(
+            movie=movie,
+            name='test_name',
+            video_url='test_url',
+            thumbnail='test_image',
+            fr_subtitle_url='test_fr_sub',
+            en_subtitle_url='test_eng_sub'
+        )
+        video2 = Video.objects.create(
+            movie=movie2,
+            name='test_name',
+            video_url='test_url',
+            thumbnail='test_image',
+            fr_subtitle_url='test_fr_sub',
+            en_subtitle_url='test_eng_sub'
+        )
+        response = self.client.get(reverse('movies-list'))
+        decoded_content = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(decoded_content['results'][0]['title'], 'The best test title ever')
+        self.assertEqual(decoded_content['previous'], None)
+        self.assertEqual(decoded_content['count'], 2)
+        self.assertEqual(decoded_content['results'][0]['video_set']['count'], 1)
 
