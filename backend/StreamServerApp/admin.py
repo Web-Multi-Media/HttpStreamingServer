@@ -1,6 +1,6 @@
 from django.contrib import admin
 from StreamServerApp.models import Video
-from StreamServerApp.utils import delete_DB_Infos, populate_db_from_local_folder
+from StreamServerApp.database_utils import delete_DB_Infos, populate_db_from_local_folder
 from django.conf import settings
 
 

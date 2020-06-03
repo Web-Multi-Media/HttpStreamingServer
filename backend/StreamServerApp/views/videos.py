@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from StreamServerApp.serializers.videos import VideoSerializer, \
      SeriesSerializer, MoviesSerializer, SeriesListSerializer, VideoListSerializer
 from StreamServerApp.models import Video, Series, Movie
-from StreamServerApp import utils
 
 
 def index(request):

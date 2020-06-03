@@ -9,7 +9,7 @@ from django.conf import settings
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from StreamServerApp.utils import get_num_videos, get_video_type_and_info
+from StreamServerApp.database_utils import get_num_videos, get_video_type_and_info
 from StreamServerApp.models import Video, Series, Movie, UserVideoHistory
 from StreamServerApp.media_processing import extract_subtitle, generate_thumbnail
 from StreamServerApp.subtitles import get_subtitles

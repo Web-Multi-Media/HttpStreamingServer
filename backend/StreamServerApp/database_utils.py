@@ -54,7 +54,7 @@ def populate_db_from_local_folder(base_path, remote_url):
         base_path: Local Folder where the videos are stored
 
         this functions will only add videos to the database if 
-        they are encoded with h264/AAC codec
+        they are encoded with h264 codec
     """
     init_cache()
     video_path = base_path
@@ -72,46 +72,11 @@ def populate_db_from_local_folder(base_path, remote_url):
                 try:
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
                     with transaction.atomic():
-                        # Print current working directory
-                        print ("Current working dir : %s" % root)
-                        video_infos = prepare_video(full_path, video_path, root, remote_url)
-                        if not video_infos:
-                            print("Dict is Empty")
-                            continue
-
-                        v = Video(name=filename, 
-                                  video_folder = root,
-                                  video_url=video_infos['remote_video_url'],
-                                  video_codec=video_infos['video_codec_type'],
-                                  audio_codec=video_infos['audio_codec_type'],
-                                  height=video_infos['video_height'],
-                                  width=video_infos['video_width'],
-                                  thumbnail=video_infos['remote_thumbnail_url'],
-                                  en_subtitle_url=video_infos['en_subtitles_remote_path'],
-                                  fr_subtitle_url=video_infos['fr_subtitles_remote_path'],
-                                  ov_subtitle_url=video_infos['ov_subtitles_remote_path']
-                                  )
-                        
-                        # parse movie or series, episode & season
-                        video_type_and_info = get_video_type_and_info(filename)
-
-                        if video_type_and_info:
-                            if video_type_and_info['type'] == 'Series':
-                                series, created = Series.objects.get_or_create(title=video_type_and_info['title'],
-                                                                               defaults={'thumbnail': video_infos['remote_thumbnail_url']})
-                                v.series = series
-                                v.season = video_type_and_info['season']
-                                v.episode = video_type_and_info['episode']
-                                if created:
-                                    count_series += 1
-
-                            elif video_type_and_info['type'] == 'Movie':
-                                movie, created = Movie.objects.get_or_create(title=video_type_and_info['title'])
-                                v.movie = movie
-                                if created:
-                                    count_movies += 1
-                                    
-                        v.save()
+                        retValue = add_one_video_to_database(full_path,  video_path, root, remote_url, filename)
+                        if retValue == 1:
+                            count_movies += 1
+                        elif retValue == 2:
+                            count_series += 1
 
                 except Exception as ex:
                     print ("An error occured")
@@ -120,6 +85,70 @@ def populate_db_from_local_folder(base_path, remote_url):
 
     print("{} videos were added to the database".format(get_num_videos()))
     print('{} series and {} movies were created'.format(count_series, count_movies))
+
+def add_one_video_to_database(full_path, video_path, root, remote_url, filename):
+    """ # create infos in the database for one video
+
+        Args:
+        full_path: absolue path to the video
+        video_path: relative (to root) basepath (ie directory) containing video
+        root: absolute path to directory containing all the videos
+        remote_url: baseurl for video access on the server
+
+        return 0 if noseries/movies was created, 1 if a movies was created, 2 if a series was created
+
+    """
+    # Print current working directory
+    print ("Current working dir : %s" % root)
+    video_infos = prepare_video(full_path, video_path, root, remote_url)
+    if not video_infos:
+        raise("Dict is Empty")
+
+    v = Video(name=filename, 
+                video_folder = root,
+                video_url=video_infos['remote_video_url'],
+                video_codec=video_infos['video_codec_type'],
+                audio_codec=video_infos['audio_codec_type'],
+                height=video_infos['video_height'],
+                width=video_infos['video_width'],
+                thumbnail=video_infos['remote_thumbnail_url'],
+                en_subtitle_url=video_infos['en_subtitles_remote_path'],
+                fr_subtitle_url=video_infos['fr_subtitles_remote_path'],
+                ov_subtitle_url=video_infos['ov_subtitles_remote_path']
+                )
+    
+    # parse movie or series, episode & season
+    return_value = 0
+    video_type_and_info = get_video_type_and_info(filename)
+
+    if video_type_and_info:
+        if video_type_and_info['type'] == 'Series':
+            series, created = Series.objects.get_or_create(title=video_type_and_info['title'],
+                                                            defaults={'thumbnail': video_infos['remote_thumbnail_url']})
+            v.series = series
+            v.season = video_type_and_info['season']
+            v.episode = video_type_and_info['episode']
+
+            if created:
+                return_value = 2
+
+
+        elif video_type_and_info['type'] == 'Movie':
+            movie, created = Movie.objects.get_or_create(title=video_type_and_info['title'])
+            v.movie = movie
+
+            if created:
+                return_value = 1
+            
+    v.save()
+
+    return return_value
+
+
+def populate_db_from_remote_server(remotePath, ListOfVideos):
+    """ # tobeDone
+       ListOfVideos could be provided through an API Call
+    """
 
 
 def prepare_video(video_full_path, video_path, video_dir, remote_url):
