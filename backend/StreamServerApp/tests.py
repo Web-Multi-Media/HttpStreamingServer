@@ -206,24 +206,6 @@ class MoviesTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(decoded_content['results'], [])
 
-    def test_read_one_movie(self):
-        movie = Movie.objects.create(title='The best test title ever')
-        video = Video.objects.create(
-            movie=movie,
-            name='test_name',
-            video_url='test_url',
-            thumbnail='test_image',
-            fr_subtitle_url='test_fr_sub',
-            en_subtitle_url='test_eng_sub'
-        )
-        response = self.client.get(reverse('movies-detail'), args=[movie])
-        decoded_content = json.loads(str(response.content, encoding='utf8'))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(decoded_content['results'][0]['title'], 'The best test title ever')
-        self.assertEqual(decoded_content['previous'], None)
-        self.assertEqual(decoded_content['count'], 1)
-        self.assertEqual(decoded_content['results'][0]['video_set']['count'], 1)
-
     def test_list_movies(self):
         movie = Movie.objects.create(title='The best test title ever')
         movie2 = Movie.objects.create(title='The best test title ever II')
@@ -250,4 +232,38 @@ class MoviesTest(TestCase):
         self.assertEqual(decoded_content['previous'], None)
         self.assertEqual(decoded_content['count'], 2)
         self.assertEqual(decoded_content['results'][0]['video_set']['count'], 1)
+
+class VideoTestLoggedout(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.factory = APIRequestFactory()
+
+    def test_video_detail(self):
+        serie = Series.objects.create(title='The best test title ever')
+        video1 = Video.objects.create(
+            series=serie,
+            name='test_name1',
+            video_url='test_url',
+            thumbnail='test_image',
+            fr_subtitle_url='test_fr_sub',
+            en_subtitle_url='test_eng_sub',
+            episode = 10,
+            season = 1
+        )
+        video2 = Video.objects.create(
+            series=serie,
+            name='test_name2',
+            video_url='test_url',
+            thumbnail='test_image',
+            fr_subtitle_url='test_fr_sub',
+            en_subtitle_url='test_eng_sub',
+            episode = 11,
+            season = 1
+        )
+        response = self.client.get(reverse('videos-detail', args=[video1.id]))
+        decoded_content = json.loads(str(response.content, encoding='utf8'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(decoded_content['name'], 'test_name1')
+        self.assertIsNotNone(decoded_content['next_episode'])
+        self.assertIsNone(decoded_content['time'])
 
