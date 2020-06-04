@@ -117,6 +117,8 @@ def update_db_from_local_folder(base_path, remote_url):
 
     Video.objects.filter(pk__in=video_ids_to_delete).delete()
 
+    num_video_before = get_num_videos()
+
     for root, directories, filenames in os.walk(video_path):
         for filename in filenames:
             full_path = os.path.join(root, filename)
@@ -124,23 +126,28 @@ def update_db_from_local_folder(base_path, remote_url):
                 print(full_path+" is already in db, skip it")
                 continue
 
-            if isfile(full_path)  and (full_path.endswith(".mp4") or full_path.endswith(".mkv")):
+            if isfile(full_path) and (full_path.endswith(".mp4") or full_path.endswith(".mkv")):
                 try:
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
                     with transaction.atomic():
-                        retValue = add_one_video_to_database(full_path,  video_path, root, remote_url, filename)
-                        if retValue == 1:
+                        created = add_one_video_to_database(
+                            full_path,  video_path, root, remote_url, filename)
+                        if created == 1:
                             count_movies += 1
-                        elif retValue == 2:
+                        elif created == 2:
                             count_series += 1
 
                 except Exception as ex:
-                    print ("An error occured")
+                    print("An error occured")
                     traceback.print_exception(type(ex), ex, ex.__traceback__)
                     continue
 
-    #print("{} videos were added to the database".format(get_num_videos()))
-    print('{} series and {} movies were created'.format(count_series, count_movies))
+    num_video_after = get_num_videos()
+
+    print("{} videos were added to the database".format(
+        num_video_after-num_video_before))
+    print('{} series and {} movies were created'.format(
+        count_series, count_movies))
 
 
 def add_one_video_to_database(full_path, video_path, root, remote_url, filename):
