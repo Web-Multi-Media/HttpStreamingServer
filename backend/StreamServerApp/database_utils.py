@@ -104,21 +104,27 @@ def update_db_from_local_folder(base_path, remote_url):
     database_old_files = Video.objects.values_list('name', 'video_folder', 'id')
     fullpath_database_old_files = [[os.path.join(folder, namein ), id] for namein, folder, id in database_old_files]
 
+    old_path_set = set()
+
     #We check here if old database files are still present on filesystem, if not, delete from db 
     video_ids_to_delete = []
     for old_files_path, old_video_id in fullpath_database_old_files:
         if os.path.isfile(old_files_path) == False:
             print(old_files_path+"will be deleted")
             video_ids_to_delete.append(old_video_id)
+        else:
+            old_path_set.add(old_files_path)
 
     Video.objects.filter(pk__in=video_ids_to_delete).delete()
 
     for root, directories, filenames in os.walk(video_path):
         for filename in filenames:
             full_path = os.path.join(root, filename)
+            if full_path in old_path_set:
+                print(full_path+" is already in db, skip it")
+                continue
 
-            if full_path not in fullpath_database_old_files and isfile(full_path)  \
-                and (full_path.endswith(".mp4") or full_path.endswith(".mkv")):
+            if isfile(full_path)  and (full_path.endswith(".mp4") or full_path.endswith(".mkv")):
                 try:
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
                     with transaction.atomic():

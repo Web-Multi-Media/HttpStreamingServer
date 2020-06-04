@@ -1,5 +1,6 @@
 import os
 import json
+import shutil
 from os.path import isfile
 from django.urls import reverse
 from django.core.management import call_command
@@ -129,6 +130,18 @@ class UtilsTest(TestCase):
         self.assertNotEqual(series.thumbnail, "")
         self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt"), True)
         os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
+
+    def test_update_db(self):
+        self.assertEqual(Series.objects.count(), 0)
+        self.assertEqual(Movie.objects.count(), 0)
+        call_command('updatedb')
+        self.assertEqual(Series.objects.count(), 1)
+        self.assertEqual(Movie.objects.count(), 5)
+        shutil.copyfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4", 
+                            "/usr/src/app/Videos/folder1/Malcolm.in.the Middle.S03E14.Cynthia's.Back.mp4")
+        call_command('updatedb')
+        self.assertEqual(Series.objects.count(), 2)
+        self.assertEqual(Movie.objects.count(), 5)
 
     def test_subtitles_extraction(self):
         extract_subtitle("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4",
