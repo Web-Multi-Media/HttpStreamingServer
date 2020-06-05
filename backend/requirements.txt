@@ -11,3 +11,4 @@ djangorestframework==3.11.0
 django-rest-auth==0.9.5 
 django-allauth==0.42.0
 django-rest-auth[with_social]
+pycodestyle==2.6.0 

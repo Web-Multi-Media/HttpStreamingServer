@@ -11,6 +11,7 @@ install:
 
 script:
   - docker-compose -f docker-compose-prod.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py test
+  - docker-compose -f docker-compose-prod.yml run --rm web ./wait-for-it.sh db:5432 -- python3 -m pycodestyle --select=E302 .
 
 deploy:
   provider: script
