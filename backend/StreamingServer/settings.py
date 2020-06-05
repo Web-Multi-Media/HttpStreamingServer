@@ -67,13 +67,12 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 VIDEO_ROOT = os.path.join(BASE_DIR, 'Videos/')
 
 
-
-if (VERBOSE_OUTPUT == True):
-    customstdout=subprocess.PIPE
-    customstderr=subprocess.PIPE
+if (VERBOSE_OUTPUT is True):
+    customstdout = subprocess.PIPE
+    customstderr = subprocess.PIPE
 else:
-    customstdout=subprocess.DEVNULL
-    customstderr=subprocess.DEVNULL
+    customstdout = subprocess.DEVNULL
+    customstderr = subprocess.DEVNULL
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/

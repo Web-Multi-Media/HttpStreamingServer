@@ -14,8 +14,10 @@ def update_videos(modeladmin, request, queryset):
     update_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL)
     update_videos.short_description = "Update videos database"
 
+
 class VideoAdmin(admin.ModelAdmin):
     actions = []
+
 
 admin.site.register(Video, VideoAdmin)
 admin.site.add_action(populate_videos)

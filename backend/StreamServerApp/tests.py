@@ -50,6 +50,7 @@ class CommandsTestCase(TestCase):
 
 class LoadingTest(TestCase):
     fixtures = ['Videos.json']
+
     def setUp(self):
             # Every test needs a client.
             self.client = Client()
@@ -323,7 +324,7 @@ class ModelsTest(TestCase):
         Video.objects.create(series=serie, season=2)
         Video.objects.create(series=serie, season=3)
 
-        self.assertEqual(set(serie.season_list), {1,2,3})
+        self.assertEqual(set(serie.season_list), {1, 2, 3})
 
     def test_return_season_episodes(self):
         serie, videos = add_series_videos(2)

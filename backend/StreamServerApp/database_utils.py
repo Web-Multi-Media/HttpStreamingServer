@@ -62,7 +62,6 @@ def populate_db_from_local_folder(base_path, remote_url):
     count_series = 0
     count_movies = 0
 
-
     for root, directories, filenames in os.walk(video_path):
         idx += len(filenames)
         for filename in filenames:
@@ -72,19 +71,21 @@ def populate_db_from_local_folder(base_path, remote_url):
                 try:
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
                     with transaction.atomic():
-                        retValue = add_one_video_to_database(full_path,  video_path, root, remote_url, filename)
+                        retValue = add_one_video_to_database(
+                            full_path,  video_path, root, remote_url, filename)
                         if retValue == 1:
                             count_movies += 1
                         elif retValue == 2:
                             count_series += 1
 
                 except Exception as ex:
-                    print ("An error occured")
+                    print("An error occured")
                     traceback.print_exception(type(ex), ex, ex.__traceback__)
                     continue
 
     print("{} videos were added to the database".format(get_num_videos()))
-    print('{} series and {} movies were created'.format(count_series, count_movies))
+    print('{} series and {} movies were created'.format(
+        count_series, count_movies))
 
 
 def update_db_from_local_folder(base_path, remote_url):
@@ -101,15 +102,17 @@ def update_db_from_local_folder(base_path, remote_url):
     count_series = 0
     count_movies = 0
 
-    database_old_files = Video.objects.values_list('name', 'video_folder', 'id')
-    fullpath_database_old_files = [[os.path.join(folder, namein ), id] for namein, folder, id in database_old_files]
+    database_old_files = Video.objects.values_list(
+        'name', 'video_folder', 'id')
+    fullpath_database_old_files = [
+        [os.path.join(folder, namein), id] for namein, folder, id in database_old_files]
 
     old_path_set = set()
 
-    #We check here if old database files are still present on filesystem, if not, delete from db 
+    #We check here if old database files are still present on filesystem, if not, delete from db
     video_ids_to_delete = []
     for old_files_path, old_video_id in fullpath_database_old_files:
-        if os.path.isfile(old_files_path) == False:
+        if os.path.isfile(old_files_path) is False:
             print(old_files_path+"will be deleted")
             video_ids_to_delete.append(old_video_id)
         else:
@@ -163,24 +166,24 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
 
     """
     # Print current working directory
-    print ("Current working dir : %s" % root)
+    print("Current working dir : %s" % root)
     video_infos = prepare_video(full_path, video_path, root, remote_url)
     if not video_infos:
         raise("Dict is Empty")
 
-    v = Video(name=filename, 
-                video_folder = root,
-                video_url=video_infos['remote_video_url'],
-                video_codec=video_infos['video_codec_type'],
-                audio_codec=video_infos['audio_codec_type'],
-                height=video_infos['video_height'],
-                width=video_infos['video_width'],
-                thumbnail=video_infos['remote_thumbnail_url'],
-                en_subtitle_url=video_infos['en_subtitles_remote_path'],
-                fr_subtitle_url=video_infos['fr_subtitles_remote_path'],
-                ov_subtitle_url=video_infos['ov_subtitles_remote_path']
-                )
-    
+    v = Video(name=filename,
+              video_folder=root,
+              video_url=video_infos['remote_video_url'],
+              video_codec=video_infos['video_codec_type'],
+              audio_codec=video_infos['audio_codec_type'],
+              height=video_infos['video_height'],
+              width=video_infos['video_width'],
+              thumbnail=video_infos['remote_thumbnail_url'],
+              en_subtitle_url=video_infos['en_subtitles_remote_path'],
+              fr_subtitle_url=video_infos['fr_subtitles_remote_path'],
+              ov_subtitle_url=video_infos['ov_subtitles_remote_path']
+              )
+
     # parse movie or series, episode & season
     return_value = 0
     video_type_and_info = get_video_type_and_info(filename)
@@ -188,7 +191,7 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
     if video_type_and_info:
         if video_type_and_info['type'] == 'Series':
             series, created = Series.objects.get_or_create(title=video_type_and_info['title'],
-                                                            defaults={'thumbnail': video_infos['remote_thumbnail_url']})
+                                                           defaults={'thumbnail': video_infos['remote_thumbnail_url']})
             v.series = series
             v.season = video_type_and_info['season']
             v.episode = video_type_and_info['episode']
@@ -197,12 +200,13 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
                 return_value = 2
 
         elif video_type_and_info['type'] == 'Movie':
-            movie, created = Movie.objects.get_or_create(title=video_type_and_info['title'])
+            movie, created = Movie.objects.get_or_create(
+                title=video_type_and_info['title'])
             v.movie = movie
 
             if created:
                 return_value = 1
-            
+
     v.save()
 
     return return_value
@@ -233,7 +237,8 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
         print(e.stderr, file=sys.stderr)
         raise
 
-    video_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
+    video_stream = next(
+        (stream for stream in probe['streams'] if stream['codec_type'] == 'video'), None)
     if video_stream is None:
         print('No video stream found', file=sys.stderr)
         return {}
@@ -246,14 +251,16 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
     elif 'duration' in probe['format']:
         duration = float(probe['format']['duration'])
 
-    audio_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'audio'), None)
+    audio_stream = next(
+        (stream for stream in probe['streams'] if stream['codec_type'] == 'audio'), None)
     if audio_stream is None:
-        #At the moment, if the input video has no audio, it's not added to the database. 
+        #At the moment, if the input video has no audio, it's not added to the database.
         print('No audio stream found', file=sys.stderr)
         return {}
 
     ov_subtitles = False
-    subtitles_stream = next((stream for stream in probe['streams'] if stream['codec_type'] == 'subtitle'), None)
+    subtitles_stream = next(
+        (stream for stream in probe['streams'] if stream['codec_type'] == 'subtitle'), None)
     if subtitles_stream is not None:
         print('Found Subtitles in the input stream')
         ov_subtitles = True
@@ -263,9 +270,9 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
     relative_path = os.path.relpath(video_full_path, video_path)
     if(("h264" in video_codec_type)):
         #Thumbnail creation
-        thumbnail_fullpath=os.path.splitext(video_full_path)[0]+'.jpg'
-        thumbnail_relativepath=os.path.splitext(relative_path)[0]+'.jpg'
-        if(os.path.isfile(thumbnail_fullpath) == False):
+        thumbnail_fullpath = os.path.splitext(video_full_path)[0]+'.jpg'
+        thumbnail_relativepath = os.path.splitext(relative_path)[0]+'.jpg'
+        if(os.path.isfile(thumbnail_fullpath) is False):
             generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
         subtitles_full_path = get_subtitles(video_full_path, ov_subtitles)
@@ -279,24 +286,29 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
                 transmux_to_mp4(video_full_path, temp_mp4, False)
 
             os.remove(video_full_path)
-            relative_path =  os.path.relpath(temp_mp4, video_path)
+            relative_path = os.path.relpath(temp_mp4, video_path)
             video_full_path = temp_mp4
 
-        
         fr_subtitles_remote_path = ''
         if(subtitles_full_path[0]):
-            fr_subtitles_relative_path = os.path.relpath(subtitles_full_path[0], video_path)
-            fr_subtitles_remote_path = os.path.join(remote_url, fr_subtitles_relative_path)
+            fr_subtitles_relative_path = os.path.relpath(
+                subtitles_full_path[0], video_path)
+            fr_subtitles_remote_path = os.path.join(
+                remote_url, fr_subtitles_relative_path)
 
         en_subtitles_remote_path = ''
         if(subtitles_full_path[1]):
-            en_subtitles_relative_path = os.path.relpath(subtitles_full_path[1], video_path)
-            en_subtitles_remote_path = os.path.join(remote_url, en_subtitles_relative_path)
+            en_subtitles_relative_path = os.path.relpath(
+                subtitles_full_path[1], video_path)
+            en_subtitles_remote_path = os.path.join(
+                remote_url, en_subtitles_relative_path)
 
         ov_subtitles_remote_path = ''
         if(subtitles_full_path[2]):
-            ov_subtitles_relative_path = os.path.relpath(subtitles_full_path[2], video_path)
-            ov_subtitles_remote_path = os.path.join(remote_url, ov_subtitles_relative_path)
+            ov_subtitles_relative_path = os.path.relpath(
+                subtitles_full_path[2], video_path)
+            ov_subtitles_remote_path = os.path.join(
+                remote_url, ov_subtitles_relative_path)
 
     else:
         #Input is not h264, let's skip it
@@ -305,11 +317,11 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
     remote_video_url = os.path.join(remote_url, relative_path)
     remote_thumbnail_url = os.path.join(remote_url, thumbnail_relativepath)
 
-    return {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type, \
-            'audio_codec_type': audio_codec_type, 'video_height': video_height,\
-            'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,\
-             'fr_subtitles_remote_path':fr_subtitles_remote_path, 'en_subtitles_remote_path':en_subtitles_remote_path,
-             'ov_subtitles_remote_path':ov_subtitles_remote_path}
+    return {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
+            'audio_codec_type': audio_codec_type, 'video_height': video_height,
+            'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
+            'fr_subtitles_remote_path': fr_subtitles_remote_path, 'en_subtitles_remote_path': en_subtitles_remote_path,
+            'ov_subtitles_remote_path': ov_subtitles_remote_path}
 
 
 def populate_db_from_remote_server(remotePath, ListOfVideos):
