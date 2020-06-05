@@ -1,7 +1,7 @@
 import React from 'react';
 import SearchBar from '../Searchbar';
 import './Header.css';
-import User from '../User';
+import User from '../login/User';
 import { AuthContext, useAuth } from '../context/auth';
 import Button from "@material-ui/core/Button";
 

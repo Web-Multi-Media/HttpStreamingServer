@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
 import axios from 'axios';
 import { Card, Form, Input, Button, Error } from "./AuthForm";
-import { useAuth } from "./context/auth";
+import { useAuth } from "../context/auth";
 
 function Signup({toggleModalBox, setDisplayModal}) {
   const [isLoggedIn, setLoggedIn] = useState(false);

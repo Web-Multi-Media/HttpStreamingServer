@@ -48,8 +48,8 @@ function VideoDetail3({
     }, [video]);
 
     const updateState = (ref) => {
-        console.log(ref.activeTextTrack);
-        console.log(playerRef.current.textTracks);
+        //console.log(ref.activeTextTrack);
+        //console.log(playerRef.current.textTracks);
         if (ref.activeTextTrack && ref.activeTextTrack.mode === "showing") {
             setActiveTextTrack('active');
         }else{

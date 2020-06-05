@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Route, useHistory, useLocation } from 'react-router-dom';
-import Login from './login';
-import Signup from './signup';
+import Login from './login/login';
+import Signup from './login/signup';
 import { AuthContext } from './context/auth';
 import { client } from '../api/djangoAPI';
 import Header from "./header/Header";

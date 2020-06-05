@@ -1,7 +1,7 @@
 import React from "react";
-import { useAuth } from "./context/auth";
+import { useAuth } from "../context/auth";
 import Button from "@material-ui/core/Button";
-import { client } from '../api/djangoAPI';
+import { client } from '../../api/djangoAPI';
 import './User.css'
 
 function UserInfo({displayModal}) {
