@@ -24,6 +24,7 @@ export const getMoviesAndSeries = async (setPager, setVideos, setSeriesPager, se
  * load it in the player if exist
  * @returns {Promise<void>}
  */
+
 export const getUrlVideo = async (location, setSelectedVideo) => {
     const values = queryString.parse(location.search);
     if (values.video) {
@@ -37,4 +38,36 @@ export const getUrlVideo = async (location, setSelectedVideo) => {
             console.log(error);
         }
     }
+};
+
+export const addOffset =  (videoId, offset) => {
+    const video = document.getElementById(videoId);
+    if (video) {
+        Array.from(video.textTracks).forEach((track) => {
+            if (track.mode === 'showing') {
+                Array.from(track.cues).forEach((cue) => {
+                    cue.startTime += offset || 0.5;
+                    cue.endTime += offset || 0.5;
+                });
+                return true;
+            }
+        });
+    }
+    return false;
+};
+
+export const removeOffset = (videoId, offset) => {
+    const video = document.getElementById(videoId);
+    if (video) {
+        Array.from(video.textTracks).forEach((track) => {
+            if (track.mode === 'showing') {
+                Array.from(track.cues).forEach((cue) => {
+                    cue.startTime -= offset || 0.5;
+                    cue.endTime -= offset || 0.5;
+                });
+                return true;
+            }
+        });
+    }
+    return false;
 };

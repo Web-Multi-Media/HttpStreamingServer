@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Route, useHistory, useLocation } from 'react-router-dom';
-import queryString from 'query-string';
-import SearchBar from './Searchbar';
-import VideoDetail from './VideoDetail';
-import SeriesCarousel from './SeriesCarousel';
-import VideoCarrouselSlick from './VideoCarrouselSlick';
 import Login from './login';
 import Signup from './signup';
-import PrivateRoute from './privateRoute';
-import User from './User';
 import { AuthContext } from './context/auth';
 import { client } from '../api/djangoAPI';
-import {getMoviesAndSeries, getUrlVideo} from '../utils/utils';
 import Header from "./header/Header";
 import './App.css'
 import Carousels from "./Carousels/Carousels";
+const utils = require ("./../utils/utils");
 
 function App(props) {
     var existingTokens;
@@ -42,8 +35,8 @@ function App(props) {
         // Create an scoped async function in the hook
         const fetchData = async () => {
             await Promise.all([
-                getMoviesAndSeries(setPager, setVideos, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos),
-                getUrlVideo(location, setSelectedVideo)
+                utils.getMoviesAndSeries(setPager, setVideos, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos),
+                utils.getUrlVideo(location, setSelectedVideo)
             ]);
         };
         async function anyNameFunction() {

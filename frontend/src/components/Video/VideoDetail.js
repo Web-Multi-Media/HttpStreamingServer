@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { client } from '../api/djangoAPI';
+import { client } from '../../api/djangoAPI';
 import Button from "@material-ui/core/Button";
 import './VideoDetail.css'
 

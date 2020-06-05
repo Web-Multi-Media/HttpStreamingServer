@@ -1,9 +1,10 @@
 import React from 'react';
-import VideoDetail from '../VideoDetail';
+import VideoDetail from '../Video/VideoDetail';
 import VideoCarrouselSlick from '../VideoCarrouselSlick';
 import SeriesCarousel from '../SeriesCarousel';
 import './Carousels.css';
 import { AuthContext } from '../context/auth';
+import VideoDetail3 from "../Video/VideoDetail3";
 
 export default function Carousels({
     video, handleVideoSelect, setHistoryPager, authTokens,
@@ -13,7 +14,7 @@ export default function Carousels({
         <div className="ui container" style={{ marginTop: '1em' }}>
             <div className="ui grid">
                 <div className="ui column">
-                    <VideoDetail
+                    <VideoDetail3
                         video={video}
                         handleVideoSelect={handleVideoSelect}
                         setHistoryPager={setHistoryPager}
