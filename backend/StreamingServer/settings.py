@@ -21,10 +21,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = (
-     os.path.join(BASE_DIR, '../frontend/build/static/'),  # update the STATICFILES_DIRS
-)
-
 ALLOWED_HOSTS = ['web', 'localhost']
 
 if os.getenv('DEPLOY_ENV', 'dev') == 'production':
@@ -32,6 +28,7 @@ if os.getenv('DEPLOY_ENV', 'dev') == 'production':
     VERBOSE_OUTPUT = False
     ALLOWED_HOSTS.append(os.getenv('HTTPSTREAMING_HOST', ''))
     VIDEO_URL = '/Videos/'
+    STATICFILES_DIRS = (os.path.join(BASE_DIR, '../frontend/build/static/'))
 else:
     DEBUG = True
     VERBOSE_OUTPUT = True
