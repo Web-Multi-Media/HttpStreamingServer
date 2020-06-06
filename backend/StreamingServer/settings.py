@@ -74,8 +74,6 @@ else:
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -132,22 +130,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'StreamingServer.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-# if 'test' in sys.argv:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': ':memory:',
-#         }
-#     }
-# else:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#         }
-#     }
-#
 DATABASE_URL_ENV_NAME = 'DJANGO_DATABASE_URL'
 DATABASES = {'default': dj_database_url.config(
     DATABASE_URL_ENV_NAME, default='postgres://postgres:postgres@db/streaming_server')}
