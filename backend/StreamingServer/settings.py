@@ -28,7 +28,7 @@ if os.getenv('DEPLOY_ENV', 'dev') == 'production':
     VERBOSE_OUTPUT = False
     ALLOWED_HOSTS.append(os.getenv('HTTPSTREAMING_HOST', ''))
     VIDEO_URL = '/Videos/'
-    STATICFILES_DIRS = (os.path.join(BASE_DIR, '../frontend/build/static/'))
+    STATICFILES_DIRS = (os.path.join(BASE_DIR, '../frontend/build/static/'),)
 else:
     DEBUG = True
     VERBOSE_OUTPUT = True
