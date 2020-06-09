@@ -26,6 +26,7 @@
     "video.js": "^7.8.2"
   },
   "scripts": {
+    "prestart": "if [ ! -d node_modules ]; then npm install; fi",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

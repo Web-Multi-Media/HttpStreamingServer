@@ -4,7 +4,6 @@ volumes:
   dbvolume:
   ipython:
   static_volume:
-  node_module:
 
 services:
   db:
@@ -49,8 +48,7 @@ services:
     build: ./frontend
     volumes:
       - ./frontend/:/usr/src/app/
-      - node_module:/usr/src/app/frontend/node_modules/
-    command: bash -c "npm install && npm start"
+    command: bash -c "npm start"
     depends_on:
       - web
     ports:
