@@ -4,7 +4,7 @@ import VideoCarrouselSlick from '../VideoCarrouselSlick';
 import SeriesCarousel from '../SeriesCarousel';
 import './Carousels.css';
 import { AuthContext } from '../context/auth';
-import VideoDetail3 from "../Video/VideoDetail3";
+
 
 export default function Carousels({
     video, handleVideoSelect, setHistoryPager, authTokens,
