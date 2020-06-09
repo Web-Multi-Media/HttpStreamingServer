@@ -14,7 +14,7 @@ export default function Carousels({
         <div className="ui container" style={{ marginTop: '1em' }}>
             <div className="ui grid">
                 <div className="ui column">
-                    <VideoDetail3
+                    <VideoDetail
                         video={video}
                         handleVideoSelect={handleVideoSelect}
                         setHistoryPager={setHistoryPager}
