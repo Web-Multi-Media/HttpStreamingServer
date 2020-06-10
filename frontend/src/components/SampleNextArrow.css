@@ -1,0 +1,15 @@
+.arrow {
+    position: absolute;
+    line-height: 100%;
+    font-size: 123px;
+    top: 18%;
+    z-index: 2;
+    opacity: 0.5;
+}
+.next { left: 25px; }
+.back { right: 25px; }
+
+.arrow:hover {
+    opacity: 1;
+    cursor: pointer;
+}

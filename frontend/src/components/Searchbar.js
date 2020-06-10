@@ -1,35 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
+import TextField from '@material-ui/core/TextField';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import './Searchbar.css';
+
+export default function Searchbar(props) {
 
 
-class Searchbar extends React.Component {
-    state = {
-        term: ''
+
+    const [term, setTerm] = useState('');
+
+    const handleChange = (event) => {
+        setTerm(event.target.value);
+        props.handleFormSubmit(event.target.value);
     };
-    
-    handleChange = (event) => {
-        this.setState({
-            term: event.target.value
-        });
-        this.props.handleFormSubmit(event.target.value);
-    };
-    
-    handleSubmit = event => {
+
+    const handleSubmit = (event) => {
         event.preventDefault();
-        this.props.handleFormSubmit(this.state.term);
+        props.handleFormSubmit(this.state.term);
     };
 
-    render() {
-        return (
-            <div className='search-bar ui segment'>
-                <form onSubmit={this.handleSubmit} className='ui form'>
-                    <div className='field'>
-                        <label htmlFor="video-search">Video Search</label>
-                        <input onChange={this.handleChange} name='video-search' type="text" placeholder='Search here' value={this.state.term}/>
-                    </div>
-                </form>
 
-            </div>
-        )
-    }
+    return (
+        <div className="search-bar ui segment">
+            <form onSubmit={handleSubmit} >
+                <div className="field">
+                    <h2 className="searchElement">Video Search</h2>
+                    <div className="group">
+                        <input className="searchInput"
+                            onChange={handleChange}
+                            type="text" required
+                        />
+                            <span className="highlight"></span>
+                            <span className="bar"></span>
+                            <label className="searchLabel">Movie, Serie</label>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    );
 }
-export default Searchbar;

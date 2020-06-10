@@ -11,10 +11,11 @@ install:
 
 script:
   - docker-compose -f docker-compose-prod.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py test
+  - docker-compose -f docker-compose-prod.yml run --rm web python3 -m pycodestyle --select=E302,E211,E202,E712,E225,E231 .
 
 deploy:
   provider: script
   script: bash docker_push
   on:
-    branch: master
+    all_branches: true
 

@@ -1,0 +1,58 @@
+.headerBar{
+    display: flex;
+    padding: 20px 10px;
+    font-family: 'Balsamiq Sans', cursive;
+    justify-content: space-between;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0px;
+    z-index: 100;
+    background-image: linear-gradient(#000000, rgba(37, 37, 37, 0.7));
+}
+.leftBarElement{
+    margin: auto 15px;
+}
+
+.headerBar h1 {
+    margin: auto 0;
+}
+
+.leftBar{
+    display: flex;
+    flex-direction: row;
+}
+.headerButton{
+    margin: auto;
+}
+
+
+@media all and (min-width: 720px) {
+    .headerBar{
+        flex-direction: row;
+    }
+
+}
+
+@media all and (max-width: 720px) {
+
+    .leftBar {
+        flex-direction: column;
+        margin: auto;
+    }
+    .headerBar{
+        flex-direction: column;
+    }
+    .headerBar h1{
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .searchInput{
+        width: 200px;
+        margin: 0;
+    }
+    .leftBarElement{
+        align-self: auto;
+        width: 100%;
+    }
+
+}

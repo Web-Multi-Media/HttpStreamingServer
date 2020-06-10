@@ -1,19 +1,11 @@
-import json
-from django.http import HttpResponse, Http404, JsonResponse
-from django.template import loader
 from django.shortcuts import render
-from django.contrib.postgres.search import TrigramSimilarity
-from django.core import serializers
-from django.core.paginator import Paginator
 from django.conf import settings
-from rest_framework.response import Response
-from rest_framework import viewsets
-from rest_framework import filters
-from rest_framework import generics
+from rest_framework import viewsets, generics
+from rest_framework.permissions import IsAuthenticated
 
-from StreamServerApp.serializers import ExtendedVideoSerializer, SimpleVideoSerializer, SeriesSerializer, MoviesSerializer, SeriesListSerializer
+from StreamServerApp.serializers.videos import VideoSerializer, \
+     SeriesSerializer, MoviesSerializer, SeriesListSerializer, VideoListSerializer
 from StreamServerApp.models import Video, Series, Movie
-from StreamServerApp import utils
 
 
 def index(request):
@@ -30,12 +22,12 @@ class VideoViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """
-        Overwirte
+        Overwirte 
         """
         if self.action == 'list':
-            return SimpleVideoSerializer
+            return VideoListSerializer
         if self.action == 'retrieve':
-            return ExtendedVideoSerializer
+            return VideoSerializer   
 
     def get_queryset(self):
         """
@@ -45,9 +37,9 @@ class VideoViewSet(viewsets.ModelViewSet):
         
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
-            queryset = Video.objects.search_trigramm('name', search_query)
+            queryset = Video.objects.search_trigramm('name', search_query).select_related('movie', 'series')
         else:
-            queryset = Video.objects.all()
+            queryset = Video.objects.select_related('movie', 'series').all()
         return queryset
 
 
@@ -66,14 +58,13 @@ class SeriesViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             return SeriesListSerializer
         if self.action == 'retrieve':
-            return SeriesSerializer          
+            return SeriesSerializer
 
     def get_queryset(self):
         """
         Optionally performs search on the series, by using the `search_query` 
         query parameter in the URL.
         """
-        
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
             queryset = Series.objects.search_trigramm('title', search_query)
@@ -86,7 +77,7 @@ class SeriesSeaonViewSet(generics.ListAPIView):
     """
     This viewset provides listing of episodes of a season of a series.
     """
-    serializer_class = ExtendedVideoSerializer
+    serializer_class = VideoListSerializer
 
     def _allowed_methods(self):
         return ['GET']
@@ -113,10 +104,9 @@ class MoviesViewSet(viewsets.ModelViewSet):
         query parameter in the URL.
         """
         
-        seriesname = self.request.query_params.get('search_query', None)
-        if seriesname:
-            queryset = Movie.objects.search_trigramm('title', seriesname)
+        search_query = self.request.query_params.get('search_query', None)
+        if search_query:
+            queryset = Movie.objects.search_trigramm('title', search_query).prefetch_related('video_set')
         else:
-            queryset = Movie.objects.all()
+            queryset = Movie.objects.prefetch_related('video_set').all()
         return queryset
-        

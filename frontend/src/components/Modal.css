@@ -1,0 +1,31 @@
+.cross{
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+.crossContainer{
+    border-radius: 50px;
+    right: 20px;
+    top: 40px;
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    background-color: rgba(92,92,92,0.35);
+    cursor: pointer ;
+}
+
+.crossContainer:hover{
+    background-color: rgba(92,92,92,0.15);
+}
+
+.modal__header{
+    margin-top: 40px;
+    margin-bottom: 50px;
+    color: black;
+}
+
+modal__section{
+    margin-top: 10px;
+}
+

@@ -1,0 +1,33 @@
+
+@media all and (min-width: 720px) {
+    video{
+        width:640px;
+        height:480px;
+    }
+
+    .test{
+        display: flex;
+        justify-content: center;
+        width:100%
+    }
+    .test2{
+        width:640px;
+    }
+
+}
+
+@media all and (max-width: 720px) {
+
+    video{
+        width:320px;
+        height:240px;
+    }
+}
+
+.hidden{
+    display: none!important;
+}
+
+.active{
+    display: block!important;
+}

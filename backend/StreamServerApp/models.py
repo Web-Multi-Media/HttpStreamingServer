@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -59,8 +60,10 @@ class Video(models.Model):
     movie = models.ForeignKey(Movie, null=True, on_delete=models.SET_NULL)
 
     # For series & movie episodes and series seasons
-    episode = models.PositiveSmallIntegerField(default=None, null=True)
-    season = models.PositiveSmallIntegerField(default=None, null=True)
+    episode = models.PositiveSmallIntegerField(default=None, null=True, db_index=True)
+    season = models.PositiveSmallIntegerField(default=None, null=True, db_index=True)
+
+    history = models.ManyToManyField(User, through='UserVideoHistory')
 
     objects = SearchManager()
     
@@ -71,3 +74,18 @@ class Video(models.Model):
                 return self.series.video_set.get(episode=self.episode+1, season=self.season).id
             except ObjectDoesNotExist:
                 return None
+
+    def return_user_time_history(self, user):
+        video_history = self.uservideohistory_set.filter(user=user)
+        if video_history.count() > 0:
+            return video_history.first().time
+        else:
+            return 0
+
+
+class UserVideoHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    time =  models.IntegerField()   # time in sec
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, db_index=True)

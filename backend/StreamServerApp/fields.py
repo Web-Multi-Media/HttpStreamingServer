@@ -1,7 +1,5 @@
 from rest_framework.fields import Field
-from rest_framework.settings import api_settings
 from rest_framework import pagination
-import re
 
 
 # This custom pagination behaves the same as the default one but returns a dict instead of a Response object.

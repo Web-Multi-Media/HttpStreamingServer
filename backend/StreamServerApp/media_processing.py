@@ -26,7 +26,7 @@ def convert_subtitles_to_webvtt(input_file, output_file):
 
     """
     cmd = ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", input_file, output_file]
-    if(os.path.isfile(output_file) == False):
+    if not os.path.isfile(output_file):
         run_ffmpeg_process(cmd)
 
 
@@ -42,8 +42,8 @@ def extract_subtitle(input_file, output_file):
     Throw an exception if the return value of the subprocess is different than 0
 
     """
-    cmd = ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", input_file,"-map", "0:s:0", output_file]
-    if(os.path.isfile(output_file) == False):
+    cmd = ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", input_file, "-map", "0:s:0", output_file]
+    if not os.path.isfile(output_file):
         run_ffmpeg_process(cmd)
 
 
@@ -63,12 +63,12 @@ def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
         print(
             "Audio codec is not aac, audio reencoding is necessary (This might take a long time)")
         cmd = ["ffmpeg", "-i", input_file,
-                "-acodec", "aac", "-vcodec", "copy", output_file]
+                "-acodec", "aac", "-vcodec", "copy", "-movflags", "+faststart", output_file]
     else:
         cmd = ["ffmpeg", "-i", input_file,
-                "-codec", "copy",  output_file]
+                "-codec", "copy", "-movflags", "+faststart", output_file]
 
-    if(os.path.isfile(output_file) == False):
+    if not os.path.isfile(output_file):
         run_ffmpeg_process(cmd)
 
 
@@ -88,5 +88,5 @@ def generate_thumbnail(input_file, duration, output_file):
     """
     cmd = ["ffmpeg", "-ss", str(duration/2.0), "-i", input_file, "-an", "-vf", "scale=320:-1",
                             "-vframes", "1", output_file]
-    if(os.path.isfile(output_file) == False):
+    if not os.path.isfile(output_file):
         run_ffmpeg_process(cmd)

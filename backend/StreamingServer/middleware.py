@@ -1,0 +1,24 @@
+import json
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+
+
+class UserAuthMiddleware(object):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.method == 'GET':
+            user_token = request.headers.get('Authorization')
+        elif request.method == 'POST':
+            user_token = json.loads(request.body.decode()).get('headers', {}).get('Authorization')
+
+        try:
+            if user_token:
+                user = User.objects.get(auth_token=user_token)
+                request.api_user = user
+
+        except ObjectDoesNotExist as ex:
+            print('User not found, token recieved: {}'.format(user_token))
+
+        return self.get_response(request)

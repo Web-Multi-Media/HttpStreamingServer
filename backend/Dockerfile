@@ -1,8 +1,8 @@
 
 FROM node:8
 
-RUN apt-get update -y
-RUN apt-get install -y python3-pip python-dev build-essential \
+RUN apt-get update -y --allow-unauthenticated
+RUN apt-get install -y --allow-unauthenticated python3-pip python-dev build-essential \
     software-properties-common python3-software-properties \
     x264 x265 ffmpeg && rm -rf /var/lib/apt/lists/*
 

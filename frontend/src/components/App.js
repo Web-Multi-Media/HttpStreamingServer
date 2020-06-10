@@ -1,149 +1,136 @@
-import React from 'react';
-import SearchBar from './Searchbar';
-import VideoDetail from './VideoDetail';
-import { withRouter } from "react-router-dom";
-import queryString from 'query-string'
-import VideoCarrouselSlick from "./VideoCarrouselSlick";
+import React, { useEffect, useState } from 'react';
+import { Route, useHistory, useLocation } from 'react-router-dom';
+import Login from './login/login';
+import Signup from './login/signup';
+import { AuthContext } from './context/auth';
 import { client } from '../api/djangoAPI';
-import  fakeData from '../fakeData/videos';
-import SeriesCarousel from "./SeriesCarousel";
+import Header from "./header/Header";
+import './App.css'
+import Carousels from "./Carousels/Carousels";
+const utils = require ("./../utils/utils");
 
-
-class App extends React.Component {
-    state = {
-        pager: null,
-        videos: [],
-        selectedVideo: null,
-        moviesPager:null,
-        seriesPager:null,
-        moviesVideos :[],
-        seriesVideos :[],
-    };
-
-    handleSubmit = async (termFromSearchBar) => {
-        // API call to retrieve videos from searchbar
-        try {
-
-            const [pager, pager2] = await Promise.all([
-                client.searchSeries(termFromSearchBar),
-                client.searchMovies(termFromSearchBar)
-            ]);
-            if (pager.series.length > 0){
-                this.setState({
-                    seriesPager: pager,
-                    seriesVideos: pager.series
-                });
-            }
-            if (pager2.videos.length > 0){
-                this.setState({
-                    moviesPager: pager2,
-                    moviesVideos: pager2.videos
-                });
-            }
-
-
-
-        } catch(error) {
-            console.log(error);
-        }
-    };
-    /**
-     * retrieve movies and series
-     * @returns {Promise<void>}
-     */
-    getMoviesAndSeries = async () => {
-        try {
-            const [pager, pager2] = await Promise.all([
-                client.searchSeries(),
-                client.searchMovies()
-            ]);
-            this.setState({
-                pager: pager,
-                videos: pager.videos,
-                seriesPager:  pager,
-                seriesVideos: pager.series,
-                moviesPager: pager2,
-                moviesVideos: pager2.videos
-            });
-        } catch(error) {
-            console.log(error);
-        }
-    };
-
-    /**
-     * check in the url if a video is specified
-     * load it in the player if exist
-     * @returns {Promise<void>}
-     */
-    getUrlVideo = async () => {
-        const values = queryString.parse(this.props.location.search);
-        if (values.video) {
-            let id = parseInt(values.video);
-            // API call to retrieve current video
-            // We look here if a query string for the video is provided, if so load the video
-            try {
-                const video = await client.getVideoById(id);
-                this.setState({selectedVideo: video})
-            } catch(error) {
-                console.log(error);
-            }
-        }
+function App(props) {
+    var existingTokens;
+    try{
+        existingTokens = JSON.parse(localStorage.getItem("tokens"));
     }
+    catch{
+        existingTokens = '';
+    }
+    const [authTokens, setAuthTokens] = useState(existingTokens);
+    const [pager, setPager] = useState(null);
+    const [displayModal, setDisplayModal] = useState(false);
+    const [toggleModal, setToggleModal] = useState(true);
+    const [videos, setVideos] = useState([]);
+    const [selectedVideo, setSelectedVideo] = useState(null);
+    const [moviesPager, setMoviesPager] = useState(null);
+    const [historyPager, setHistoryPager] = useState(null);
+    const [seriesPager, setSeriesPager] = useState(null);
+    const [moviesVideos, setMoviesVideos] = useState([]);
+    const [seriesVideos, setSeriesVideos] = useState([]);
+    const location = useLocation();
+    const history = useHistory();
 
-    async componentDidMount() {
-        await Promise.all([
-            this.getMoviesAndSeries(),
-            this.getUrlVideo()
-        ]);
-    };
+    useEffect(() => {
+        // Create an scoped async function in the hook
+        const fetchData = async () => {
+            await Promise.all([
+                utils.getMoviesAndSeries(setPager, setVideos, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos),
+                utils.getUrlVideo(location, setSelectedVideo)
+            ]);
+        };
+        async function anyNameFunction() {
+            // Set the token for the API client
+            client.setToken(authTokens);
+            if(authTokens && authTokens.key !== ""){
+                const history = await client.getHistory(authTokens.key);
+                setHistoryPager(history)
+            }
+        }    // Execute the created function directly
+        anyNameFunction(authTokens);
+        fetchData();
+    }, [authTokens]);
 
-    handleVideoSelect = (video) => {
-        console.log("handleVideoSelect"+video);
-        this.setState({ selectedVideo: video });
-        if(video){
-            this.props.history.push("/streaming/?video=" + video.id);
+    const handleVideoSelect  = async (video) => {
+        const videoHistory = await client.getVideoById(video.id);
+        video.time = videoHistory.time;
+        video.nextEpisode = videoHistory.nextEpisode;
+        setSelectedVideo(video);
+        if (video) {
+            history.push(`/streaming/?video=${video.id}`);
             document.title = video.name;
         }
         // change tab title with the name of the selected video
         window.scrollTo(0, 0);
     };
 
-    render() {
-        return (
-            <div className='ui container' style={{ marginTop: '1em' }}>
-                <SearchBar handleFormSubmit={this.handleSubmit} />
-                <div className='ui grid'>
-                    <div className="ui column">
-                            <VideoDetail video={this.state.selectedVideo} handleVideoSelect={this.handleVideoSelect}/>
-                    </div>
-                </div>
-                {
-                    this.state.seriesVideos.length > 0 &&
-                    <div className="carrouselContainer">
-                        <SeriesCarousel
-                            pager={this.state.seriesPager}
-                            videos={this.state.seriesVideos}
-                            handleVideoSelect={this.handleVideoSelect}
-                        />
-                    </div>
-                }
-                        <div className="carrouselContainer">
-                <h4>MOVIES</h4>
-                <div>
 
-                    {
-                        this.state.moviesVideos.length > 0 &&
-                            <VideoCarrouselSlick
-                                pager={this.state.moviesPager}
-                                videos={this.state.moviesVideos}
-                                handleVideoSelect={this.handleVideoSelect}
-                            />
-                    }
-                        </div>
-                </div>
-            </div>
-        )
+    const displayModalBox = (isDisplay) =>{
+        setDisplayModal(isDisplay);
     }
+    const toggleModalBox = () =>{
+        setToggleModal(!toggleModal);
+    }
+
+
+    const handleSubmit = async (termFromSearchBar) => {
+        // API call to retrieve videos from searchbar
+        try {
+            const [fetchPager, fetchPager2] = await Promise.all([
+                client.searchSeries(termFromSearchBar),
+                client.searchMovies(termFromSearchBar),
+            ]);
+            if (fetchPager.series.length > 0) {
+                setSeriesPager(fetchPager);
+                setSeriesVideos(fetchPager.series);
+            }
+            if (fetchPager2.videos.length > 0) {
+                setMoviesPager(fetchPager2);
+                setMoviesVideos(fetchPager2.videos);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+
+
+
+    const setTokens = (data) => {
+        localStorage.setItem('tokens', JSON.stringify(data));
+        setAuthTokens(data);
+    };
+
+    return (
+        <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
+            <Header
+                handleFormSubmit={handleSubmit}
+                displayModal={displayModalBox}
+            />
+            <Carousels
+                video={selectedVideo}
+                handleVideoSelect={handleVideoSelect}
+                setHistoryPager={setHistoryPager}
+                authTokens={authTokens}
+                historyPager={historyPager}
+                seriesPager={seriesPager}
+                seriesVideos={seriesVideos}
+                moviesPager={moviesPager}
+                moviesVideos={moviesVideos}
+            />
+            {(displayModal && toggleModal) &&
+            <Login
+                toggleModalBox={toggleModalBox}
+                setDisplayModal={setDisplayModal}
+            />}
+            {(displayModal && !toggleModal) &&
+            <Signup
+                toggleModalBox={toggleModalBox}
+                setDisplayModal={setDisplayModal}
+           />}
+
+        </AuthContext.Provider>
+    );
 }
 
-export default withRouter(App);
+export default App;
