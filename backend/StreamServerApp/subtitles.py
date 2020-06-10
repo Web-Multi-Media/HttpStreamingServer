@@ -10,7 +10,7 @@ from StreamServerApp.media_processing import extract_subtitle, convert_subtitles
 def init_cache():
     """ # init cache for subtitles database query and stuff.
     """
-    if(os.path.isfile('cachefile.dbm.db') is False):
+    if not os.path.isfile('cachefile.dbm.db'):
         print("Create subtitles cache data")
         region.configure('dogpile.cache.dbm', arguments={
             'filename': 'cachefile.dbm'}, replace_existing_backend=True)

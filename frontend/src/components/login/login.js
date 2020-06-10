@@ -3,6 +3,7 @@ import { Link, Redirect } from "react-router-dom";
 import axios from 'axios';
 import { Card, Form, Input, Button, Error } from "./AuthForm";
 import { useAuth } from "../context/auth";
+import { client } from '../../api/djangoAPI';
 import '../Modal.css'
 
 function Login({toggleModalBox, setDisplayModal}) {
@@ -10,28 +11,22 @@ function Login({toggleModalBox, setDisplayModal}) {
   const [isError, setIsError] = useState(false);
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const email=""
   const { setAuthTokens } = useAuth();
 
-  function postLogin() {
-    const http = axios.create({
-      baseURL: process.env.REACT_APP_DJANGO_API,
-      responseType: 'json',
-    });
-    http.post("/rest-auth/login/", {
-      username,
-      password,
-      email,
-    }).then(result => {
-      if (result.status === 200) {
-        setAuthTokens(result.data);
-        setLoggedIn(true);
-      } else {
-        setIsError(true);
-      }
-    }).catch(e => {
+  async function postLogin() {
+    const param = {
+      'username': username,
+      'password': password,
+      'email': "",
+
+    };
+    const response = await client.postRequest("/rest-auth/login", null, param);
+    if (response.status === 200) {
+      setAuthTokens(response.data);
+      setLoggedIn(true);
+    } else {
       setIsError(true);
-    });
+    }
   }
 
   function search(event) {

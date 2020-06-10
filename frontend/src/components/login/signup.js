@@ -3,6 +3,7 @@ import { Link, Redirect } from "react-router-dom";
 import axios from 'axios';
 import { Card, Form, Input, Button, Error } from "./AuthForm";
 import { useAuth } from "../context/auth";
+import { client } from '../../api/djangoAPI';
 
 function Signup({toggleModalBox, setDisplayModal}) {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -13,25 +14,20 @@ function Signup({toggleModalBox, setDisplayModal}) {
   const email = ""
   const { setAuthTokens } = useAuth();
 
-  function postSignup() {
-    const http = axios.create({
-      baseURL: process.env.REACT_APP_DJANGO_API,
-      responseType: 'json',
-    });
-    http.post("/rest-auth/registration/", {
-      username,
-      password1,
-      password2,
-    }).then(result => {
-      if (result.status === 201) {
-        setAuthTokens(result.data);
-        setLoggedIn(true);
-      } else {
-        setIsError(true);
-      }
-    }).catch(e => {
+  async function postSignup() {
+    const param = {
+      'username': username,
+      'password1': password1,
+      'password2': password2,
+
+    };
+    const response = await client.postRequest("/rest-auth/registration", null, param);
+    if (response.status === 201) {
+      setAuthTokens(response.data);
+      setLoggedIn(true);
+    } else {
       setIsError(true);
-    });
+    }
   }
 
   function search(event) {

@@ -324,11 +324,6 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             'ov_subtitles_remote_path': ov_subtitles_remote_path}
 
 
-def populate_db_from_remote_server(remotePath, ListOfVideos):
-    """ # tobeDone
-       ListOfVideos could be provided through an API Call
-    """
-
 
 def get_video_type_and_info(video_path):
     """ # Uses subliminal to parse information from filename.

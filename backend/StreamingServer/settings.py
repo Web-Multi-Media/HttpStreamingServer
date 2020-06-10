@@ -64,7 +64,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 VIDEO_ROOT = os.path.join(BASE_DIR, 'Videos/')
 
 
-if (VERBOSE_OUTPUT is True):
+if VERBOSE_OUTPUT:
     customstdout = subprocess.PIPE
     customstderr = subprocess.PIPE
 else:
