@@ -9,6 +9,7 @@ import '../Modal.css'
 function Login({toggleModalBox, setDisplayModal}) {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [errorMessages, setErrorMessage] = useState([]);
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const { setAuthTokens } = useAuth();
@@ -20,12 +21,18 @@ function Login({toggleModalBox, setDisplayModal}) {
       'email': "",
 
     };
-    const response = await client.postRequest("/rest-auth/login", null, param);
-    if (response.status === 200) {
-      setAuthTokens(response.data);
-      setLoggedIn(true);
-    } else {
+    try {
+      const response = await client.postRequest("/rest-auth/login", null, param);
+      if (response.status === 200) {
+        setAuthTokens(response.data);
+        setLoggedIn(true);
+      } else {
+        setIsError(true);
+        setErrorMessage(Object.values(response.data));
+      }
+    } catch (error) {
       setIsError(true);
+      setErrorMessage(Object.values(error.response.data));
     }
   }
 
@@ -71,7 +78,11 @@ function Login({toggleModalBox, setDisplayModal}) {
         </Button>
       </Form>
       <Link onClick={toggleModalBox}>Don't have an account?</Link>
-        { isError &&<Error>The username or password provided were incorrect!</Error> }
+        { isError &&<Error> 
+          Error: 
+          {errorMessages.map(message => <div>{message}</div>)}
+        
+      </Error> }
     </Card>
   );
 }

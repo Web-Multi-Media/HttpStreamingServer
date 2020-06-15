@@ -13,6 +13,7 @@ function Signup({toggleModalBox, setDisplayModal}) {
   const [password2, setPassword2] = useState("");
   const email = ""
   const { setAuthTokens } = useAuth();
+  const [errorMessages, setErrorMessage] = useState([]);
 
   async function postSignup() {
     const param = {
@@ -21,12 +22,18 @@ function Signup({toggleModalBox, setDisplayModal}) {
       'password2': password2,
 
     };
-    const response = await client.postRequest("/rest-auth/registration", null, param);
-    if (response.status === 201) {
-      setAuthTokens(response.data);
-      setLoggedIn(true);
-    } else {
+    try {
+      const response = await client.postRequest("/rest-auth/registration", null, param);
+      if (response.status === 201) {
+        setAuthTokens(response.data);
+        setLoggedIn(true);
+      } else {
+        setIsError(true);
+        setErrorMessage(Object.values(response.data));
+      }
+    } catch (error) {
       setIsError(true);
+      setErrorMessage(Object.values(error.response.data));
     }
   }
 
@@ -87,7 +94,11 @@ function Signup({toggleModalBox, setDisplayModal}) {
       </Form>
 
       <Link onClick={toggleModalBox}>Already have an account?</Link>
-      { isError &&<Error>The username or password provided were incorrect!</Error> }
+      { isError &&<Error> 
+          Error: 
+          {errorMessages.map(message => <div>{message}</div>)}
+        
+      </Error> }
     </Card>
   );
 }
