@@ -16,49 +16,34 @@ def init_cache():
             'filename': 'cachefile.dbm'}, replace_existing_backend=True)
 
 
-def handle_subliminal_download(video, video_path):
+def handle_subliminal_download(video, video_path, languages_to_retrieve):
     """ # Download the best subtitles in french and english
         Args:
         video : Name of video
         video_path: absolute path to videos
     """
-    best_subtitles = download_best_subtitles([video], {Language('fra'),Language('eng')})
+
+    subtitles_returned = {}
+    for language in languages_to_retrieve:
+        subtitles_returned[language] = ''
+
+    best_subtitles = download_best_subtitles([video], languages_to_retrieve)
     if best_subtitles[video]:
-
-        if best_subtitles[video][0].language == Language('eng') :
-            best_subtitle_eng = best_subtitles[video][0]
-            best_subtitle_fr = best_subtitles[video][1]
-        else : 
-            best_subtitle_fr = best_subtitles[video][0]
-            best_subtitle_eng = best_subtitles[video][1]
-
-        value_fr = save_subtitles(video, [best_subtitle_fr], encoding='utf8')
-        value_eng = save_subtitles(video, [best_subtitle_eng], encoding='utf8')
-        webvtt_fullpath=[]
-
-        if len(value_fr) > 0:
-            srt_fullpath = subtitle.get_subtitle_path(
-                video_path, Language('fra'))
-            webvtt_fr_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
-            if(os.path.isfile(webvtt_fr_fullpath) is True):
-                #return subtitles path even if subtitles are already downloaded/converted
-                webvtt_fullpath.append(webvtt_fr_fullpath)
-            if(os.path.isfile(srt_fullpath)): 
-                convert_subtitles_to_webvtt(srt_fullpath, webvtt_fr_fullpath)
-                webvtt_fullpath.append(webvtt_fr_fullpath)
-
-        if len(value_eng) > 0:
-            srt_fullpath = subtitle.get_subtitle_path(
-                video_path, Language('eng'))
-            webvtt_en_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
-            if(os.path.isfile(webvtt_en_fullpath) is True):
-                #return subtitles path even if subtitles are already downloaded/converted
-                webvtt_fullpath.append(webvtt_en_fullpath)
-            if(os.path.isfile(srt_fullpath)): 
-                convert_subtitles_to_webvtt(srt_fullpath, webvtt_en_fullpath)
-                webvtt_fullpath.append(webvtt_en_fullpath)
-                
-        return webvtt_fullpath
+        for retrieved_subtitle in best_subtitles[video]:
+            subtitles_are_saved = save_subtitles(
+                video, [retrieved_subtitle], encoding='utf8')
+            if subtitles_are_saved:
+                srt_fullpath = subtitle.get_subtitle_path(
+                    video_path, retrieved_subtitle.language)
+                webvtt_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
+                if(os.path.isfile(webvtt_fullpath)):
+                    #Add the subtitles path to subtitles_returned even if they are already downloaded/converted
+                    subtitles_returned[retrieved_subtitle.language] = webvtt_fullpath
+                if(os.path.isfile(srt_fullpath)):
+                    #Add the subtitles path to subtitles_returned after converting them in .vtt
+                    convert_subtitles_to_webvtt(srt_fullpath, webvtt_fullpath)
+                    subtitles_returned[retrieved_subtitle.language] = webvtt_fullpath
+        return subtitles_returned
     else:
         return ''
 
@@ -70,9 +55,11 @@ def get_subtitles(video_path, ov_subtitles):
         ov_subtitles: boolean (True if input has subtitles, False if not)
         return: empty string if no subtitles was found. Otherwise return subtitle absolute location
     """
+    languages_to_retrieve = {
+        Language('eng'),
+        Language('fra'),
+    }
     webvtt_fullpath = ''
-    webvtt_fr_fullpath = ''
-    webvtt_en_fullpath = ''
     webvtt_ov_fullpath = ''
 
     if ov_subtitles:
@@ -85,12 +72,14 @@ def get_subtitles(video_path, ov_subtitles):
     video = Video.fromname(video_path)
 
     try:
-        webvtt_fullpath=handle_subliminal_download(video,video_path)
+        webvtt_fullpath = handle_subliminal_download(
+            video, video_path, languages_to_retrieve)
     except:
         webvtt_fullpath = ''
 
-    if webvtt_fullpath != '' :
-        webvtt_fr_fullpath = webvtt_fullpath[0]
-        webvtt_en_fullpath = webvtt_fullpath[1]
+    ### to Enhance For more languages -> Change in the return and dependancies
+    if webvtt_fullpath != '':
+        webvtt_fr_fullpath = webvtt_fullpath[Language('fra')]
+        webvtt_en_fullpath = webvtt_fullpath[Language('eng')]
 
     return (webvtt_fr_fullpath, webvtt_en_fullpath, webvtt_ov_fullpath)
