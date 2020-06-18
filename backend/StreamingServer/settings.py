@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os, sys
 import dj_database_url
 import subprocess
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -184,3 +186,15 @@ REST_FRAMEWORK = {
 # https://django-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional
 SITE_ID = 1
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+
+sentry_dsn = os.getenv('SENTRY_DSN', None)
+if sentry_dsn:
+    sentry_sdk.init(
+        dsn=sentry_dsn,
+        integrations=[DjangoIntegration()],
+
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True
+    )
