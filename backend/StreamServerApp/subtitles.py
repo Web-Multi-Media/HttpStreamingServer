@@ -26,12 +26,7 @@ def handle_subliminal_download(video, video_path, languages_to_retrieve):
     """
 
     subtitles_returned = {}
-    dict_language = {}
-
-    for lan in languages_to_retrieve:
-	    dict_language[Language(lan)] = ''
-    best_subtitles = download_best_subtitles([video], dict_language.keys())
-
+    best_subtitles = download_best_subtitles([video], set(map(Language,languages_to_retrieve)))
     if best_subtitles[video]:
         for retrieved_subtitle in best_subtitles[video]:
             subtitles_are_saved = save_subtitles(
@@ -42,16 +37,14 @@ def handle_subliminal_download(video, video_path, languages_to_retrieve):
                 webvtt_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
                 if os.path.isfile(webvtt_fullpath):
                     # Add the subtitles path to subtitles_returned even if they are already downloaded/converted
-                    subtitles_returned[str(
-                        retrieved_subtitle.language)] = webvtt_fullpath
+                    subtitles_returned[
+                        retrieved_subtitle.language.alpha3] = webvtt_fullpath
                 if os.path.isfile(srt_fullpath):
                     # Add the subtitles path to subtitles_returned after converting them in .vtt
                     convert_subtitles_to_webvtt(srt_fullpath, webvtt_fullpath)
-                    subtitles_returned[str(
-                        retrieved_subtitle.language)] = webvtt_fullpath
-        return subtitles_returned
-    else:
-        return ''
+                    subtitles_returned[
+                        retrieved_subtitle.language.alpha3] = webvtt_fullpath
+    return subtitles_returned
 
 
 def get_subtitles(video_path, ov_subtitles):
@@ -65,7 +58,7 @@ def get_subtitles(video_path, ov_subtitles):
         'eng',
         'fra',
     }
-    webvtt_fullpath = ''
+    webvtt_fullpath = {}
     webvtt_ov_fullpath = ''
 
     if ov_subtitles:
@@ -81,8 +74,10 @@ def get_subtitles(video_path, ov_subtitles):
         webvtt_fullpath = handle_subliminal_download(
             video, video_path, languages_to_retrieve)
     except:
-        webvtt_fullpath = ''
+        webvtt_fullpath = {}
 
     webvtt_fullpath['ov'] = webvtt_ov_fullpath
-
+    for lang in languages_to_retrieve :
+        if lang not in webvtt_fullpath:
+            webvtt_fullpath[lang]=''
     return (webvtt_fullpath)
