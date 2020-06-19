@@ -26,7 +26,8 @@ def handle_subliminal_download(video, video_path, languages_to_retrieve):
     """
 
     subtitles_returned = {}
-    best_subtitles = download_best_subtitles([video], set(map(Language,languages_to_retrieve)))
+    best_subtitles = download_best_subtitles(
+        [video], set(map(Language, languages_to_retrieve)))
     if best_subtitles[video]:
         for retrieved_subtitle in best_subtitles[video]:
             subtitles_are_saved = save_subtitles(
@@ -77,7 +78,7 @@ def get_subtitles(video_path, ov_subtitles):
         webvtt_fullpath = {}
 
     webvtt_fullpath['ov'] = webvtt_ov_fullpath
-    for lang in languages_to_retrieve :
+    for lang in languages_to_retrieve:
         if lang not in webvtt_fullpath:
-            webvtt_fullpath[lang]=''
+            webvtt_fullpath[lang] = ''
     return (webvtt_fullpath)
