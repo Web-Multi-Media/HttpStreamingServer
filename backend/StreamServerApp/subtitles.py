@@ -30,7 +30,7 @@ def handle_subliminal_download(video, video_path, languages_to_retrieve):
 
     for lan in languages_to_retrieve:
 	    dict_language[Language(lan)] = ''
-    best_subtitles = download_best_subtitles([video], dict_language.keys)
+    best_subtitles = download_best_subtitles([video], dict_language.keys())
 
     if best_subtitles[video]:
         for retrieved_subtitle in best_subtitles[video]:
