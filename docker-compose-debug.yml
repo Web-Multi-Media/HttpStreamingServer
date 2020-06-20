@@ -51,5 +51,7 @@ services:
     command: bash -c "npm start"
     depends_on:
       - web
+    env_file:
+      - .env
     ports:
       - 3000:3000

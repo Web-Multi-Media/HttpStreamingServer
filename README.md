@@ -59,6 +59,8 @@ The following variables can be configured in .env file:
     DJANGO_SECRET_KEY=fdj(re&lf87/qwm%jkiq78fdah346gsa
     POSTGRES_PASSWORD=password
     HTTPSTREAMING_HOST=www.foo.com
+    SENTRY_DSN=https://foo.ingest.sentry.io/bar
+    REACT_APP_SENTRY_DSN=https://foo.ingest.sentry.io/bar
 
 
 #### Build Process and Debug
