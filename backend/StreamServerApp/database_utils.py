@@ -289,26 +289,14 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             relative_path = os.path.relpath(temp_mp4, video_path)
             video_full_path = temp_mp4
 
-        fr_subtitles_remote_path = ''
-        if(subtitles_full_path[0]):
-            fr_subtitles_relative_path = os.path.relpath(
-                subtitles_full_path[0], video_path)
-            fr_subtitles_remote_path = os.path.join(
-                remote_url, fr_subtitles_relative_path)
-
-        en_subtitles_remote_path = ''
-        if(subtitles_full_path[1]):
-            en_subtitles_relative_path = os.path.relpath(
-                subtitles_full_path[1], video_path)
-            en_subtitles_remote_path = os.path.join(
-                remote_url, en_subtitles_relative_path)
-
-        ov_subtitles_remote_path = ''
-        if(subtitles_full_path[2]):
-            ov_subtitles_relative_path = os.path.relpath(
-                subtitles_full_path[2], video_path)
-            ov_subtitles_remote_path = os.path.join(
-                remote_url, ov_subtitles_relative_path)
+        subtitles_remote_path = {}
+        for language_str, subtitle_url in subtitles_full_path.items():
+            subtitles_remote_path[language_str] = ''
+            if subtitle_url:
+                subtitles_relative_path = os.path.relpath(
+                    subtitle_url, video_path)
+                subtitle_url = os.path.join(
+                    remote_url, subtitles_relative_path)
 
     else:
         #Input is not h264, let's skip it
@@ -316,13 +304,11 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
 
     remote_video_url = os.path.join(remote_url, relative_path)
     remote_thumbnail_url = os.path.join(remote_url, thumbnail_relativepath)
-
     return {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
             'audio_codec_type': audio_codec_type, 'video_height': video_height,
             'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
-            'fr_subtitles_remote_path': fr_subtitles_remote_path, 'en_subtitles_remote_path': en_subtitles_remote_path,
-            'ov_subtitles_remote_path': ov_subtitles_remote_path}
-
+            'fr_subtitles_remote_path': subtitles_remote_path['fra'], 'en_subtitles_remote_path': subtitles_remote_path['eng'],
+            'ov_subtitles_remote_path': subtitles_remote_path['ov']}
 
 
 def get_video_type_and_info(video_path):

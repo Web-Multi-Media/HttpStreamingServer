@@ -16,23 +16,36 @@ def init_cache():
             'filename': 'cachefile.dbm'}, replace_existing_backend=True)
 
 
-def handle_subliminal_download(video, video_path, langage):
-    best_subtitles = download_best_subtitles([video], {Language(langage)})
+def handle_subliminal_download(video, video_path, languages_to_retrieve):
+    """ # Download the best subtitles in french and english
+        Args:
+        video : Name of video
+        video_path: absolute path to videos
+        languages_to_retrieve : dict of subtitles languages to retrieve
+        return : dict with the path of each subtitles with str(language) as key / Exemple : str(<Language [en]> = 'en'
+    """
+
+    subtitles_returned = {}
+    best_subtitles = download_best_subtitles(
+        [video], set(map(Language, languages_to_retrieve)))
     if best_subtitles[video]:
-        best_subtitle = best_subtitles[video][0]
-        value = save_subtitles(video, [best_subtitle], encoding='utf8')
-        if len(value) > 0:
-            srt_fullpath = subtitle.get_subtitle_path(
-                video_path, Language(langage))
-            webvtt_en_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
-            if(os.path.isfile(webvtt_en_fullpath) is True):
-                #return subtitles path even if subtitles are already downloaded/converted
-                return webvtt_en_fullpath
-            if(os.path.isfile(srt_fullpath)): 
-                convert_subtitles_to_webvtt(srt_fullpath, webvtt_en_fullpath)
-                return webvtt_en_fullpath
-    else:
-        return ''
+        for retrieved_subtitle in best_subtitles[video]:
+            subtitles_are_saved = save_subtitles(
+                video, [retrieved_subtitle], encoding='utf8')
+            if subtitles_are_saved:
+                srt_fullpath = subtitle.get_subtitle_path(
+                    video_path, retrieved_subtitle.language)
+                webvtt_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
+                if os.path.isfile(webvtt_fullpath):
+                    # Add the subtitles path to subtitles_returned even if they are already downloaded/converted
+                    subtitles_returned[
+                        retrieved_subtitle.language.alpha3] = webvtt_fullpath
+                if os.path.isfile(srt_fullpath):
+                    # Add the subtitles path to subtitles_returned after converting them in .vtt
+                    convert_subtitles_to_webvtt(srt_fullpath, webvtt_fullpath)
+                    subtitles_returned[
+                        retrieved_subtitle.language.alpha3] = webvtt_fullpath
+    return subtitles_returned
 
 
 def get_subtitles(video_path, ov_subtitles):
@@ -40,11 +53,13 @@ def get_subtitles(video_path, ov_subtitles):
         Args:
         video_path: absolute path to videos
         ov_subtitles: boolean (True if input has subtitles, False if not)
-        return: empty string if no subtitles was found. Otherwise return subtitle absolute location
+        return: empty string if no subtitles was found. Otherwise return dict of subtitle absolute location with str(Language) as key
     """
-
-    webvtt_fr_fullpath = ''
-    webvtt_en_fullpath = ''
+    languages_to_retrieve = {
+        'eng',
+        'fra',
+    }
+    webvtt_fullpath = {}
     webvtt_ov_fullpath = ''
 
     if ov_subtitles:
@@ -57,13 +72,13 @@ def get_subtitles(video_path, ov_subtitles):
     video = Video.fromname(video_path)
 
     try:
-        webvtt_en_fullpath = handle_subliminal_download(video, video_path, 'eng')
+        webvtt_fullpath = handle_subliminal_download(
+            video, video_path, languages_to_retrieve)
     except:
-        webvtt_en_fullpath = ''
-    
-    try:
-        webvtt_fr_fullpath = handle_subliminal_download(video, video_path, 'fra')
-    except:
-        webvtt_fr_fullpath = ''
+        webvtt_fullpath = {}
 
-    return (webvtt_fr_fullpath, webvtt_en_fullpath, webvtt_ov_fullpath)
+    webvtt_fullpath['ov'] = webvtt_ov_fullpath
+    for lang in languages_to_retrieve:
+        if lang not in webvtt_fullpath:
+            webvtt_fullpath[lang] = ''
+    return (webvtt_fullpath)
