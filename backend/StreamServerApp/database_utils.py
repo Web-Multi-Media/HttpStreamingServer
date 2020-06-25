@@ -275,7 +275,8 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
         if(os.path.isfile(thumbnail_fullpath) is False):
             generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
-        subtitles_full_path = get_subtitles(video_full_path, ov_subtitles)
+        webvtt_subtitles_full_path, srt_subtitles_full_path = get_subtitles(
+            video_full_path, ov_subtitles)
 
         #if file is mkv or has an audio codec different than AAC, transmux to mp4
         if(video_full_path.endswith(".mkv") or ("aac" not in audio_codec_type)):
@@ -289,14 +290,23 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             relative_path = os.path.relpath(temp_mp4, video_path)
             video_full_path = temp_mp4
 
-        subtitles_remote_path = {}
-        for language_str, subtitle_url in subtitles_full_path.items():
-            subtitles_remote_path[language_str] = ''
+        webvtt_subtitles_remote_path = {}
+        srt_subtitles_remote_path = {}
+        for language_str, subtitle_url in webvtt_subtitles_full_path.items():
+            webvtt_subtitles_remote_path[language_str] = ''
             if subtitle_url:
-                subtitles_relative_path = os.path.relpath(
+                webvtt_subtitles_relative_path = os.path.relpath(
                     subtitle_url, video_path)
                 subtitle_url = os.path.join(
-                    remote_url, subtitles_relative_path)
+                    remote_url, webvtt_subtitles_relative_path)
+
+        for language_str, subtitle_url in srt_subtitles_full_path.items():
+            srt_subtitles_remote_path[language_str] = ''
+            if subtitle_url:
+                srt_subtitles_relative_path = os.path.relpath(
+                    subtitle_url, video_path)
+                subtitle_url = os.path.join(
+                    remote_url, srt_subtitles_relative_path)
 
     else:
         #Input is not h264, let's skip it
@@ -307,8 +317,8 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
     return {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
             'audio_codec_type': audio_codec_type, 'video_height': video_height,
             'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
-            'fr_subtitles_remote_path': subtitles_remote_path['fra'], 'en_subtitles_remote_path': subtitles_remote_path['eng'],
-            'ov_subtitles_remote_path': subtitles_remote_path['ov']}
+            'fr_subtitles_remote_path': webvtt_subtitles_remote_path['fra'], 'en_subtitles_remote_path': webvtt_subtitles_remote_path['eng'],
+            'ov_subtitles_remote_path': webvtt_subtitles_remote_path['ov']}
 
 
 def get_video_type_and_info(video_path):

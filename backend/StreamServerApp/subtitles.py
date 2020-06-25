@@ -22,10 +22,12 @@ def handle_subliminal_download(video, video_path, languages_to_retrieve):
         video : Name of video
         video_path: absolute path to videos
         languages_to_retrieve : dict of subtitles languages to retrieve
-        return : dict with the path of each subtitles with str(language) as key / Exemple : str(<Language [en]> = 'en'
+        return : two dicts with the path of each subtitles with str of language as key / Exemple : 'eng' for english, 'fra' for french . 
+        the first dict is the path to vtt subtitles, the second one is the path to str subtitles
     """
 
-    subtitles_returned = {}
+    webvtt_subtitles_returned = {}
+    srt_subtitles_returned = {}
     best_subtitles = download_best_subtitles(
         [video], set(map(Language, languages_to_retrieve)))
     if best_subtitles[video]:
@@ -35,17 +37,19 @@ def handle_subliminal_download(video, video_path, languages_to_retrieve):
             if subtitles_are_saved:
                 srt_fullpath = subtitle.get_subtitle_path(
                     video_path, retrieved_subtitle.language)
+                srt_subtitles_returned = [
+                    retrieved_subtitle.language.alpha3] = srt_fullpath
                 webvtt_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
                 if os.path.isfile(webvtt_fullpath):
                     # Add the subtitles path to subtitles_returned even if they are already downloaded/converted
-                    subtitles_returned[
+                    webvtt_subtitles_returned[
                         retrieved_subtitle.language.alpha3] = webvtt_fullpath
                 if os.path.isfile(srt_fullpath):
                     # Add the subtitles path to subtitles_returned after converting them in .vtt
                     convert_subtitles_to_webvtt(srt_fullpath, webvtt_fullpath)
-                    subtitles_returned[
+                    webvtt_subtitles_returned[
                         retrieved_subtitle.language.alpha3] = webvtt_fullpath
-    return subtitles_returned
+    return webvtt_subtitles_returned,srt_subtitles_returned
 
 
 def get_subtitles(video_path, ov_subtitles):
@@ -60,6 +64,7 @@ def get_subtitles(video_path, ov_subtitles):
         'fra',
     }
     webvtt_fullpath = {}
+    srt_fullpath = {}
     webvtt_ov_fullpath = ''
 
     if ov_subtitles:
@@ -72,13 +77,16 @@ def get_subtitles(video_path, ov_subtitles):
     video = Video.fromname(video_path)
 
     try:
-        webvtt_fullpath = handle_subliminal_download(
+        webvtt_fullpath, srt_fullpath = handle_subliminal_download(
             video, video_path, languages_to_retrieve)
     except:
         webvtt_fullpath = {}
+        srt_fullpath = {}
 
     webvtt_fullpath['ov'] = webvtt_ov_fullpath
     for lang in languages_to_retrieve:
         if lang not in webvtt_fullpath:
             webvtt_fullpath[lang] = ''
-    return (webvtt_fullpath)
+        if lang not in srt_fullpath:
+            srt_fullpath[lang] = ''
+    return (webvtt_fullpath, srt_fullpath)
