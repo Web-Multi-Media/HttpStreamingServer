@@ -179,8 +179,10 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
               height=video_infos['video_height'],
               width=video_infos['video_width'],
               thumbnail=video_infos['remote_thumbnail_url'],
-              en_subtitle_url=video_infos['en_subtitles_remote_path'],
-              fr_subtitle_url=video_infos['fr_subtitles_remote_path'],
+              en_webvtt_subtitle_url=video_infos['en_webvtt_subtitles_remote_path'],
+              fr_webvtt_subtitle_url=video_infos['fr_webvtt_subtitles_remote_path'],
+              en_srt_subtitle_url=video_infos['en_srt_subtitles_remote_path'],
+              fr_srt_subtitle_url=video_infos['fr_srt_subtitles_remote_path'],
               ov_subtitle_url=video_infos['ov_subtitles_remote_path']
               )
 
@@ -317,7 +319,8 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
     return {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
             'audio_codec_type': audio_codec_type, 'video_height': video_height,
             'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
-            'fr_subtitles_remote_path': webvtt_subtitles_remote_path['fra'], 'en_subtitles_remote_path': webvtt_subtitles_remote_path['eng'],
+            'fr_webvtt_subtitles_remote_path': webvtt_subtitles_remote_path['fra'], 'en_webvtt_subtitles_remote_path': webvtt_subtitles_remote_path['eng'],
+            'fr_srt_subtitles_remote_path': srt_subtitles_remote_path['fra'], 'en_srt_subtitles_remote_path': srt_subtitles_remote_path['eng'],
             'ov_subtitles_remote_path': webvtt_subtitles_remote_path['ov']}
 
 
