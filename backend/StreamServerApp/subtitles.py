@@ -49,7 +49,7 @@ def handle_subliminal_download(video, video_path, languages_to_retrieve):
                     convert_subtitles_to_webvtt(srt_fullpath, webvtt_fullpath)
                     webvtt_subtitles_returned[
                         retrieved_subtitle.language.alpha3] = webvtt_fullpath
-    return webvtt_subtitles_returned,srt_subtitles_returned
+    return webvtt_subtitles_returned, srt_subtitles_returned
 
 
 def get_subtitles(video_path, ov_subtitles):
