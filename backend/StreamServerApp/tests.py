@@ -25,8 +25,10 @@ def add_series_videos(num_videos=2):
             name='test_name_{}'.format(video_num),
             video_url='test_url',
             thumbnail='test_image',
-            fr_subtitle_url='test_fr_sub',
-            en_subtitle_url='test_eng_sub',
+            fr_webvtt_subtitle_url='test_webvtt_fr_sub',
+            en_webvtt_subtitle_url='test_webvtt_eng_sub',
+            fr_srt_subtitle_url='test_srt_fr_sub',
+            en_srt_subtitle_url='test_srt_eng_sub',
             episode = video_num,
             season = 1
         )
@@ -248,16 +250,20 @@ class MoviesTest(TestCase):
             name='test_name',
             video_url='test_url',
             thumbnail='test_image',
-            fr_subtitle_url='test_fr_sub',
-            en_subtitle_url='test_eng_sub'
+            fr_webvtt_subtitle_url='test_webvtt_fr_sub',
+            en_webvtt_subtitle_url='test_webvtt_eng_sub',
+            fr_srt_subtitle_url='test_srt_fr_sub',
+            en_srt_subtitle_url='test_srt_eng_sub'
         )
         video2 = Video.objects.create(
             movie=movie2,
             name='test_name',
             video_url='test_url',
             thumbnail='test_image',
-            fr_subtitle_url='test_fr_sub',
-            en_subtitle_url='test_eng_sub'
+            fr_webvtt_subtitle_url='test_webvtt_fr_sub',
+            en_webvtt_subtitle_url='test_webvtt_eng_sub',
+            fr_srt_subtitle_url='test_srt_fr_sub',
+            en_srt_subtitle_url='test_srt_eng_sub'
         )
         response = self.client.get(reverse('movies-list'))
         decoded_content = json.loads(str(response.content, encoding='utf8'))
