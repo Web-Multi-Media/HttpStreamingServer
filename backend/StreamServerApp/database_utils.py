@@ -295,7 +295,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             if subtitle_url:
                 subtitles_relative_path = os.path.relpath(
                     subtitle_url, video_path)
-                subtitle_url = os.path.join(
+                subtitles_remote_path[language_str] = os.path.join(
                     remote_url, subtitles_relative_path)
 
     else:

@@ -128,6 +128,7 @@ class UtilsTest(TestCase):
         self.assertEqual(video.episode, 19)
         self.assertEqual(video.season, 5)
         self.assertEqual(video.series, series)
+        self.assertNotEqual(video.ov_subtitle_url, "")
         self.assertNotEqual(series.thumbnail, "")
         self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt"), True)
         os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
