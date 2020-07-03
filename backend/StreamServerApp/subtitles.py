@@ -71,7 +71,8 @@ def get_subtitles(video_path, ov_subtitles):
 
     try:
         video = Video.fromname(video_path)
-    except:
+    except ValueError:
+        #This usually happens when there is not enough data for subliminal to guess
         webvtt_fullpath['ov'] = webvtt_ov_fullpath
         for lang in languages_to_retrieve:
             webvtt_fullpath[lang] = ''

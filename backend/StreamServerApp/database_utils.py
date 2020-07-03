@@ -332,7 +332,15 @@ def get_video_type_and_info(video_path):
     filename = os.path.basename(video_path)
     if re.match(r'(\d*(\-|\.) .*)',  filename):
         filename = re.sub(r'(\d*(\-|\.) )', '', filename, 1)
-    video = subliminal.Video.fromname(filename)
+    try:
+        video = subliminal.Video.fromname(filename)
+    except ValueError:
+        #This usually happens when there is not enough data for subliminal to guess.
+        return {
+            'type': 'Movie',
+            'title': string.capwords(filename),
+        }
+
     if hasattr(video, 'series'):
         return {
             'type': 'Series',
