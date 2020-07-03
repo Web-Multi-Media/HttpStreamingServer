@@ -69,7 +69,13 @@ def get_subtitles(video_path, ov_subtitles):
         except:
             webvtt_ov_fullpath = ''
 
-    video = Video.fromname(video_path)
+    try:
+        video = Video.fromname(video_path)
+    except:
+        webvtt_fullpath['ov'] = webvtt_ov_fullpath
+        for lang in languages_to_retrieve:
+            webvtt_fullpath[lang] = ''
+        return webvtt_fullpath
 
     try:
         webvtt_fullpath = handle_subliminal_download(
