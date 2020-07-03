@@ -5,7 +5,6 @@ This module provides functionalities to erase/update videos infos in the databas
 
 Todo:
     * Define how to interact with multiple servers
-    * Update database only when needed.
 """
 import os
 import sys
@@ -119,6 +118,10 @@ def update_db_from_local_folder(base_path, remote_url):
             old_path_set.add(old_files_path)
 
     Video.objects.filter(pk__in=video_ids_to_delete).delete()
+
+    #Remove empty Series/Movies dataset
+    Series.objects.filter(video=None).delete()
+    Movie.objects.filter(video=None).delete()
 
     num_video_before = get_num_videos()
 

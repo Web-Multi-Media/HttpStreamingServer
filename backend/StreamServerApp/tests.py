@@ -144,6 +144,10 @@ class UtilsTest(TestCase):
         call_command('updatedb')
         self.assertEqual(Series.objects.count(), 2)
         self.assertEqual(Movie.objects.count(), 5)
+        os.remove("/usr/src/app/Videos/folder1/Malcolm.in.the Middle.S03E14.Cynthia's.Back.mp4")
+        call_command('updatedb')
+        self.assertEqual(Series.objects.count(), 1)
+        self.assertEqual(Movie.objects.count(), 5)
 
     def test_subtitles_extraction(self):
         extract_subtitle("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4",
