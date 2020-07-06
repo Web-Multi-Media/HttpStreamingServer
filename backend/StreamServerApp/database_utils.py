@@ -299,7 +299,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             if subtitle_url:
                 webvtt_subtitles_relative_path = os.path.relpath(
                     subtitle_url, video_path)
-                subtitle_url = os.path.join(
+                webvtt_subtitles_remote_path[language_str] = os.path.join(
                     remote_url, webvtt_subtitles_relative_path)
 
         for language_str, subtitle_url in srt_subtitles_full_path.items():
@@ -307,7 +307,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             if subtitle_url:
                 srt_subtitles_relative_path = os.path.relpath(
                     subtitle_url, video_path)
-                subtitle_url = os.path.join(
+                srt_subtitles_remote_path[language_str] = os.path.join(
                     remote_url, srt_subtitles_relative_path)
 
     else:
