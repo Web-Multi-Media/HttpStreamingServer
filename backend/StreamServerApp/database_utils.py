@@ -294,6 +294,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
 
         webvtt_subtitles_remote_path = {}
         srt_subtitles_remote_path = {}
+        srt_subtitle_path = {}
         for language_str, subtitle_url in webvtt_subtitles_full_path.items():
             webvtt_subtitles_remote_path[language_str] = ''
             if subtitle_url:
@@ -304,16 +305,18 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
 
         for language_str, subtitle_url in srt_subtitles_full_path.items():
             srt_subtitles_remote_path[language_str] = ''
+            srt_subtitle_path[language_str] = ''
             if subtitle_url:
+                srt_subtitle_path[language_str] = subtitle_url
                 srt_subtitles_relative_path = os.path.relpath(
                     subtitle_url, video_path)
                 srt_subtitles_remote_path[language_str] = os.path.join(
                     remote_url, srt_subtitles_relative_path)
-
+            
     else:
         #Input is not h264, let's skip it
         return {}
-
+    print(srt_subtitle_path['eng'])
     remote_video_url = os.path.join(remote_url, relative_path)
     remote_thumbnail_url = os.path.join(remote_url, thumbnail_relativepath)
     return {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
@@ -321,6 +324,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
             'fr_webvtt_subtitles_remote_path': webvtt_subtitles_remote_path['fra'], 'en_webvtt_subtitles_remote_path': webvtt_subtitles_remote_path['eng'],
             'fr_srt_subtitles_remote_path': srt_subtitles_remote_path['fra'], 'en_srt_subtitles_remote_path': srt_subtitles_remote_path['eng'],
+            'fr_srt_subtitle_path': srt_subtitle_path['fra'], 'en_srt_subtitle_path': srt_subtitle_path['eng'],
             'ov_subtitles_remote_path': webvtt_subtitles_remote_path['ov']}
 
 
@@ -342,7 +346,16 @@ def get_video_type_and_info(video_path):
     filename = os.path.basename(video_path)
     if re.match(r'(\d*(\-|\.) .*)',  filename):
         filename = re.sub(r'(\d*(\-|\.) )', '', filename, 1)
-    video = subliminal.Video.fromname(filename)
+    try:
+        video = subliminal.Video.fromname(filename)
+    except ValueError:
+        #This usually happens when there is not enough data for subliminal to guess.
+        return {
+            'type': 'Movie',
+            'title': string.capwords(filename),
+        }
+
+
     if hasattr(video, 'series'):
         return {
             'type': 'Series',

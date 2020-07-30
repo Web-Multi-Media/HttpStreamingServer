@@ -53,7 +53,9 @@ class Video(models.Model):
     en_webvtt_subtitle_url = models.CharField(max_length=300, default="")
     fr_srt_subtitle_url = models.CharField(max_length=300, default="")
     en_srt_subtitle_url = models.CharField(max_length=300, default="")
-
+    fr_srt_subtitle_path = models.CharField(max_length=300, default="")
+    en_srt_subtitle_path = models.CharField(max_length=300, default="")
+    
     # This field describes the path to the subtitle shipped with the input video
     ov_subtitle_url = models.CharField(max_length=300, default="")
 

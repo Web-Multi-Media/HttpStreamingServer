@@ -49,7 +49,7 @@ class VideoSerializer(serializers.ModelSerializer):
             'thumbnail', 
             'fr_webvtt_subtitle_url', 
             'en_webvtt_subtitle_url', 
-            'ov_subtitle_url', 
+            'ov_subtitle_url',
             'series', 
             'movie', 
             'episode', 

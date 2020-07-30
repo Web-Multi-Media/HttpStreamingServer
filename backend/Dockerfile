@@ -1,5 +1,5 @@
 
-FROM node:8
+FROM python:3.6
 
 RUN apt-get update -y --allow-unauthenticated
 RUN apt-get install -y --allow-unauthenticated python3-pip python-dev build-essential \
