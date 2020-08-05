@@ -20,5 +20,5 @@ urlpatterns = [
     url(r'^history/', accounts.History.as_view(), name='history'),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
-    url(r'^sync_subtitles/(?P<video_id>.+)/$',videos.request_sync_subtitles)
+    url(r'^sync_subtitles/(?P<video_id>.+)/(?P<language>.+)/$',videos.request_sync_subtitles)
 ]

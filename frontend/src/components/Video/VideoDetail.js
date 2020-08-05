@@ -62,6 +62,8 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     <source src={video.videoUrl} title='Video player' />
                     {video.frSubtitleUrl && <track label="French" kind="subtitles" srcLang="fr" src={video.frSubtitleUrl} />}
                     {video.enSubtitleUrl && <track label="English" kind="subtitles" srcLang="eng" src={video.enSubtitleUrl} />}
+                    {video.frSyncSubtitleUrl && <track label="Synchronized French" kind="subtitles" srcLang="fr" src={video.frSyncSubtitleUrl} />}
+                    {video.enSyncSubtitleUrl && <track label="Synchronized English" kind="subtitles" srcLang="eng" src={video.enSyncSubtitleUrl} />}
                     {video.ovSubtitleUrl && <track label="OV" kind="subtitles" srcLang="ov" src={video.ovSubtitleUrl} />}
                 </video>
             </div>

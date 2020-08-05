@@ -323,8 +323,9 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             'audio_codec_type': audio_codec_type, 'video_height': video_height,
             'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
             'fr_webvtt_subtitles_remote_path': webvtt_subtitles_remote_path['fra'], 'en_webvtt_subtitles_remote_path': webvtt_subtitles_remote_path['eng'],
+            'fr_webvtt_sync_url':'','en_webvtt_sync_url':'',
             'fr_srt_subtitles_remote_path': srt_subtitles_remote_path['fra'], 'en_srt_subtitles_remote_path': srt_subtitles_remote_path['eng'],
-            'fr_srt_subtitle_path': srt_subtitle_path['fra'], 'en_srt_subtitle_path': srt_subtitle_path['eng'],
+            'fr_srt_sync_url': '', 'en_srt_sync_url': '',
             'ov_subtitles_remote_path': webvtt_subtitles_remote_path['ov']}
 
 

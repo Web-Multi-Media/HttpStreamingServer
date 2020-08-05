@@ -165,8 +165,10 @@ function Video(response) {
     this.name = response.movie !== null ? response.movie : response.name;
     this.videoUrl = response.video_url;
     this.thumbnail = response.thumbnail;
-    this.frSubtitleUrl = response.fr_subtitle_url;
-    this.enSubtitleUrl = response.en_subtitle_url;
+    this.frSubtitleUrl = response.fr_webvtt_subtitle_url;
+    this.enSubtitleUrl = response.en_webvtt_subtitle_url;
+    this.frSyncSubtitleUrl = response.fr_webvtt_sync_url;
+    this.enSyncSubtitleUrl = response.en_webvtt_sync_url;
     this.ovSubtitleUrl = response.ov_subtitle_url;
     this.series = response.series;
     this.episode = response.episode;

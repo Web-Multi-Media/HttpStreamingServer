@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.conf import settings
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
-from StreamServerApp.tasks import sync_subtitles,convert_subtitles,update_db_after_sync
+from StreamServerApp.tasks import sync_subtitles
 from StreamServerApp.serializers.videos import VideoSerializer, \
      SeriesSerializer, MoviesSerializer, SeriesListSerializer, VideoListSerializer
 from StreamServerApp.models import Video, Series, Movie
@@ -114,18 +114,15 @@ class MoviesViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-def request_sync_subtitles(request, video_id):
+def request_sync_subtitles(request, video_id,language):
     video = Video.objects.get(id=video_id)
     video_path = os.path.join(video.video_folder, video.name)
-    subtitles_path = os.path.join(video.video_folder, video.en_srt_subtitle_url.replace(video.video_url.replace(video.name,''),''))
-    #save subtitles name, join path with folder, -> convert to webvtt after synchronysation.
-    print(subtitles_path)
-    print(os.path.join(video.video_folder, video.en_webvtt_subtitle_url.replace(video.video_url.replace(video.name,''),'')))
-    webvtt_path=os.path.join(video.video_folder, video.en_webvtt_subtitle_url.replace(video.video_url.replace(video.name,''),''))
-    print(os.path.join(video.video_folder, video.en_srt_subtitle_url.replace(video.video_url.replace(video.name,''),'')))
-    sync_subtitles.delay(video_path,subtitles_path,(subtitles_path+'.re.srt'))
-    print('synchronized')
-    convert_subtitles.delay((subtitles_path+'.re.srt'),webvtt_path)
-    print('converted')
-    update_db_after_sync.delay('usr/src/app/Videos/','http://localhost:1337/Videos/')
-    print('suceed')
+    if (language == 'en') :
+        subtitles_path = os.path.join(video.video_folder, video.en_srt_subtitle_url.replace(video.video_url.replace(video.name,''),''))
+        webvtt_path = os.path.join(video.video_folder, video.en_webvtt_subtitle_url.replace(video.video_url.replace(video.name,''),''))
+    if (language == 'fr') :
+        subtitles_path = os.path.join(video.video_folder, video.fr_srt_subtitle_url.replace(video.video_url.replace(video.name,''),''))
+        webvtt_path = os.path.join(video.video_folder, video.fr_webvtt_subtitle_url.replace(video.video_url.replace(video.name,''),''))
+    webvtt_path = webvtt_path.replace('.vtt','_sync.vtt')
+    sync_subtitle_path = subtitles_path.replace('.srt','_sync.srt')
+    sync_subtitles.delay(language,video_path,video_id,subtitles_path,sync_subtitle_path,webvtt_path)
