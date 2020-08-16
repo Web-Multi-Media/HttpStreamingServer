@@ -1,10 +1,7 @@
 
-FROM node:8
+FROM python:3.6
 
-RUN apt-get update -y --allow-unauthenticated
-RUN apt-get install -y --allow-unauthenticated python3-pip python-dev build-essential \
-    software-properties-common python3-software-properties \
-    x264 x265 ffmpeg && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && apt-get install -y ffmpeg 
 
 ENV PYTHONUNBUFFERED 1
 COPY . /usr/src/app/
