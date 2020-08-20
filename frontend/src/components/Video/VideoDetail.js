@@ -2,6 +2,9 @@ import React, {useEffect, useState} from 'react';
 import { client } from '../../api/djangoAPI';
 import Button from "@material-ui/core/Button";
 import './VideoDetail.css'
+import VTTConverter from 'srt-webvtt';
+
+
 
 
 
@@ -10,11 +13,45 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
 
     const [timer, setTimer] = useState(false);
     const [count, setCount] = useState(0);
+    //const [customsub, setCustomSub] = useState('');
 
     async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
         const video = await client.getVideoById(nextEpisodeID);
         handleVideoSelect(video);
     }
+
+    const handleChange = event => {
+        let customsub = event.target.value;
+        var ext = customsub.substr(customsub.lastIndexOf('.') + 1);
+        console.log(ext);
+        if(ext != "srt"){
+            alert("Only .srt files are supported \n");
+            return;
+        }
+        console.log(event.target.files[0]);
+        const vttConverter = new VTTConverter(event.target.files[0]);
+        let track = document.createElement("track");
+        track.id= "my-sub-track";
+        track.kind = "captions";
+        track.label = "Custom subtitle";
+        track.srclang = "en";
+        //track.src = "captions/sintel-en.vtt";
+        let video = document.getElementById("myVideo");
+        video.appendChild(track);
+        vttConverter
+        .getURL()
+        .then(function(url) { // Its a valid url that can be used further
+          var track = document.getElementById('my-sub-track'); // Track element (which is child of a video element)
+          var video = document.getElementById('myVideo'); // Main video element
+          track.src = url; // Set the converted URL to track's source
+          video.textTracks[0].mode = 'show'; // Start showing subtitle to your track
+        })
+        .catch(function(err) {
+          console.error(err);
+        })
+        
+    };
+
 
     function startVideo() {
         setTimer(true);
@@ -74,6 +111,14 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                         Next Episode
                     </Button>
                 }
+            </div>
+            <div className="ui segment">
+                <form >
+                    <label>
+                    Add Custom subtitles:
+                    <input type="file" onChange={handleChange} />
+                    </label>
+                </form>
             </div>
         </div>
     );
