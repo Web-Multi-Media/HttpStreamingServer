@@ -5,15 +5,10 @@ import './VideoDetail.css'
 import VTTConverter from 'srt-webvtt';
 
 
-
-
-
-
 function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }) {
 
     const [timer, setTimer] = useState(false);
     const [count, setCount] = useState(0);
-    //const [customsub, setCustomSub] = useState('');
 
     async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
         const video = await client.getVideoById(nextEpisodeID);
@@ -23,19 +18,16 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
     const handleChange = event => {
         let customsub = event.target.value;
         var ext = customsub.substr(customsub.lastIndexOf('.') + 1);
-        console.log(ext);
         if(ext != "srt"){
             alert("Only .srt files are supported \n");
             return;
         }
-        console.log(event.target.files[0]);
         const vttConverter = new VTTConverter(event.target.files[0]);
         let track = document.createElement("track");
         track.id= "my-sub-track";
         track.kind = "captions";
         track.label = "Custom subtitle";
         track.srclang = "en";
-        //track.src = "captions/sintel-en.vtt";
         let video = document.getElementById("myVideo");
         video.appendChild(track);
         vttConverter
