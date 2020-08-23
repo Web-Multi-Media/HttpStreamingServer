@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react';
 import { client } from '../../api/djangoAPI';
 import Button from "@material-ui/core/Button";
 import './VideoDetail.css'
-import VTTConverter from 'srt-webvtt';
+import SubtitleForm from "./SubtitlesForm"
+
 
 
 function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }) {
@@ -14,35 +15,6 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
         const video = await client.getVideoById(nextEpisodeID);
         handleVideoSelect(video);
     }
-
-    const handleChange = event => {
-        let customsub = event.target.value;
-        var ext = customsub.substr(customsub.lastIndexOf('.') + 1);
-        if(ext != "srt"){
-            alert("Only .srt files are supported \n");
-            return;
-        }
-        const vttConverter = new VTTConverter(event.target.files[0]);
-        let track = document.createElement("track");
-        track.id= "my-sub-track";
-        track.kind = "captions";
-        track.label = "Custom subtitle";
-        track.srclang = "en";
-        let video = document.getElementById("myVideo");
-        video.appendChild(track);
-        vttConverter
-        .getURL()
-        .then(function(url) { // Its a valid url that can be used further
-          var track = document.getElementById('my-sub-track'); // Track element (which is child of a video element)
-          var video = document.getElementById('myVideo'); // Main video element
-          track.src = url; // Set the converted URL to track's source
-          video.textTracks[0].mode = 'show'; // Start showing subtitle to your track
-        })
-        .catch(function(err) {
-          console.error(err);
-        })
-        
-    };
 
 
     function startVideo() {
@@ -104,14 +76,9 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     </Button>
                 }
             </div>
-            <div className="ui segment">
-                <form >
-                    <label>
-                    Add Custom subtitles:
-                    <input type="file" onChange={handleChange} />
-                    </label>
-                </form>
-            </div>
+            <SubtitleForm
+            />
+
         </div>
     );
 };
