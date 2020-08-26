@@ -27,7 +27,6 @@ services:
     environment:
       - DEPLOY_ENV=production
     volumes:
-      - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
       - /static/
       - ipython:/root/.ipython
