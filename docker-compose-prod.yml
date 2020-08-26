@@ -15,7 +15,7 @@ services:
     volumes:
       - dbvolume:/var/lib/postgresql/data/
   web:
-    image: webmultimedia/http-streaming-server:customsub
+    image: webmultimedia/http-streaming-server:master
     build:
       context: .
       dockerfile: ./backend/Dockerfile.prod
@@ -27,7 +27,6 @@ services:
     environment:
       - DEPLOY_ENV=production
     volumes:
-      - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
       - /static/
       - ipython:/root/.ipython
