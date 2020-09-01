@@ -20,9 +20,9 @@ You'll need to have [`docker`](https://docs.docker.com/install/) and [`docker-co
 
 #### RUN
 
-Build the frontend:
+Pull the images:
 
-    docker-compose -f docker-compose-prod.yml build
+    docker-compose -f docker-compose-prod.yml pull
 
 Migrate the database:
 
@@ -63,8 +63,8 @@ The following variables can be configured in .env file:
     REACT_APP_SENTRY_DSN=https://foo.ingest.sentry.io/bar
 
 
-#### Build Process and Debug
+#### Contributing
 
-See the /doc folder for more informations
+See the /doc folder for more informations on how to run a debug version of this app.
 
 
