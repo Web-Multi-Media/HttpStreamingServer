@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { client } from '../../api/djangoAPI';
 import Button from "@material-ui/core/Button";
 import './VideoDetail.css'
-
+import SubtitleForm from "./SubtitlesForm"
 
 
 
@@ -15,6 +15,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
         const video = await client.getVideoById(nextEpisodeID);
         handleVideoSelect(video);
     }
+
 
     function startVideo() {
         setTimer(true);
@@ -77,6 +78,9 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     </Button>
                 }
             </div>
+            <SubtitleForm
+            />
+
         </div>
     );
 };

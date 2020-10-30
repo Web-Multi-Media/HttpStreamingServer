@@ -5,7 +5,6 @@ This module provides functionalities to erase/update videos infos in the databas
 
 Todo:
     * Define how to interact with multiple servers
-    * Update database only when needed.
 """
 import os
 import sys
@@ -53,7 +52,7 @@ def populate_db_from_local_folder(base_path, remote_url):
         remote_url: baseurl for video access on the server
         base_path: Local Folder where the videos are stored
 
-        this functions will only add videos to the database if 
+        this functions will only add videos to the database if
         they are encoded with h264 codec
     """
     init_cache()
@@ -94,7 +93,7 @@ def update_db_from_local_folder(base_path, remote_url):
         remote_url: baseurl for video access on the server
         base_path: Local Folder where the videos are stored
 
-        this functions will only add videos to the database if 
+        this functions will only add videos to the database if
         they are encoded with h264 codec
     """
     video_path = base_path
@@ -119,6 +118,10 @@ def update_db_from_local_folder(base_path, remote_url):
             old_path_set.add(old_files_path)
 
     Video.objects.filter(pk__in=video_ids_to_delete).delete()
+
+    #Remove empty Series/Movies dataset
+    Series.objects.filter(video=None).delete()
+    Movie.objects.filter(video=None).delete()
 
     num_video_before = get_num_videos()
 
@@ -229,7 +232,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
 
         return: Dictionnary with video infos
 
-        this functions will only add videos to the database if 
+        this functions will only add videos to the database if
         they are encoded with h264/AAC codec
     """
     print("processing {}".format(video_full_path))
@@ -303,6 +306,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
                 webvtt_subtitles_remote_path[language_str] = os.path.join(
                     remote_url, webvtt_subtitles_relative_path)
 
+
         for language_str, subtitle_url in srt_subtitles_full_path.items():
             srt_subtitles_remote_path[language_str] = ''
             srt_subtitle_path[language_str] = ''
@@ -312,7 +316,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
                     subtitle_url, video_path)
                 srt_subtitles_remote_path[language_str] = os.path.join(
                     remote_url, srt_subtitles_relative_path)
-            
+
     else:
         #Input is not h264, let's skip it
         return {}
@@ -331,13 +335,13 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
 
 def get_video_type_and_info(video_path):
     """ # Uses subliminal to parse information from filename.
-    
+
     Subliminal tells us if the video is a serie or not.
     If not, we assume it to be a movie, which is not necesarly the case (e.g. documentary, simple video).
     We use string.capwords() on title strings for consistency of capitalization.
     The subliminal fromname function as a bug when the input string begins with 1-, as a quick fix, we use a regular expression to
     get rid of the problematic characters. A future fix coulb be to be use imdb api for disambiguation.
-    
+
     Args:
     video_path: full path to the video (eg: /Videos/folder1/video.mp4)
 

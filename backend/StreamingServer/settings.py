@@ -186,6 +186,7 @@ REST_FRAMEWORK = {
 # https://django-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional
 SITE_ID = 1
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_SESSION_REMEMBER = True
 
 
 sentry_dsn = os.getenv('SENTRY_DSN', None)

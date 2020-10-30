@@ -22,7 +22,7 @@ def handle_subliminal_download(video, video_path, languages_to_retrieve):
         video : Name of video
         video_path: absolute path to videos
         languages_to_retrieve : dict of subtitles languages to retrieve
-        return : two dicts with the path of each subtitles with str of language as key / Exemple : 'eng' for english, 'fra' for french . 
+        return : two dicts with the path of each subtitles with str of language as key / Exemple : 'eng' for english, 'fra' for french .
         the first dict is the path to vtt subtitles, the second one is the path to str subtitles
     """
 
@@ -73,6 +73,8 @@ def get_subtitles(video_path, ov_subtitles):
             extract_subtitle(video_path, webvtt_ov_fullpath)
         except:
             webvtt_ov_fullpath = ''
+
+
     try:
         video = Video.fromname(video_path)
         try:
