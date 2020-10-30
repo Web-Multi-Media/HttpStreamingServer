@@ -306,7 +306,6 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
                 webvtt_subtitles_remote_path[language_str] = os.path.join(
                     remote_url, webvtt_subtitles_relative_path)
 
-
         for language_str, subtitle_url in srt_subtitles_full_path.items():
             srt_subtitles_remote_path[language_str] = ''
             srt_subtitle_path[language_str] = ''
@@ -327,7 +326,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             'audio_codec_type': audio_codec_type, 'video_height': video_height,
             'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
             'fr_webvtt_subtitles_remote_path': webvtt_subtitles_remote_path['fra'], 'en_webvtt_subtitles_remote_path': webvtt_subtitles_remote_path['eng'],
-            'fr_webvtt_sync_url':'','en_webvtt_sync_url':'',
+            'fr_webvtt_sync_url': '', 'en_webvtt_sync_url': '',
             'fr_srt_subtitles_remote_path': srt_subtitles_remote_path['fra'], 'en_srt_subtitles_remote_path': srt_subtitles_remote_path['eng'],
             'fr_srt_sync_url': '', 'en_srt_sync_url': '',
             'ov_subtitles_remote_path': webvtt_subtitles_remote_path['ov']}
@@ -359,7 +358,6 @@ def get_video_type_and_info(video_path):
             'type': 'Movie',
             'title': string.capwords(filename),
         }
-
 
     if hasattr(video, 'series'):
         return {

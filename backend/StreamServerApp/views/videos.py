@@ -5,7 +5,7 @@ from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from StreamServerApp.tasks import sync_subtitles
 from StreamServerApp.serializers.videos import VideoSerializer, \
-     SeriesSerializer, MoviesSerializer, SeriesListSerializer, VideoListSerializer
+    SeriesSerializer, MoviesSerializer, SeriesListSerializer, VideoListSerializer
 from StreamServerApp.models import Video, Series, Movie
 import subprocess
 
@@ -24,19 +24,19 @@ class VideoViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """
-        Overwirte 
+        Overwirte
         """
         if self.action == 'list':
             return VideoListSerializer
         if self.action == 'retrieve':
-            return VideoSerializer   
+            return VideoSerializer
 
     def get_queryset(self):
         """
-        Optionally performs search on the videos, by using the `search_query` 
+        Optionally performs search on the videos, by using the `search_query`
         query parameter in the URL.
         """
-        
+
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
             queryset = Video.objects.search_trigramm('name', search_query).select_related('movie', 'series')
@@ -55,7 +55,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """
-        Overwirte 
+        Overwirte
         """
         if self.action == 'list':
             return SeriesListSerializer
@@ -64,7 +64,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Optionally performs search on the series, by using the `search_query` 
+        Optionally performs search on the series, by using the `search_query`
         query parameter in the URL.
         """
         search_query = self.request.query_params.get('search_query', None)
@@ -102,10 +102,10 @@ class MoviesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Optionally performs search on the movies, by using the `search_query` 
+        Optionally performs search on the movies, by using the `search_query`
         query parameter in the URL.
         """
-        
+
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
             queryset = Movie.objects.search_trigramm('title', search_query).prefetch_related('video_set')
@@ -114,15 +114,15 @@ class MoviesViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-def request_sync_subtitles(request, video_id,language):
+def request_sync_subtitles(request, video_id, language):
     video = Video.objects.get(id=video_id)
     video_path = os.path.join(video.video_folder, video.name)
-    if (language == 'en') :
-        subtitles_path = os.path.join(video.video_folder, video.en_srt_subtitle_url.replace(video.video_url.replace(video.name,''),''))
-        webvtt_path = os.path.join(video.video_folder, video.en_webvtt_subtitle_url.replace(video.video_url.replace(video.name,''),''))
-    if (language == 'fr') :
-        subtitles_path = os.path.join(video.video_folder, video.fr_srt_subtitle_url.replace(video.video_url.replace(video.name,''),''))
-        webvtt_path = os.path.join(video.video_folder, video.fr_webvtt_subtitle_url.replace(video.video_url.replace(video.name,''),''))
-    webvtt_path = webvtt_path.replace('.vtt','_sync.vtt')
-    sync_subtitle_path = subtitles_path.replace('.srt','_sync.srt')
-    sync_subtitles.delay(language,video_path,video_id,subtitles_path,sync_subtitle_path,webvtt_path)
+    if (language == 'en'):
+        subtitles_path = os.path.join(video.video_folder, video.en_srt_subtitle_url.replace(video.video_url.replace(video.name, ''), ''))
+        webvtt_path = os.path.join(video.video_folder, video.en_webvtt_subtitle_url.replace(video.video_url.replace(video.name, ''), ''))
+    if (language == 'fr'):
+        subtitles_path = os.path.join(video.video_folder, video.fr_srt_subtitle_url.replace(video.video_url.replace(video.name, ''), ''))
+        webvtt_path = os.path.join(video.video_folder, video.fr_webvtt_subtitle_url.replace(video.video_url.replace(video.name, ''), ''))
+    webvtt_path = webvtt_path.replace('.vtt', '_sync.vtt')
+    sync_subtitle_path = subtitles_path.replace('.srt', '_sync.srt')
+    sync_subtitles.delay(language, video_path, video_id, subtitles_path, sync_subtitle_path, webvtt_path)
