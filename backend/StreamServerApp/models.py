@@ -96,3 +96,16 @@ class UserVideoHistory(models.Model):
     time =  models.IntegerField()   # time in sec
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
+
+
+class Subtitle(models.Model):
+    webvtt_subtitle_url = models.CharField(max_length=300, default="")
+    webvtt_sync_url = models.CharField(max_length=300, default="")
+    srt_path = models.CharField(max_length=300, default="")
+    srt_sync_path = models.CharField(max_length=300, default="")
+    vtt_path = models.CharField(max_length=300, default="")
+    vtt_sync_path = models.CharField(max_length=300, default="")
+    language = models.CharField(max_length=300, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, db_index=True)
+    video_id = models.ForeignKey(Video, on_delete=models.CASCADE)
