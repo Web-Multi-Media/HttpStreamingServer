@@ -105,7 +105,19 @@ class Subtitle(models.Model):
     srt_sync_path = models.CharField(max_length=300, default="")
     vtt_path = models.CharField(max_length=300, default="")
     vtt_sync_path = models.CharField(max_length=300, default="")
-    language = models.CharField(max_length=300, default="")
+    FRENCH = 'fra'
+    ENGLISH = 'eng'
+    OV = 'OV'
+    LANGUAGE_CHOICES = [
+        (FRENCH, 'French'),
+        (ENGLISH, 'English'),
+        (OV, 'Original Version'),
+    ]
+    language = models.CharField(
+        max_length=3,
+        choices=LANGUAGE_CHOICES,
+        default=ENGLISH,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
     video_id = models.ForeignKey(Video, on_delete=models.CASCADE)
