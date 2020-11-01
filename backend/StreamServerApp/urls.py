@@ -3,7 +3,7 @@ from django.urls.conf import include
 from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
 
-from .views import videos
+from .views import videos, subtitles
 from .views import accounts
 
 
@@ -11,6 +11,7 @@ router = DefaultRouter()
 router.register(r'videos', videos.VideoViewSet, basename='videos')
 router.register(r'series', videos.SeriesViewSet, basename='series')
 router.register(r'movies', videos.MoviesViewSet, basename='movies')
+router.register(r'subtitles', subtitles.SubtitleViewSet, basename='subtitles')
 
 
 urlpatterns = [

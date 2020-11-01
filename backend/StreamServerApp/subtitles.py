@@ -94,4 +94,4 @@ def get_subtitles(video_path, ov_subtitles):
         if lang not in srt_fullpath:
             srt_fullpath[lang] = ''
 
-    return (webvtt_fullpath, srt_fullpath)
+    return [webvtt_fullpath, srt_fullpath]

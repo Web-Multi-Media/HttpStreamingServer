@@ -16,7 +16,7 @@ import subliminal
 from django.db import transaction
 import re
 
-from StreamServerApp.models import Video, Series, Movie
+from StreamServerApp.models import Video, Series, Movie, Subtitle
 from StreamServerApp.subtitles import get_subtitles, init_cache
 from StreamServerApp.media_processing import transmux_to_mp4, generate_thumbnail
 
@@ -170,7 +170,7 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
     """
     # Print current working directory
     print("Current working dir : %s" % root)
-    video_infos = prepare_video(full_path, video_path, root, remote_url)
+    video_infos, subtitles_list = prepare_video(full_path, video_path, root, remote_url)
     if not video_infos:
         raise("Dict is Empty")
 
@@ -182,12 +182,8 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
               height=video_infos['video_height'],
               width=video_infos['video_width'],
               thumbnail=video_infos['remote_thumbnail_url'],
-              en_webvtt_subtitle_url=video_infos['en_webvtt_subtitles_remote_path'],
-              fr_webvtt_subtitle_url=video_infos['fr_webvtt_subtitles_remote_path'],
-              en_srt_subtitle_url=video_infos['en_srt_subtitles_remote_path'],
-              fr_srt_subtitle_url=video_infos['fr_srt_subtitles_remote_path'],
-              ov_subtitle_url=video_infos['ov_subtitles_remote_path']
               )
+
 
     # parse movie or series, episode & season
     return_value = 0
@@ -213,6 +209,26 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
                 return_value = 1
 
     v.save()
+
+    webvtt_subtitles_full_path = subtitles_list[0]
+    srt_subtitles_full_path = subtitles_list[1]
+    print(webvtt_subtitles_full_path)
+    print(srt_subtitles_full_path)
+    webvtt_subtitles_remote_path = {}
+    for language_str, srt_subtitle_url in webvtt_subtitles_full_path.items():
+        webvtt_subtitles_remote_path[language_str] = ''
+        vtt_subtitle_url = webvtt_subtitles_full_path[language_str]
+        if srt_subtitle_url and vtt_subtitle_url:
+            print("adding sub")
+            webvtt_subtitles_relative_path = os.path.relpath(
+                vtt_subtitle_url, video_path)
+            newsub = Subtitle()
+            newsub.video_id = v
+            newsub.vtt_path = vtt_subtitle_url
+            newsub.webvtt_subtitle_url = os.path.join(
+                remote_url, webvtt_subtitles_relative_path)
+            newsub.language = language_str
+            newsub.save()
 
     return return_value
 
@@ -280,8 +296,9 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
         if(os.path.isfile(thumbnail_fullpath) is False):
             generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
-        webvtt_subtitles_full_path, srt_subtitles_full_path = get_subtitles(
+        subtitles_list = get_subtitles(
             video_full_path, ov_subtitles)
+
 
         #if file is mkv or has an audio codec different than AAC, transmux to mp4
         if(video_full_path.endswith(".mkv") or ("aac" not in audio_codec_type)):
@@ -295,41 +312,17 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             relative_path = os.path.relpath(temp_mp4, video_path)
             video_full_path = temp_mp4
 
-        webvtt_subtitles_remote_path = {}
-        srt_subtitles_remote_path = {}
-        srt_subtitle_path = {}
-        for language_str, subtitle_url in webvtt_subtitles_full_path.items():
-            webvtt_subtitles_remote_path[language_str] = ''
-            if subtitle_url:
-                webvtt_subtitles_relative_path = os.path.relpath(
-                    subtitle_url, video_path)
-                webvtt_subtitles_remote_path[language_str] = os.path.join(
-                    remote_url, webvtt_subtitles_relative_path)
-
-        for language_str, subtitle_url in srt_subtitles_full_path.items():
-            srt_subtitles_remote_path[language_str] = ''
-            srt_subtitle_path[language_str] = ''
-            if subtitle_url:
-                srt_subtitle_path[language_str] = subtitle_url
-                srt_subtitles_relative_path = os.path.relpath(
-                    subtitle_url, video_path)
-                srt_subtitles_remote_path[language_str] = os.path.join(
-                    remote_url, srt_subtitles_relative_path)
-
     else:
         #Input is not h264, let's skip it
         return {}
-    print(srt_subtitle_path['eng'])
+
     remote_video_url = os.path.join(remote_url, relative_path)
     remote_thumbnail_url = os.path.join(remote_url, thumbnail_relativepath)
-    return {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
-            'audio_codec_type': audio_codec_type, 'video_height': video_height,
-            'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
-            'fr_webvtt_subtitles_remote_path': webvtt_subtitles_remote_path['fra'], 'en_webvtt_subtitles_remote_path': webvtt_subtitles_remote_path['eng'],
-            'fr_webvtt_sync_url': '', 'en_webvtt_sync_url': '',
-            'fr_srt_subtitles_remote_path': srt_subtitles_remote_path['fra'], 'en_srt_subtitles_remote_path': srt_subtitles_remote_path['eng'],
-            'fr_srt_sync_url': '', 'en_srt_sync_url': '',
-            'ov_subtitles_remote_path': webvtt_subtitles_remote_path['ov']}
+    video_info = {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
+                  'audio_codec_type': audio_codec_type, 'video_height': video_height,
+                  'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url}
+
+    return video_info, subtitles_list
 
 
 def get_video_type_and_info(video_path):
