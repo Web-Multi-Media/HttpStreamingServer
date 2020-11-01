@@ -63,10 +63,6 @@ class Video(models.Model):
 
     objects = SearchManager()
 
-    @property
-    def subtitle_list(self):
-        print(self.subtitles_set)
-        return list(set(self.subtitles_set))
     
     @property
     def next_episode(self):
@@ -114,4 +110,5 @@ class Subtitle(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
-    video_id = models.ForeignKey(Video, on_delete=models.CASCADE)
+    video_id = models.ForeignKey(Video, related_name='subtitles', on_delete=models.CASCADE)
+    

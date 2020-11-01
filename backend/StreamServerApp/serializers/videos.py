@@ -5,12 +5,13 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from StreamServerApp.models import Video, Series, Movie
 from StreamServerApp.fields import PaginatedRelationField
+from StreamServerApp.serializers.subtitles import SubtitleListSerializer
 
 
 class VideoListSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField(many=False)
     series = serializers.StringRelatedField(many=False)
-    subtitles = serializers.ReadOnlyField(source='subtitle_list')
+    subtitles_set = SubtitleListSerializer(many=True)
 
     class Meta:
         model = Video
@@ -19,7 +20,7 @@ class VideoListSerializer(serializers.ModelSerializer):
             'name', 
             'video_url', 
             'thumbnail', 
-            'subtitles',
+            'subtitles_set',
             'series', 
             'movie', 
             'episode', 
@@ -31,7 +32,7 @@ class VideoSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField(many=False)
     series = serializers.StringRelatedField(many=False)
     time = serializers.SerializerMethodField('get_video_time_history')
-    subtitles = serializers.ReadOnlyField(source='subtitle_list')
+    subtitles_set = SubtitleListSerializer(many=True)
 
     def get_video_time_history(self, obj):
         try:
@@ -47,7 +48,7 @@ class VideoSerializer(serializers.ModelSerializer):
             'name', 
             'video_url', 
             'thumbnail', 
-            'subtitles',
+            'subtitles_set',
             'series', 
             'movie', 
             'episode', 
