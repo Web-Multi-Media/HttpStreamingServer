@@ -10,6 +10,7 @@ from StreamServerApp.fields import PaginatedRelationField
 class VideoListSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField(many=False)
     series = serializers.StringRelatedField(many=False)
+    subtitles = serializers.ReadOnlyField(source='subtitle_list')
 
     class Meta:
         model = Video
@@ -18,11 +19,7 @@ class VideoListSerializer(serializers.ModelSerializer):
             'name', 
             'video_url', 
             'thumbnail', 
-            'fr_webvtt_subtitle_url', 
-            'en_webvtt_subtitle_url',
-            'fr_webvtt_sync_url',
-            'en_webvtt_sync_url', 
-            'ov_subtitle_url', 
+            'subtitles',
             'series', 
             'movie', 
             'episode', 
@@ -34,6 +31,7 @@ class VideoSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField(many=False)
     series = serializers.StringRelatedField(many=False)
     time = serializers.SerializerMethodField('get_video_time_history')
+    subtitles = serializers.ReadOnlyField(source='subtitle_list')
 
     def get_video_time_history(self, obj):
         try:
@@ -49,9 +47,7 @@ class VideoSerializer(serializers.ModelSerializer):
             'name', 
             'video_url', 
             'thumbnail', 
-            'fr_webvtt_subtitle_url', 
-            'en_webvtt_subtitle_url', 
-            'ov_subtitle_url',
+            'subtitles',
             'series', 
             'movie', 
             'episode', 

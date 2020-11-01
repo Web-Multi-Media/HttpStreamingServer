@@ -49,18 +49,7 @@ class Video(models.Model):
     video_url = models.CharField(max_length=300, default="")
     video_folder = models.CharField(max_length=300, default="")
     thumbnail = models.CharField(max_length=300, default="")
-    fr_webvtt_subtitle_url = models.CharField(max_length=300, default="")
-    en_webvtt_subtitle_url = models.CharField(max_length=300, default="")
-    fr_webvtt_sync_url = models.CharField(max_length=300, default="")
-    en_webvtt_sync_url = models.CharField(max_length=300, default="")
-    fr_srt_subtitle_url = models.CharField(max_length=300, default="")
-    en_srt_subtitle_url = models.CharField(max_length=300, default="")
-    fr_srt_sync_url = models.CharField(max_length=300, default="")
-    en_srt_sync_url = models.CharField(max_length=300, default="")
     
-    # This field describes the path to the subtitle shipped with the input video
-    ov_subtitle_url = models.CharField(max_length=300, default="")
-
     # Relations to series and movies
     # on_delete=SET_NULL keeps videos indexed if we remove a serie or a video it belongs to
     series = models.ForeignKey(Series, null=True, on_delete=models.SET_NULL)
@@ -73,6 +62,11 @@ class Video(models.Model):
     history = models.ManyToManyField(User, through='UserVideoHistory')
 
     objects = SearchManager()
+
+    @property
+    def subtitle_list(self):
+        print(self.subtitles_set)
+        return list(set(self.subtitles_set))
     
     @property
     def next_episode(self):
