@@ -212,14 +212,11 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
 
     webvtt_subtitles_full_path = subtitles_list[0]
     srt_subtitles_full_path = subtitles_list[1]
-    print(webvtt_subtitles_full_path)
-    print(srt_subtitles_full_path)
     webvtt_subtitles_remote_path = {}
     for language_str, srt_subtitle_url in webvtt_subtitles_full_path.items():
         webvtt_subtitles_remote_path[language_str] = ''
         vtt_subtitle_url = webvtt_subtitles_full_path[language_str]
         if srt_subtitle_url and vtt_subtitle_url:
-            print("adding sub")
             webvtt_subtitles_relative_path = os.path.relpath(
                 vtt_subtitle_url, video_path)
             newsub = Subtitle()

@@ -11,19 +11,19 @@ from StreamServerApp.serializers.subtitles import SubtitleListSerializer
 class VideoListSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField(many=False)
     series = serializers.StringRelatedField(many=False)
-    subtitles_set = SubtitleListSerializer(many=True)
+    subtitles = SubtitleListSerializer(many=True)
 
     class Meta:
         model = Video
         fields = [
-            'id', 
-            'name', 
-            'video_url', 
-            'thumbnail', 
-            'subtitles_set',
-            'series', 
-            'movie', 
-            'episode', 
+            'id',
+            'name',
+            'video_url',
+            'thumbnail',
+            'subtitles',
+            'series',
+            'movie',
+            'episode',
             'season',
         ]
 
@@ -32,7 +32,7 @@ class VideoSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField(many=False)
     series = serializers.StringRelatedField(many=False)
     time = serializers.SerializerMethodField('get_video_time_history')
-    subtitles_set = SubtitleListSerializer(many=True)
+    subtitles = SubtitleListSerializer(many=True)
 
     def get_video_time_history(self, obj):
         try:
@@ -44,14 +44,14 @@ class VideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
         fields = [
-            'id', 
-            'name', 
-            'video_url', 
-            'thumbnail', 
-            'subtitles_set',
-            'series', 
-            'movie', 
-            'episode', 
+            'id',
+            'name',
+            'video_url',
+            'thumbnail',
+            'subtitles',
+            'series',
+            'movie',
+            'episode',
             'season',
             'next_episode',
             'time',
@@ -60,7 +60,7 @@ class VideoSerializer(serializers.ModelSerializer):
 
 class SeriesListSerializer(serializers.ModelSerializer):
     """
-    This serializer is used for listing series. 
+    This serializer is used for listing series.
     We do not list items from the video_set related field.
     """
     class Meta:
@@ -70,7 +70,7 @@ class SeriesListSerializer(serializers.ModelSerializer):
 
 class SeriesSerializer(serializers.ModelSerializer):
     """
-    This serializer is used for retrieving a series. 
+    This serializer is used for retrieving a series.
     We list items from the video_set related field, and the seasons.
     """
     seasons = serializers.ReadOnlyField(source='season_list')

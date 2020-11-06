@@ -11,7 +11,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 from StreamServerApp.database_utils import get_num_videos, get_video_type_and_info
-from StreamServerApp.models import Video, Series, Movie, UserVideoHistory
+from StreamServerApp.models import Video, Series, Movie, UserVideoHistory, Subtitle
 from StreamServerApp.media_processing import extract_subtitle, generate_thumbnail
 from StreamServerApp.subtitles import get_subtitles
 
@@ -19,20 +19,20 @@ from StreamServerApp.subtitles import get_subtitles
 def add_series_videos(num_videos=2):
     videos = []
     serie = Series.objects.create(title='The best test title ever')
+
     for video_num in range(1, num_videos+1):
         video = Video.objects.create(
             series=serie,
             name='test_name_{}'.format(video_num),
             video_url='test_url',
             thumbnail='test_image',
-            fr_webvtt_subtitle_url='test_webvtt_fr_sub',
-            en_webvtt_subtitle_url='test_webvtt_eng_sub',
-            fr_srt_subtitle_url='test_srt_fr_sub',
-            en_srt_subtitle_url='test_srt_eng_sub',
             episode = video_num,
             season = 1
         )
         videos.append(video)
+        newsub = Subtitle()
+        newsub.video_id = video
+        newsub.save()
     return serie, videos
 
 
@@ -73,10 +73,10 @@ class LoadingTest(TestCase):
 
         response = self.client.get(reverse('videos-list'), data=data)
         self.assertEqual(response.status_code, 200)
-        
+
         # check that the first result is the best match
         results = json.loads(str(response.content, encoding='utf8'))
-        retrieved_name = results['results'][0]['name']  
+        retrieved_name = results['results'][0]['name']
         self.assertEqual(expected_result_name, retrieved_name)
 
 
@@ -130,7 +130,7 @@ class UtilsTest(TestCase):
         self.assertEqual(video.episode, 19)
         self.assertEqual(video.season, 5)
         self.assertEqual(video.series, series)
-        self.assertNotEqual(video.ov_subtitle_url, "")
+        self.assertNotEqual(video.subtitles, None)
         self.assertNotEqual(series.thumbnail, "")
         self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt"), True)
         os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
@@ -141,7 +141,7 @@ class UtilsTest(TestCase):
         call_command('updatedb')
         self.assertEqual(Series.objects.count(), 1)
         self.assertEqual(Movie.objects.count(), 5)
-        shutil.copyfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4", 
+        shutil.copyfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4",
                             "/usr/src/app/Videos/folder1/Malcolm.in.the Middle.S03E14.Cynthia's.Back.mp4")
         call_command('updatedb')
         self.assertEqual(Series.objects.count(), 2)
@@ -193,12 +193,12 @@ class HistoryTest(TestCase):
 
         results = json.loads(str(response.content, encoding='utf8'))
         self.assertEqual(results['results'], [])
-        
+
     def test_write_history(self):
         video = Video.objects.create()
         response = self.client.post(
-            reverse('history'), 
-            content_type='application/json', 
+            reverse('history'),
+            content_type='application/json',
             data=json.dumps({
                 'body': {
                     'video-id': video.id,
@@ -255,21 +255,19 @@ class MoviesTest(TestCase):
             name='test_name',
             video_url='test_url',
             thumbnail='test_image',
-            fr_webvtt_subtitle_url='test_webvtt_fr_sub',
-            en_webvtt_subtitle_url='test_webvtt_eng_sub',
-            fr_srt_subtitle_url='test_srt_fr_sub',
-            en_srt_subtitle_url='test_srt_eng_sub'
         )
         video2 = Video.objects.create(
             movie=movie2,
             name='test_name',
             video_url='test_url',
             thumbnail='test_image',
-            fr_webvtt_subtitle_url='test_webvtt_fr_sub',
-            en_webvtt_subtitle_url='test_webvtt_eng_sub',
-            fr_srt_subtitle_url='test_srt_fr_sub',
-            en_srt_subtitle_url='test_srt_eng_sub'
         )
+        newsub = Subtitle()
+        newsub.video_id = video
+        newsub.save()
+        newsub2 = Subtitle()
+        newsub.video_id = video2
+        newsub2.save()
         response = self.client.get(reverse('movies-list'))
         decoded_content = json.loads(str(response.content, encoding='utf8'))
         self.assertEqual(response.status_code, 200)
@@ -277,8 +275,9 @@ class MoviesTest(TestCase):
         self.assertEqual(decoded_content['results'][0]['video_set']['results'][0]['name'], 'test_name')
         self.assertEqual(decoded_content['results'][0]['video_set']['results'][0]['video_url'], 'test_url')
         self.assertEqual(decoded_content['results'][0]['video_set']['results'][0]['thumbnail'], 'test_image')
-        self.assertEqual(decoded_content['results'][0]['video_set']['results'][0]['fr_webvtt_subtitle_url'], 'test_webvtt_fr_sub')
-        self.assertEqual(decoded_content['results'][0]['video_set']['results'][0]['en_webvtt_subtitle_url'], 'test_webvtt_eng_sub')
+        print(decoded_content['results'][0]['video_set']['results'][0]['subtitles'])
+        #self.assertEqual(decoded_content['results'][0]['video_set']['results'][0]['subtitles'], 'test_webvtt_fr_sub')
+        #self.assertEqual(decoded_content['results'][0]['video_set']['results'][0]['en_webvtt_subtitle_url'], 'test_webvtt_eng_sub')
         self.assertEqual(decoded_content['previous'], None)
         self.assertEqual(decoded_content['count'], 2)
         self.assertEqual(decoded_content['results'][0]['video_set']['count'], 1)
@@ -311,7 +310,7 @@ class VideosTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(decoded_content['count'], 15)
         self.assertEqual(len(decoded_content['results']), settings.REST_FRAMEWORK['PAGE_SIZE'])
-        
+
         # perform request on next page
         next_page_url = decoded_content['next']
         response = self.client.get(next_page_url)
@@ -348,4 +347,4 @@ class ModelsTest(TestCase):
 
         self.assertEqual(episodes.count(), 2)
         self.assertEqual(list(episodes.values_list('episode', flat=True)), [1, 2])
-        
+
