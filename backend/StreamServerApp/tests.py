@@ -266,7 +266,7 @@ class MoviesTest(TestCase):
         newsub.video_id = video
         newsub.save()
         newsub2 = Subtitle()
-        newsub.video_id = video2
+        newsub2.video_id = video2
         newsub2.save()
         response = self.client.get(reverse('movies-list'))
         decoded_content = json.loads(str(response.content, encoding='utf8'))
