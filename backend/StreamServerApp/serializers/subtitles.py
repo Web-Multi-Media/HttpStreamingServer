@@ -9,6 +9,11 @@ from StreamServerApp.fields import PaginatedRelationField
 
 class SubtitleListSerializer(serializers.ModelSerializer):
 
+    video_id = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='id'
+    )
+
     class Meta:
         model = Subtitle
         fields = [
