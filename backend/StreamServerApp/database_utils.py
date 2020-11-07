@@ -46,11 +46,13 @@ def pretty(d, indent=0):
             print('\t' * (indent+1) + str(value))
 
 
-def populate_db_from_local_folder(base_path, remote_url):
+def populate_db_from_local_folder(base_path, remote_url, keep_files=False):
     """ # create all the videos infos in the database
         Args:
         remote_url: baseurl for video access on the server
         base_path: Local Folder where the videos are stored
+        keep_files: Keep original files in case of convertion
+
 
         this functions will only add videos to the database if
         they are encoded with h264 codec
@@ -71,7 +73,7 @@ def populate_db_from_local_folder(base_path, remote_url):
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
                     with transaction.atomic():
                         retValue = add_one_video_to_database(
-                            full_path,  video_path, root, remote_url, filename)
+                            full_path,  video_path, root, remote_url, filename, keep_files)
                         if retValue == 1:
                             count_movies += 1
                         elif retValue == 2:
@@ -87,7 +89,7 @@ def populate_db_from_local_folder(base_path, remote_url):
         count_series, count_movies))
 
 
-def update_db_from_local_folder(base_path, remote_url):
+def update_db_from_local_folder(base_path, remote_url, keep_files=False):
     """ #  Update  the videos infos in the database
         Args:
         remote_url: baseurl for video access on the server
@@ -137,7 +139,7 @@ def update_db_from_local_folder(base_path, remote_url):
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
                     with transaction.atomic():
                         created = add_one_video_to_database(
-                            full_path,  video_path, root, remote_url, filename)
+                            full_path,  video_path, root, remote_url, filename, keep_files)
                         if created == 1:
                             count_movies += 1
                         elif created == 2:
@@ -156,7 +158,7 @@ def update_db_from_local_folder(base_path, remote_url):
         count_series, count_movies))
 
 
-def add_one_video_to_database(full_path, video_path, root, remote_url, filename):
+def add_one_video_to_database(full_path, video_path, root, remote_url, filename, keep_files=False):
     """ # create infos in the database for one video
 
         Args:
@@ -164,13 +166,14 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
         video_path: relative (to root) basepath (ie directory) containing video
         root: absolute path to directory containing all the videos
         remote_url: baseurl for video access on the server
+        keep_files: Keep files in case of convertion
 
         return 0 if noseries/movies was created, 1 if a movies was created, 2 if a series was created
 
     """
     # Print current working directory
     print("Current working dir : %s" % root)
-    video_infos, subtitles_list = prepare_video(full_path, video_path, root, remote_url)
+    video_infos, subtitles_list = prepare_video(full_path, video_path, root, remote_url, keep_files)
     if not video_infos:
         raise("Dict is Empty")
 
@@ -236,12 +239,13 @@ def populate_db_from_remote_server(remotePath, ListOfVideos):
     """
 
 
-def prepare_video(video_full_path, video_path, video_dir, remote_url):
+def prepare_video(video_full_path, video_path, video_dir, remote_url, keep_files=False):
     """ # Create thumbnail, transmux if necessayr and get all the videos infos.
         Args:
         full_path: full path to the video (eg: /Videos/folder1/video.mp4)
         video_path: path to the video basedir (eg: /Videos/)
         video_dir: path to the video dir (eg: /Videos/folder1/)
+        keep_files: Keep original files in case of convertion
 
         return: Dictionnary with video infos
 
@@ -305,7 +309,9 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             else:
                 transmux_to_mp4(video_full_path, temp_mp4, False)
 
-            os.remove(video_full_path)
+            if not keep_files:
+                os.remove(video_full_path)
+
             relative_path = os.path.relpath(temp_mp4, video_path)
             video_full_path = temp_mp4
 

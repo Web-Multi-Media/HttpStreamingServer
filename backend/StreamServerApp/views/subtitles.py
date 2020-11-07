@@ -3,6 +3,7 @@ from rest_framework import viewsets, generics
 from StreamServerApp.serializers.subtitles import SubtitleListSerializer
 from StreamServerApp.models import Subtitle
 
+
 class SubtitleViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `search` actions for Videos
@@ -17,7 +18,7 @@ class SubtitleViewSet(viewsets.ModelViewSet):
         """
         if self.action == 'list':
             return SubtitleListSerializer
-        if self.action == 'retrieve':
+        elif self.action == 'retrieve':
             return SubtitleListSerializer
 
     def get_queryset(self):
