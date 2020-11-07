@@ -34,20 +34,15 @@ class SubtitlesTest(TestCase):
         #print(results)
         self.assertEqual(results['results'], [])
 
-    def _create_test_file(self, path):
-        f = open(path, 'w')
-        f.write('test123\n')
-        f.close()
-        f = open(path, 'rb')
-        return {'datafile': f}
-
     def test_upload_file(self):
         url = reverse('subtitles-list')
-        data = self._create_test_file('/tmp/test_upload')
+        data = {}
         video = Video.objects.create()
         data['video_id'] = video.id
-        print(data)
-
+        data['language'] = 'fra'
+        data['datafile'] = open('/usr/src/app/Videos/subtitles/test.srt', 'rb')
 
         response = self.client.post(url, data, format='multipart')
-        print(response)
+        self.assertEqual(response.status_code, 201)
+        sub = video.subtitles.all()[0]
+        self.assertEqual(sub.webvtt_subtitle_url, "http://localhost:1337/Videos/test.vtt")
