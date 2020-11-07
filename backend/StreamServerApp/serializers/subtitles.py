@@ -16,5 +16,4 @@ class SubtitleListSerializer(serializers.ModelSerializer):
             'webvtt_subtitle_url', 
             'language', 
             'video_id', 
-
         ]

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 
 
 class SearchManager(models.Manager):
@@ -111,4 +112,5 @@ class Subtitle(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
     video_id = models.ForeignKey(Video, related_name='subtitles', on_delete=models.CASCADE)
+    uploaded_data = models.FileField(upload_to='uploads/', default='')
     
