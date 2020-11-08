@@ -22,7 +22,7 @@ function Login({toggleModalBox, setDisplayModal}) {
 
     };
     try {
-      const response = await client.postRequest("/rest-auth/login", null, param);
+      const response = await client.postRequest("/rest-auth/login", null, null, null,param, );
       if (response.status === 200) {
         setAuthTokens(response.data);
         setLoggedIn(true);

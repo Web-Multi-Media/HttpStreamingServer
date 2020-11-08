@@ -82,14 +82,13 @@ function Client() {
      * @returns {Response}
      * 
      */
-    this.postRequest = (endPoint, body={}, params={}, headers ={}) => http.post(`${endPoint}/`, {
-        ...params,
+    this.postRequest = (endPoint, body={}, params={}, headers ={}) => http.post(`${endPoint}/`, params , {
         headers: {
             Authorization: this.token, // the token is a variable which holds the token
             'X-CSRFToken': this.csrfcookie,
             ...headers
         },
-        body,
+        ...body,
     });
 
         /**
@@ -196,22 +195,10 @@ function Client() {
         };*/
         
         let params = new FormData();
-        params.append('image',video_id);
-        params.append('title',language);
-        params.append('content',datafile);
-        let body = {
-            'data': params
-        }
-        // const response = await this.postRequest(SUBTITLES_ENDPOINT, body, {} , {'content-type': 'multipart/form-data' }, );
-        const response = await http.post(`${SUBTITLES_ENDPOINT}/`,params,  {
-           
-            headers: {
-                Authorization: this.token, // the token is a variable which holds the token
-                'X-CSRFToken': this.csrfcookie,
-                'content-type': 'multipart/form-data'
-            },
-        });
-        
+        params.append('datafile',datafile);
+        params.append('language',language);
+        params.append('video_id',video_id);
+        const response = await this.postRequest(SUBTITLES_ENDPOINT, null , params , {'content-type': 'multipart/form-data' } );
     };
 };
 
