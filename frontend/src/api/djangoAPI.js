@@ -82,11 +82,12 @@ function Client() {
      * @returns {Response}
      * 
      */
-    this.postRequest = (endPoint, body={}, params={}) => http.post(`${endPoint}/`, {
+    this.postRequest = (endPoint, body={}, params={}, headers ={}) => http.post(`${endPoint}/`, {
         ...params,
         headers: {
             Authorization: this.token, // the token is a variable which holds the token
             'X-CSRFToken': this.csrfcookie,
+            ...headers
         },
         body,
     });
@@ -101,14 +102,14 @@ function Client() {
      * @returns {Response}
      * 
      */
-    this.postForm = (endPoint, body={}, params={}) => http.post(`${endPoint}/`, {
+    this.postForm = (endPoint, body={}, params={}, object= {}) => http.post(`${endPoint}/`, {
         ...params,
         headers: {
             Authorization: this.token, // the token is a variable which holds the token
             'X-CSRFToken': this.csrfcookie,
             'content-type': 'multipart/form-data'
         },
-        body,
+        body
     });
 
     /**
@@ -193,12 +194,24 @@ function Client() {
             'language': language,
             'video_id': video_id,
         };*/
+        
         let params = new FormData();
-        params.append('datafile',datafile);
-        params.append('language',language);
-        params.append('video_id',video_id);
-        console.log(params);
-        const response = await this.postForm(SUBTITLES_ENDPOINT, params, params );
+        params.append('image',video_id);
+        params.append('title',language);
+        params.append('content',datafile);
+        let body = {
+            'data': params
+        }
+        // const response = await this.postRequest(SUBTITLES_ENDPOINT, body, {} , {'content-type': 'multipart/form-data' }, );
+        const response = await http.post(`${SUBTITLES_ENDPOINT}/`,params,  {
+           
+            headers: {
+                Authorization: this.token, // the token is a variable which holds the token
+                'X-CSRFToken': this.csrfcookie,
+                'content-type': 'multipart/form-data'
+            },
+        });
+        
     };
 };
 
