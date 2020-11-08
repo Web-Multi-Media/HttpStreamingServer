@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { checkPropTypes } from 'prop-types';
 
 /**
  * initialize the client with the base url
@@ -15,6 +16,7 @@ const VIDEOS_ENDPOINT = '/videos';
 const SERIES_ENDPOINT = '/series';
 const SEASON_ENDPOINT = '/season';
 const MOVIES_ENDPOINT = '/movies';
+const SUBTITLES_ENDPOINT = '/subtitles';
 const HISTORY_ENDPOINT = '/history';
 
 
@@ -89,6 +91,26 @@ function Client() {
         body,
     });
 
+        /**
+     * Wrapper for sending POST request to server using axios http client
+     *
+     * @param endPoint
+     *          API endpoint to which send the POST request
+     * @param body
+     *          Body of the POST reuqest
+     * @returns {Response}
+     * 
+     */
+    this.postForm = (endPoint, body={}, params={}) => http.post(`${endPoint}/`, {
+        ...params,
+        headers: {
+            Authorization: this.token, // the token is a variable which holds the token
+            'X-CSRFToken': this.csrfcookie,
+            'content-type': 'multipart/form-data'
+        },
+        body,
+    });
+
     /**
      * performs GET request to retrieve a single video by it's ID
      *
@@ -115,7 +137,7 @@ function Client() {
             'video-id': id,
             'video-time': timeStamp,
         };
-        const response = await this.postRequest(HISTORY_ENDPOINT, body);
+        const response = await this.postForm(HISTORY_ENDPOINT, body);
         return new MoviesPager(response.data);
     };
 
@@ -154,6 +176,29 @@ function Client() {
         const response = await this.getRequest(MOVIES_ENDPOINT, { params });
         response.data.results = response.data.results.map((result) => result.video_set.results[0]);
         return new MoviesPager(response.data);
+    };
+
+    /**
+     * performs POST request to upload a new subtitles to a video
+     *
+        data['video_id'] = video.id
+        data['language'] = 'fra'
+        data['datafile'] = open('/usr/src/app/Videos/subtitles/test.srt', 'rb')
+     * @returns {Promise<Video>}
+     *          Video
+     */
+    this.uploadSubtitles = async (token, video_id, language, datafile) => {
+        /*const params = {
+            'datafile': datafile,
+            'language': language,
+            'video_id': video_id,
+        };*/
+        let params = new FormData();
+        params.append('datafile',datafile);
+        params.append('language',language);
+        params.append('video_id',video_id);
+        console.log(params);
+        const response = await this.postForm(SUBTITLES_ENDPOINT, params, params );
     };
 };
 

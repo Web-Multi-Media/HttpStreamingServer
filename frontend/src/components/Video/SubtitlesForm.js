@@ -1,10 +1,11 @@
 
 import React, {useEffect, useState} from 'react';
+import { client } from '../../api/djangoAPI';
 
 import VTTConverter from 'srt-webvtt';
 
 
-function SubtitleForm  (){
+function SubtitleForm ({video, token}){
 
     const [selectedFiles, setSelectedFiles] = useState(undefined);
     const [subtitleName, setSubtitleName] = useState("Custom Subtitle");
@@ -41,15 +42,21 @@ function SubtitleForm  (){
 
     const handleSubmit = event => {
         event.preventDefault()  
+        //console.log("coucou");
+        console.log(selectedFiles[0]);
+        //console.log(token.key);
+        //console.log(video);
+        client.uploadSubtitles(token.key, video.id, 'eng', selectedFiles[0]);
     };
 
     return (
             <div className="ui segment">
-            <form  onSubmit={e => { e.preventDefault(); }} >
+            <form  onSubmit={handleSubmit} >
                 <label>
                 Add Custom subtitles:
                 <input type="file" onChange={handleSubtitleChange} />
                 <input type="text" defaultValue="Custom Subtitle" onChange={handleSubtitleNameChange}/>
+                <button onChange={handleSubmit} type="submit">Send </button>
                 </label>
             </form>
         </div>

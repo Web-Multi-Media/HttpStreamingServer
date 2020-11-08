@@ -77,8 +77,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     </Button>
                 }
             </div>
-            <SubtitleForm
-            />
+            <SubtitleForm video={video} token={authTokens}/>
 
         </div>
     );

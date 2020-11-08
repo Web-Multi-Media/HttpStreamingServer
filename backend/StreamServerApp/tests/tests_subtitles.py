@@ -45,4 +45,4 @@ class SubtitlesTest(TestCase):
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, 201)
         sub = video.subtitles.all()[0]
-        self.assertEqual(sub.webvtt_subtitle_url, "http://localhost:1337/Videos/test.vtt")
+        self.assertEqual(sub.webvtt_subtitle_url, "/Videos/test.vtt")
