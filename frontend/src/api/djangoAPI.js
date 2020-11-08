@@ -82,34 +82,24 @@ function Client() {
      * @returns {Response}
      * 
      */
-    this.postRequest = (endPoint, body={}, params={}, headers ={}) => http.post(`${endPoint}/`, params , {
-        headers: {
+    this.postRequest = (endPoint, body={}, params=null, headers ={}) => 
+    {
+        const   axiosParams = {
+            headers: {
             Authorization: this.token, // the token is a variable which holds the token
             'X-CSRFToken': this.csrfcookie,
             ...headers
-        },
-        ...body,
-    });
+            },
+            ...body,
+        };
 
-        /**
-     * Wrapper for sending POST request to server using axios http client
-     *
-     * @param endPoint
-     *          API endpoint to which send the POST request
-     * @param body
-     *          Body of the POST reuqest
-     * @returns {Response}
-     * 
-     */
-    this.postForm = (endPoint, body={}, params={}, object= {}) => http.post(`${endPoint}/`, {
-        ...params,
-        headers: {
-            Authorization: this.token, // the token is a variable which holds the token
-            'X-CSRFToken': this.csrfcookie,
-            'content-type': 'multipart/form-data'
-        },
-        body
-    });
+        if (params){
+            return http.post(`${endPoint}/`, params , axiosParams);
+        }
+        else {
+            return http.post(`${endPoint}/`, axiosParams);
+        }
+}
 
     /**
      * performs GET request to retrieve a single video by it's ID
@@ -133,11 +123,15 @@ function Client() {
      *          Video
      */
     this.updateHistory = async (token, id, timeStamp = 0) => {
-        const body = {
-            'video-id': id,
-            'video-time': timeStamp,
+        const body = 
+        {
+            body:{
+                'video-id': id,
+                'video-time': timeStamp,}
         };
-        const response = await this.postForm(HISTORY_ENDPOINT, body);
+        
+        const response = await this.postRequest(HISTORY_ENDPOINT, body , null , {'content-type': 'multipart/form-data' } );
+
         return new MoviesPager(response.data);
     };
 
