@@ -16,13 +16,14 @@ function Login({toggleModalBox, setDisplayModal}) {
 
   async function postLogin() {
     const param = {
-      'username': username,
-      'password': password,
-      'email': "",
-
+    
+        'username': username,
+        'password': password,
+        'email': "",
+      
     };
     try {
-      const response = await client.postRequest("/rest-auth/login", null, null, null,param, );
+      const response = await client.postRequest("/rest-auth/login", param );
       if (response.status === 200) {
         setAuthTokens(response.data);
         setLoggedIn(true);
