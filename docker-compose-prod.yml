@@ -28,6 +28,8 @@ services:
       - DEPLOY_ENV=production
     volumes:
       - ./Videos/:/usr/src/app/Videos
+      # To be fixed, backend code is mapped here to share static files (react build) with nginx
+      - ./backend/:/usr/src/app/
       - /static/
       - ipython:/root/.ipython
     command: bash -c "python3 /usr/src/app/manage.py collectstatic --no-input && gunicorn StreamingServer.wsgi:application --bind 0.0.0.0:8000"
