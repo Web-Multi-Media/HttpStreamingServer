@@ -91,7 +91,7 @@ export default class VideoCarrouselSlick extends Component {
             onClick={() => this.props.handleVideoSelect(video)}
           >
             <img className={`img-cover`} src={video.thumbnail} />
-            <FaPlayCircle className="playIcon" size="60" color="black" />
+            <FaPlayCircle className="playIcon" size="60" color="white" />
             <div className={`shadow-element`}>
               <p className={`paragraph-element`}>{video.name}</p>
             </div>

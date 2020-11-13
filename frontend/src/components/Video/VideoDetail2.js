@@ -16,6 +16,7 @@ import {
   BigPlayButton,
   ClosedCaptionButton,
 } from "video-react";
+import UploadSubtitle from "./UploadSubtitle";
 
 function VideoDetail2({
   video,
@@ -118,6 +119,13 @@ function VideoDetail2({
                 order={8}
               />
             )}
+
+            <UploadSubtitle
+              video={video}
+              token={authTokens}
+              order={8}
+              player={player}
+            />
           </ControlBar>
         </Player>
       </div>

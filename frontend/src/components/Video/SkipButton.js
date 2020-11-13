@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import React, { Component, useRef } from "react";
+import React, { useRef } from "react";
 import classNames from "classnames";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { BiSkipNext } from "react-icons/bi";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import "./SkipButton.css";
 
@@ -32,8 +32,11 @@ function SkipButton(props) {
         })}
         onClick={handleClick}
       >
-        <FontAwesomeIcon size={"2x"} icon={faArrowRight} />
+        <BiSkipNext size="20" color="white" />
+
+        {/* <FontAwesmeIcon size={"2x"} icon={faArrowRight} /> */}
       </a>
+       
     </div>
   );
 }
