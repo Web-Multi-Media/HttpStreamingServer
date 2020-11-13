@@ -19,15 +19,17 @@
     "node-sass": "^4.12.0",
     "pure-react-carousel": "^1.23.3",
     "query-string": "^6.8.3",
-    "react": "^16.8.6",
+    "react": "^16.14.0",
     "react-bootstrap": "latest",
-    "react-dom": "^16.8.6",
+    "react-dom": "^16.14.0",
+    "react-icons": "^3.11.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",
     "react-slick": "^0.25.2",
     "reactstrap": "^8.4.1",
     "srt-webvtt": "1.0.1",
-    "styled-components": "latest"
+    "styled-components": "latest",
+    "video-react": "^0.14.1"
   },
   "scripts": {
     "prestart": "if [ ! -d node_modules ]; then npm install; fi",

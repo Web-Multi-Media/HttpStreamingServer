@@ -1,82 +1,79 @@
 import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-    Button,
-    useDisclosure,
-    Input,
-    Box
-  } from "@chakra-ui/core";
-import React, {useEffect, useState, useRef} from 'react';
-import { client } from '../../api/djangoAPI';
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+  useDisclosure,
+  Input,
+  Box,
+} from "@chakra-ui/core";
+import React, { useEffect, useState, useRef } from "react";
+import { client } from "../../api/djangoAPI";
 
-import VTTConverter from 'srt-webvtt';
+import VTTConverter from "srt-webvtt";
 
+function SubtitleForm({ video, token }) {
+  const [selectedFiles, setSelectedFiles] = useState(undefined);
+  const [subtitleName, setSubtitleName] = useState("Custom Subtitle");
+  const hiddenFileInput = useRef(null);
 
-function SubtitleForm ({video, token}){
+  const handleClick = (event) => {
+    hiddenFileInput.current.click();
+  };
 
-    const [selectedFiles, setSelectedFiles] = useState(undefined);
-    const [subtitleName, setSubtitleName] = useState("Custom Subtitle");
-    const hiddenFileInput = useRef(null);
+  const handleSubtitleChange = (event) => {
+    let customsub = event.target.value;
+    var ext = customsub.substr(customsub.lastIndexOf(".") + 1);
+    if (ext != "srt") {
+      alert("Only .srt files are supported \n");
+      return;
+    }
 
-    const handleClick = event => {
-      hiddenFileInput.current.click();
-    };
+    setSubtitleName(event.target.files[0].name);
+    const vttConverter = new VTTConverter(event.target.files[0]);
+    let track = document.createElement("track");
+    track.id = "my-sub-track";
+    track.kind = "captions";
+    track.label = subtitleName;
+    let videoElement = document.getElementById("myVideo");
+    videoElement.appendChild(track);
+    vttConverter
+      .getURL()
+      .then(function (url) {
+        // Its a valid url that can be used further
+        track.src = url; // Set the converted URL to track's source
+        videoElement.textTracks[0].mode = "show"; // Start showing subtitle to your track
+      })
+      .catch(function (err) {
+        alert(err);
+      });
 
-    const handleSubtitleChange = event => {
-        let customsub = event.target.value;
-        var ext = customsub.substr(customsub.lastIndexOf('.') + 1);
-        if(ext != "srt"){
-            alert("Only .srt files are supported \n");
-            return;
-        }
-        
-        
-        setSubtitleName( event.target.files[0].name);    
-        const vttConverter = new VTTConverter(event.target.files[0]);
-        let track = document.createElement("track");
-        track.id= "my-sub-track";
-        track.kind = "captions";
-        track.label = subtitleName;
-        let videoElement = document.getElementById("myVideo");
-        videoElement.appendChild(track);
-        vttConverter
-        .getURL()
-        .then(function(url) { // Its a valid url that can be used further
-          console.log('url', url)
-          track.src = url; // Set the converted URL to track's source
-          videoElement.textTracks[0].mode = 'show'; // Start showing subtitle to your track
-        })
-        .catch(function(err) {
-          alert(err);
-        })
-        
-        setSelectedFiles(event.target.files);    
-      };
+    setSelectedFiles(event.target.files);
+  };
 
-    const handleSubtitleNameChange = event => {
-        setSubtitleName(event.target.value);    
-    };
+  const handleSubtitleNameChange = (event) => {
+    setSubtitleName(event.target.value);
+  };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault()  
-        console.log('prout')
-        
-        const response = await client.uploadSubtitles(token.key, video.id, 'eng', selectedFiles[0]);
-        console.log('r', response)
-        onClose();
-    };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const response = await client.uploadSubtitles(
+      token.key,
+      video.id,
+      "eng",
+      selectedFiles[0]
+    );
+    onClose();
+  };
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const { isOpen, onOpen, onClose } = useDisclosure();
-
-    return (
-         
-            <>
+  return (
+    <>
       <Button onClick={onOpen}>Handle subtitles</Button>
 
       <Modal isOpen={isOpen} onClose={onClose} onS isCentered>
@@ -84,32 +81,40 @@ function SubtitleForm ({video, token}){
         <ModalContent>
           <ModalHeader color="black"> Add Custom subtitles:</ModalHeader>
           <ModalCloseButton />
-          <ModalBody mt= {4}>
+          <ModalBody mt={4}>
             <Box m={4}>
-
-              <Button mb={4} onClick={handleClick} >Upload SUB </Button>
-              <Input type="file" 
+              <Button mb={4} onClick={handleClick}>
+                Upload SUB{" "}
+              </Button>
+              <Input
+                type="file"
                 onChange={handleSubtitleChange}
-                accept=".srt" 
+                accept=".srt"
                 ref={hiddenFileInput}
-                style={{display:'none'}} 
-                />
-              <Input mb={4} type="text" defaultValue="Custom Subtitle" value={subtitleName} onChange={handleSubtitleNameChange}/>
-                </Box>
+                style={{ display: "none" }}
+              />
+              <Input
+                mb={4}
+                type="text"
+                defaultValue="Custom Subtitle"
+                value={subtitleName}
+                onChange={handleSubtitleNameChange}
+              />
+            </Box>
           </ModalBody>
 
           <ModalFooter>
-            <Button mb={4} onClick={handleSubmit}  mr={3}>Send</Button>
-            <Button variantColor="blue"  onClick={onClose}>
+            <Button mb={4} onClick={handleSubmit} mr={3}>
+              Send
+            </Button>
+            <Button variantColor="blue" onClick={onClose}>
               Close
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
-        
-    )
+  );
 }
 
 export default SubtitleForm;
-

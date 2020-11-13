@@ -1,89 +1,111 @@
-import React, {useEffect, useState} from 'react';
-import { client } from '../../api/djangoAPI';
+import React, { useEffect, useState } from "react";
+import { client } from "../../api/djangoAPI";
 import Button from "@material-ui/core/Button";
-import './VideoDetail.css'
-import SubtitleForm from "./SubtitlesForm"
+import "./VideoDetail.css";
+import SubtitleForm from "./SubtitlesForm";
 
+function VideoDetail({
+  video,
+  handleVideoSelect,
+  authTokens,
+  setHistoryPager,
+}) {
+  const [timer, setTimer] = useState(false);
+  const [count, setCount] = useState(0);
 
+  async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
+    const video = await client.getVideoById(nextEpisodeID);
+    handleVideoSelect(video);
+  }
 
-function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }) {
+  function startVideo() {
+    setTimer(true);
+  }
 
-    const [timer, setTimer] = useState(false);
-    const [count, setCount] = useState(0);
-    
-    async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
-        const video = await client.getVideoById(nextEpisodeID);
-        handleVideoSelect(video);
+  function canPlay(video) {
+    if (video.time > 0) {
+      document.getElementById("myVideo").currentTime = video.time;
     }
-    
-    
-    function startVideo() {
-        setTimer(true);
-        
+  }
+
+  useEffect(() => {
+    if (timer) {
+      const theThimer = setInterval(async () => {
+        setCount(count + 1);
+        const newHistory = await client.updateHistory(
+          authTokens.key,
+          video.id,
+          document.getElementById("myVideo").currentTime
+        );
+        setHistoryPager(newHistory);
+      }, 2000);
+      return () => {
+        clearInterval(theThimer);
+      };
     }
-    
-    function canPlay(video) {
-        console.log('canPlay')
-        if (video.time > 0){
-            document.getElementById("myVideo").currentTime = video.time;
-        }
-    }
-    
-    
-    useEffect(() => {
-        if(timer){
-            const theThimer =
-            setInterval(async () =>{
-                setCount(count + 1);
-                const newHistory =  await client.updateHistory (authTokens.key, video.id, document.getElementById("myVideo").currentTime);
-                setHistoryPager(newHistory);
-            }, 20000);
-            return () => {
-                console.log('clear');
-                clearInterval(theThimer);
+  }, [timer, count]);
+
+  if (!video) {
+    return null;
+  }
+
+  return (
+    <div>
+      <div className="ui embed">
+        <video
+          id="myVideo"
+          preload="auto"
+          controls
+          key={video.id}
+          onLoadedData={() => {
+            canPlay(video);
+          }}
+          onPlay={() => {
+            startVideo();
+          }}
+          onPause={() => setTimer(false)}
+        >
+          <source src={video.videoUrl} title="Video player" />
+          {video.frSubtitleUrl && (
+            <track
+              label="French"
+              kind="subtitles"
+              srcLang="fr"
+              src={video.frSubtitleUrl}
+            />
+          )}
+          {!video.subtitles
+            ? null
+            : video.subtitles.map((sub, index) => (
+                <track
+                  label={sub.language}
+                  default={index === 0}
+                  kind="subtitles"
+                  srcLang={sub.language}
+                  src={sub.webvtt_subtitle_url}
+                />
+              ))}
+        </video>
+      </div>
+      <div className="ui segment">
+        <h4 className="ui header">{video.name}</h4>
+      </div>
+      <div className="ui segment">
+        {video.nextEpisode && (
+          <Button
+            onClick={() =>
+              HandleNextEpisode(handleVideoSelect, video.nextEpisode)
             }
-        }
-    }, [timer, count]);
-    
-    
-    if (!video) {
-        return null;
-    }
-    console.log(video.subtitles)
-    return (
-        
-        <div>
-            <div className="ui embed">
-                <video
-                    id="myVideo"
-                    preload="auto"
-                    controls
-                    key={video.id}
-                    onLoadedData={()=>{canPlay(video)} } onPlay={()=>{startVideo()} }
-                    onPause={() => setTimer(false)}>
-                    <source src={video.videoUrl} title='Video player' />
-                    {video.frSubtitleUrl && <track label="French" kind="subtitles" srcLang="fr" src={video.frSubtitleUrl} />}
-                    {!video.subtitles ? null  : video.subtitles.map((sub, index) => 
-                    <track label={sub.language} default={index === 0 }  kind="subtitles" srcLang={sub.language} src={sub.webvtt_subtitle_url} />
-                     )}
-                  
-                    
-                </video>
-            </div>
-            <div className="ui segment">
-                <h4 className="ui header">{video.name}</h4>
-            </div>
-            <div className="ui segment">
-                {video.nextEpisode &&
-                    <Button  onClick={() => HandleNextEpisode(handleVideoSelect,video.nextEpisode)} variant="contained" color="primary">
-                        Next Episode
-                    </Button>
-                }
-            </div>
-            <SubtitleForm video={video} token={authTokens}/>
-
-        </div>
-    );
-};
+            variant="contained"
+            color="primary"
+          >
+            Next Episode
+          </Button>
+        )}
+      </div>
+      <SubtitleForm video={video} token={authTokens} />
+    </div>
+  );
+}
 
 export default VideoDetail;
