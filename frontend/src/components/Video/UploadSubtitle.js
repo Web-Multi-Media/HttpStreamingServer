@@ -54,7 +54,6 @@ function UploadSubtitle(props) {
       .getURL()
       .then(function (url) {
         // Its a valid url that can be used further
-        console.log("url", url);
         track.src = url; // Set the converted URL to track's source
         videoElement.textTracks[0].mode = "show"; // Start showing subtitle to your track
       })

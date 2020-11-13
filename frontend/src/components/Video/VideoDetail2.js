@@ -34,19 +34,6 @@ function VideoDetail2({
     }
   }, [video]);
 
-  const handleStateChange = (state, prevState) => {
-    // copy player state to this component's state
-    console.log("state", state);
-  };
-
-  useEffect(() => {
-    if (player) {
-      console.log("if player", player);
-    }
-    console.log("player.current", player.context);
-    // player.current.subscribeToStateChange(handleStateChange.bind());
-  }, [player]);
-
   async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
     const video = await client.getVideoById(nextEpisodeID);
     handleVideoSelect(video);

@@ -23,7 +23,6 @@ function VideoDetail({
   }
 
   function canPlay(video) {
-    console.log("canPlay");
     if (video.time > 0) {
       document.getElementById("myVideo").currentTime = video.time;
     }
@@ -41,7 +40,6 @@ function VideoDetail({
         setHistoryPager(newHistory);
       }, 2000);
       return () => {
-        console.log("clear");
         clearInterval(theThimer);
       };
     }
