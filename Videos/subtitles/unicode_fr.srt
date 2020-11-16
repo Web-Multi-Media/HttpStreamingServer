@@ -1,0 +1,16 @@
+1
+00:01:16,924 --> 00:01:19,051
+<i>Vous ne passerez pas !</i>
+
+2
+00:01:19,176 --> 00:01:20,387
+<i>Gandalf !</i>
+
+3
+00:01:25,559 --> 00:01:27,769
+<i>Je suis un Serviteur de Feu Secret,</i>
+
+4
+00:01:27,894 --> 00:01:30,938
+<i>D�tenteur de la flamme d'Anor.</i>
+

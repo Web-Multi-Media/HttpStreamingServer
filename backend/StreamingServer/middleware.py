@@ -12,7 +12,7 @@ class UserAuthMiddleware(object):
             user_token = request.headers.get('Authorization')
         elif request.method == 'POST':
             try:
-                user_token = json.loads(request.body.decode()).get('headers', {}).get('Authorization')
+                user_token = json.loads(request.body.decode("utf-8", "ignore")).get('headers', {}).get('Authorization')
             except json.decoder.JSONDecodeError:
                 user_token = None
 

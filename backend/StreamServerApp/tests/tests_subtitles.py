@@ -46,3 +46,17 @@ class SubtitlesTest(TestCase):
         self.assertEqual(response.status_code, 201)
         sub = video.subtitles.all()[0]
         self.assertEqual(sub.webvtt_subtitle_url, "/Videos/test.vtt")
+
+
+    def test_upload_unicode_file(self):
+        url = reverse('subtitles-list')
+        data = {}
+        video = Video.objects.create()
+        data['video_id'] = video.id
+        data['language'] = 'fra'
+        data['datafile'] = open('/usr/src/app/Videos/subtitles/unicode_fr.srt', 'rb')
+
+        response = self.client.post(url, data, format='multipart')
+        self.assertEqual(response.status_code, 201)
+        sub = video.subtitles.all()[0]
+        self.assertEqual(sub.webvtt_subtitle_url, "/Videos/unicode_fr.vtt")

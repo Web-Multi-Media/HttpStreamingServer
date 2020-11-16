@@ -225,6 +225,8 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename,
             newsub = Subtitle()
             newsub.video_id = v
             newsub.vtt_path = vtt_subtitle_url
+            if srt_subtitles_full_path.get(language_str):
+                newsub.srt_path = srt_subtitles_full_path[language_str]
             newsub.webvtt_subtitle_url = os.path.join(
                 remote_url, webvtt_subtitles_relative_path)
             newsub.language = language_str

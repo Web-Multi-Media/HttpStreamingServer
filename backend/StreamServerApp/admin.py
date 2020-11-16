@@ -1,5 +1,5 @@
 from django.contrib import admin
-from StreamServerApp.models import Video
+from StreamServerApp.models import Video, Movie, Series, Subtitle
 from StreamServerApp.database_utils import delete_DB_Infos, populate_db_from_local_folder, update_db_from_local_folder
 from django.conf import settings
 
@@ -20,5 +20,8 @@ class VideoAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Video, VideoAdmin)
+admin.site.register(Movie, VideoAdmin)
+admin.site.register(Series, VideoAdmin)
+admin.site.register(Subtitle, VideoAdmin)
 admin.site.add_action(populate_videos)
 admin.site.add_action(update_videos)

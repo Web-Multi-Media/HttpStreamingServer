@@ -33,4 +33,4 @@ You can launch all the tests with:
 
 
 You can launch a specific test with:
-    docker-compose -f docker-compose-debug.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py test StreamServerApp.tests.tests_subtitle
+    docker-compose -f docker-compose-debug.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py test StreamServerApp.tests.tests_subtitles
