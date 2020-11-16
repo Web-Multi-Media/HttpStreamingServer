@@ -63,10 +63,10 @@ function Client() {
      * @param endPoint
      *          API endpoint to which send the GET request
      * @returns {Response}
-     * 
+     *
      */
     this.getRequest = (endPoint, params={}) => http.get(`${endPoint}`, {
-        ...params, 
+        ...params,
         headers: {
             Authorization: this.token, // the token is a variable which holds the token
         },
@@ -80,9 +80,9 @@ function Client() {
      * @param body
      *          Body of the POST reuqest
      * @returns {Response}
-     * 
+     *
      */
-    this.postRequest = (endPoint, body={}, params=null, headers ={}) => 
+    this.postRequest = (endPoint, body={}, params=null, headers ={}) =>
     {
         const   axiosParams = {
             headers: {
@@ -123,13 +123,13 @@ function Client() {
      *          Video
      */
     this.updateHistory = async (token, id, timeStamp = 0) => {
-        const body = 
+        const body =
         {
             body:{
                 'video-id': id,
                 'video-time': timeStamp,}
         };
-        
+
         const response = await this.postRequest(HISTORY_ENDPOINT, body , null , {'content-type': 'multipart/form-data' } );
 
         return new MoviesPager(response.data);
@@ -187,12 +187,13 @@ function Client() {
             'language': language,
             'video_id': video_id,
         };*/
-        
+
         let params = new FormData();
         params.append('datafile',datafile);
         params.append('language',language);
         params.append('video_id',video_id);
         const response = await this.postRequest(SUBTITLES_ENDPOINT, null , params , {'content-type': 'multipart/form-data' } );
+        return response;
     };
 };
 

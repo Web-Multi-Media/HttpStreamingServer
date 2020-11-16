@@ -21,6 +21,7 @@ function SubtitleForm ({video, token}){
 
     const [selectedFiles, setSelectedFiles] = useState(undefined);
     const [subtitleName, setSubtitleName] = useState("Custom Subtitle");
+    const [subtitleLanguage, setSubtitleLanguage] = useState("eng");
     const hiddenFileInput = useRef(null);
 
     const handleClick = event => {
@@ -34,9 +35,9 @@ function SubtitleForm ({video, token}){
             alert("Only .srt files are supported \n");
             return;
         }
-        
-        
-        setSubtitleName( event.target.files[0].name);    
+
+
+        setSubtitleName( event.target.files[0].name);
         const vttConverter = new VTTConverter(event.target.files[0]);
         let track = document.createElement("track");
         track.id= "my-sub-track";
@@ -54,20 +55,27 @@ function SubtitleForm ({video, token}){
         .catch(function(err) {
           alert(err);
         })
-        
-        setSelectedFiles(event.target.files);    
+
+        setSelectedFiles(event.target.files);
       };
 
+  const handleSubtitleLangChange = event => {
+    setSubtitleLanguage(event.target.value);
+  };
+
+
+
     const handleSubtitleNameChange = event => {
-        setSubtitleName(event.target.value);    
+        setSubtitleName(event.target.value);
     };
 
     const handleSubmit = async (event) => {
-        event.preventDefault()  
-        console.log('prout')
-        
-        const response = await client.uploadSubtitles(token.key, video.id, 'eng', selectedFiles[0]);
-        console.log('r', response)
+        event.preventDefault()
+        //console.log("sending subtitle Language " + subtitleLanguage)
+        const response = await client.uploadSubtitles(token.key, video.id, subtitleLanguage, selectedFiles[0]);
+        //console.log('r', response)
+        if (response.status != 201)
+            alert("Something went wront, are you connected ?");
         onClose();
     };
 
@@ -75,7 +83,7 @@ function SubtitleForm ({video, token}){
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
-         
+
             <>
       <Button onClick={onOpen}>Handle subtitles</Button>
 
@@ -88,13 +96,17 @@ function SubtitleForm ({video, token}){
             <Box m={4}>
 
               <Button mb={4} onClick={handleClick} >Upload SUB </Button>
-              <Input type="file" 
+              <Input type="file"
                 onChange={handleSubtitleChange}
-                accept=".srt" 
+                accept=".srt"
                 ref={hiddenFileInput}
-                style={{display:'none'}} 
+                style={{display:'none'}}
                 />
               <Input mb={4} type="text" defaultValue="Custom Subtitle" value={subtitleName} onChange={handleSubtitleNameChange}/>
+                <select onChange={handleSubtitleLangChange}>
+                  <option value="fra">French</option>
+                  <option selected value="eng">English</option>
+                </select>
                 </Box>
           </ModalBody>
 
@@ -107,7 +119,7 @@ function SubtitleForm ({video, token}){
         </ModalContent>
       </Modal>
     </>
-        
+
     )
 }
 

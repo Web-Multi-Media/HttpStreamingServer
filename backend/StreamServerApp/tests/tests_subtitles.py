@@ -39,7 +39,7 @@ class SubtitlesTest(TestCase):
         data = {}
         video = Video.objects.create()
         data['video_id'] = video.id
-        data['language'] = 'fra'
+        data['language'] = 'eng'
         data['datafile'] = open('/usr/src/app/Videos/subtitles/test.srt', 'rb')
 
         response = self.client.post(url, data, format='multipart')
