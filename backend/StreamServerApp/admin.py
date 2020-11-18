@@ -5,7 +5,7 @@ from django.conf import settings
 
 
 class VideoAdmin(admin.ModelAdmin):
-    search_fields = ['Name']
+    search_fields = ['name']
 
 admin.site.register(Video, VideoAdmin)
 admin.site.register(Movie)
