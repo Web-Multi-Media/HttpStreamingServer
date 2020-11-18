@@ -4,7 +4,10 @@ from StreamServerApp.database_utils import delete_DB_Infos, populate_db_from_loc
 from django.conf import settings
 
 
-admin.site.register(Video)
+class VideoAdmin(admin.ModelAdmin):
+    search_fields = ['Name']
+
+admin.site.register(Video, VideoAdmin)
 admin.site.register(Movie)
 admin.site.register(Series)
 admin.site.register(Subtitle)
