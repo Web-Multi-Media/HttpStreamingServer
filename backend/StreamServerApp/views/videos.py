@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from StreamServerApp.tasks import sync_subtitles
 from StreamServerApp.serializers.videos import VideoSerializer, \
     SeriesSerializer, MoviesSerializer, SeriesListSerializer, VideoListSerializer
-from StreamServerApp.models import Video, Series, Movie
+from StreamServerApp.models import Video, Series, Movie, Subtitle
 import subprocess
 
 
@@ -114,15 +114,5 @@ class MoviesViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-def request_sync_subtitles(request, video_id, language):
-    video = Video.objects.get(id=video_id)
-    video_path = os.path.join(video.video_folder, video.name)
-    if (language == 'en'):
-        subtitles_path = os.path.join(video.video_folder, video.en_srt_subtitle_url.replace(video.video_url.replace(video.name, ''), ''))
-        webvtt_path = os.path.join(video.video_folder, video.en_webvtt_subtitle_url.replace(video.video_url.replace(video.name, ''), ''))
-    if (language == 'fr'):
-        subtitles_path = os.path.join(video.video_folder, video.fr_srt_subtitle_url.replace(video.video_url.replace(video.name, ''), ''))
-        webvtt_path = os.path.join(video.video_folder, video.fr_webvtt_subtitle_url.replace(video.video_url.replace(video.name, ''), ''))
-    webvtt_path = webvtt_path.replace('.vtt', '_sync.vtt')
-    sync_subtitle_path = subtitles_path.replace('.srt', '_sync.srt')
-    sync_subtitles.delay(language, video_path, video_id, subtitles_path, sync_subtitle_path, webvtt_path)
+def request_sync_subtitles(request, video_id, subtitle_id):
+    sync_subtitles.delay(video_id, subtitle_id)
