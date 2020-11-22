@@ -15,6 +15,10 @@ from StreamServerApp.models import Video, Series, Movie, UserVideoHistory, Subti
 from StreamServerApp.media_processing import extract_subtitle, generate_thumbnail
 from StreamServerApp.subtitles import get_subtitles
 
+from django.conf import settings
+from StreamServerApp.tasks import sync_subtitles
+
+
 
 
 class SubtitlesTest(TestCase):
@@ -60,4 +64,19 @@ class SubtitlesTest(TestCase):
         self.assertEqual(response.status_code, 201)
         sub = video.subtitles.all()[0]
         self.assertEqual(sub.webvtt_subtitle_url, "/Videos/unicode_fr.vtt")
+
+    def test_resync_subtitle(self):
+
+        data = {}
+        video = Video.objects.create(name="spongebob.mp4",
+                                     video_url=os.path.join(settings.VIDEO_URL, "folder2/spongebob.mp4"))
+        video.save()                      
+
+        subtitle = Subtitle.objects.create(srt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.srt"),
+        video_id = video, vtt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.vtt"))
+        subtitle.save()
+
+        sync_subtitles(video.id, subtitle.id)
+        #print("URL" + subtitle.webvtt_sync_url + "coucou")
+        self.assertEqual(subtitle.webvtt_sync_url, "/Videos/subtitles/spongebob_sync.vtt")
 
