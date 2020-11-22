@@ -60,3 +60,4 @@ class SubtitlesTest(TestCase):
         self.assertEqual(response.status_code, 201)
         sub = video.subtitles.all()[0]
         self.assertEqual(sub.webvtt_subtitle_url, "/Videos/unicode_fr.vtt")
+

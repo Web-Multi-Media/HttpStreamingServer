@@ -36,19 +36,6 @@ def add_series_videos(num_videos=2):
     return serie, videos
 
 
-class CommandsTestCase(TestCase):
-    def test_database_populate_command(self):
-        " Test database creation."
-
-        args = []
-        opts = {}
-        call_command('populatedb', *args, **opts)
-        # a bit of a mess here to make sure to count only files in all folders...
-        files_in_videos_folders = [[os.path.join(root, file) for file in files] for root, _, files in os.walk(settings.VIDEO_ROOT)]
-        video_files = [filename for sublist in files_in_videos_folders for filename in sublist  # flatten nested list
-                       if isfile(filename) and (filename.endswith(".mp4") or filename.endswith(".mkv"))]
-        self.assertEqual(get_num_videos(), len(video_files))
-
 
 class LoadingTest(TestCase):
     fixtures = ['Videos.json']
@@ -116,40 +103,7 @@ class UtilsTest(TestCase):
         self.assertEqual(movie_info['type'], 'Movie')
         self.assertEqual(movie_info['title'], 'The Blues Brothers')
 
-    def test_movies_series_added_to_db(self):
-        # We check that only one Series instance is created (2 bing band theory episodes)
-        # and 4 Movie instances are created.
-        # We also check that the video fields are set correctly.
-        call_command('populatedb')
 
-        self.assertEqual(Series.objects.count(), 1)
-        self.assertEqual(Movie.objects.count(), 5)
-
-        video = Video.objects.get(name='The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4')
-        series = Series.objects.first()
-        self.assertEqual(video.episode, 19)
-        self.assertEqual(video.season, 5)
-        self.assertEqual(video.series, series)
-        self.assertNotEqual(video.subtitles, None)
-        self.assertNotEqual(series.thumbnail, "")
-        self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt"), True)
-        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL_ov.vtt")
-
-    def test_update_db(self):
-        self.assertEqual(Series.objects.count(), 0)
-        self.assertEqual(Movie.objects.count(), 0)
-        call_command('updatedb')
-        self.assertEqual(Series.objects.count(), 1)
-        self.assertEqual(Movie.objects.count(), 5)
-        shutil.copyfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4",
-                            "/usr/src/app/Videos/folder1/Malcolm.in.the Middle.S03E14.Cynthia's.Back.mp4")
-        call_command('updatedb')
-        self.assertEqual(Series.objects.count(), 2)
-        self.assertEqual(Movie.objects.count(), 5)
-        os.remove("/usr/src/app/Videos/folder1/Malcolm.in.the Middle.S03E14.Cynthia's.Back.mp4")
-        call_command('updatedb')
-        self.assertEqual(Series.objects.count(), 1)
-        self.assertEqual(Movie.objects.count(), 5)
 
     def test_subtitles_extraction(self):
         extract_subtitle("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4",

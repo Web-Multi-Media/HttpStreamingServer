@@ -1,6 +1,7 @@
 import os
 from django.shortcuts import render
 from django.conf import settings
+from django.http import HttpResponse
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from StreamServerApp.tasks import sync_subtitles
@@ -116,3 +117,4 @@ class MoviesViewSet(viewsets.ModelViewSet):
 
 def request_sync_subtitles(request, video_id, subtitle_id):
     sync_subtitles.delay(video_id, subtitle_id)
+    return HttpResponse(status=201)
