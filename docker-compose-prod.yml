@@ -46,3 +46,22 @@ services:
       - 1337:80
     depends_on:
       - web
+
+  celery:
+    build: ./backend
+
+    command: celery -A StreamingServer worker -l info
+    volumes:
+        - ./backend/:/usr/src/app/
+        - ./Videos/:/usr/src/app/Videos
+    env_file:
+        - .env
+    depends_on:
+        - db
+        - redis
+
+  redis:
+    image: redis:alpine
+    command: redis-server --port 6380
+    ports:
+        - 6380:6380
