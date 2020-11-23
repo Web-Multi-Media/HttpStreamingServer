@@ -49,7 +49,8 @@ class SubtitlesTest(TestCase):
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, 201)
         sub = video.subtitles.all()[0]
-        self.assertEqual(sub.webvtt_subtitle_url, "/Videos/test.vtt")
+        expected_url = os.path.join(settings.VIDEO_URL, "test.vtt")
+        self.assertEqual(sub.webvtt_subtitle_url, expected_url)
 
 
     def test_upload_unicode_file(self):
@@ -63,20 +64,22 @@ class SubtitlesTest(TestCase):
         response = self.client.post(url, data, format='multipart')
         self.assertEqual(response.status_code, 201)
         sub = video.subtitles.all()[0]
-        self.assertEqual(sub.webvtt_subtitle_url, "/Videos/unicode_fr.vtt")
+        expected_url = os.path.join(settings.VIDEO_URL, "unicode_fr.vtt")
+        self.assertEqual(sub.webvtt_subtitle_url, expected_url)
 
     def test_resync_subtitle(self):
 
         data = {}
-        video = Video.objects.create(name="spongebob.mp4",
-                                     video_url=os.path.join(settings.VIDEO_URL, "folder2/spongebob.mp4"))
-        video.save()                      
+        fake_url = os.path.join(settings.VIDEO_URL, "folder2/spongebob2.mp4")
+        print(fake_url)
+        video = Video.objects.create(name="spongebob2.mp4",
+                                     video_url=fake_url)
 
         subtitle = Subtitle.objects.create(srt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.srt"),
         video_id = video, vtt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.vtt"))
-        subtitle.save()
 
         sync_subtitles(video.id, subtitle.id)
-        #print("URL" + subtitle.webvtt_sync_url + "coucou")
-        self.assertEqual(subtitle.webvtt_sync_url, "/Videos/subtitles/spongebob_sync.vtt")
+        subtitle.refresh_from_db()
+        expected_url = os.path.join(settings.VIDEO_URL, "subtitles/spongebob_sync.vtt")
+        self.assertEqual(subtitle.webvtt_sync_url, expected_url)
 

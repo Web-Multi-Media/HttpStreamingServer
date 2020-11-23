@@ -12,7 +12,6 @@ from django.conf import settings
 def sync_subtitles( video_id, subtitle_id):
     video = Video.objects.get(id=video_id)
     video_path = os.path.join(settings.VIDEO_ROOT, video.video_url.split(settings.VIDEO_URL)[1])
-    #print(video_path)
     assert(os.path.isfile(video_path))
     subtitle = Subtitle.objects.get(id=subtitle_id)
     subtitle_path = subtitle.srt_path
@@ -25,5 +24,4 @@ def sync_subtitles( video_id, subtitle_id):
     subtitle.srt_sync_path = sync_subtitle_path
     subtitle.vtt_sync_path = webvtt_path
     subtitle.webvtt_sync_url = os.path.join(settings.VIDEO_URL, webvtt_path.split(settings.VIDEO_ROOT)[1])
-    #print(subtitle.webvtt_sync_url )
     subtitle.save()
