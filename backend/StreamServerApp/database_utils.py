@@ -17,8 +17,9 @@ from django.db import transaction
 import re
 
 from StreamServerApp.models import Video, Series, Movie, Subtitle
-from StreamServerApp.subtitles import get_subtitles, init_cache
+from StreamServerApp.subtitles import init_cache
 from StreamServerApp.media_processing import transmux_to_mp4, generate_thumbnail
+from StreamServerApp.tasks import get_subtitles_async
 
 
 def delete_DB_Infos():
@@ -173,7 +174,7 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename,
     """
     # Print current working directory
     print("Current working dir : %s" % root)
-    video_infos, subtitles_list = prepare_video(full_path, video_path, root, remote_url, keep_files)
+    video_infos = prepare_video(full_path, video_path, root, remote_url, keep_files)
     if not video_infos:
         raise("Dict is Empty")
 
@@ -213,24 +214,7 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename,
 
     v.save()
 
-    webvtt_subtitles_full_path = subtitles_list[0]
-    srt_subtitles_full_path = subtitles_list[1]
-    webvtt_subtitles_remote_path = {}
-    for language_str, srt_subtitle_url in webvtt_subtitles_full_path.items():
-        webvtt_subtitles_remote_path[language_str] = ''
-        vtt_subtitle_url = webvtt_subtitles_full_path[language_str]
-        if srt_subtitle_url and vtt_subtitle_url:
-            webvtt_subtitles_relative_path = os.path.relpath(
-                vtt_subtitle_url, video_path)
-            newsub = Subtitle()
-            newsub.video_id = v
-            newsub.vtt_path = vtt_subtitle_url
-            if srt_subtitles_full_path.get(language_str):
-                newsub.srt_path = srt_subtitles_full_path[language_str]
-            newsub.webvtt_subtitle_url = os.path.join(
-                remote_url, webvtt_subtitles_relative_path)
-            newsub.language = language_str
-            newsub.save()
+    get_subtitles_async.delay(v.id, video_infos['has_ov_subtitle'])
 
     return return_value
 
@@ -299,8 +283,6 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url, keep_files
         if(os.path.isfile(thumbnail_fullpath) is False):
             generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
-        subtitles_list = get_subtitles(
-            video_full_path, ov_subtitles)
 
 
         #if file is mkv or has an audio codec different than AAC, transmux to mp4
@@ -325,9 +307,10 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url, keep_files
     remote_thumbnail_url = os.path.join(remote_url, thumbnail_relativepath)
     video_info = {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
                   'audio_codec_type': audio_codec_type, 'video_height': video_height,
-                  'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url}
+                  'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
+                  'has_ov_subtitle':ov_subtitles}
 
-    return video_info, subtitles_list
+    return video_info
 
 
 def get_video_type_and_info(video_path):
