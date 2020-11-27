@@ -35,6 +35,7 @@ services:
     command: bash -c "python3 /usr/src/app/manage.py collectstatic --no-input && gunicorn StreamingServer.wsgi:application --bind 0.0.0.0:8000"
     depends_on:
       - db
+      - redis
 
   nginx:
     build: ./nginx
