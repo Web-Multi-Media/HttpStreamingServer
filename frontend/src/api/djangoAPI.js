@@ -18,6 +18,7 @@ const SEASON_ENDPOINT = '/season';
 const MOVIES_ENDPOINT = '/movies';
 const SUBTITLES_ENDPOINT = '/subtitles';
 const HISTORY_ENDPOINT = '/history';
+const SYNC_ENDPOINT = '/sync_subtitles';
 
 
 function Client() {
@@ -195,6 +196,11 @@ function Client() {
         const response = await this.postRequest(SUBTITLES_ENDPOINT, null , params , {'content-type': 'multipart/form-data' } );
         return response;
     };
+
+    this.resyncSubtitle = async (token, video_id, subtitle_id) => {
+        const response = await this.getRequest(`${SYNC_ENDPOINT}/${video_id}/${subtitle_id}/`);
+    }
+
 };
 
 var client = new Client();

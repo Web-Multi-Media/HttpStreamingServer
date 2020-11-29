@@ -82,6 +82,7 @@ function SubtitleForm ({video, token}){
   const handleResync = async (videoid, subid) => {
     console.log(videoid);
     console.log(subid);
+    const response = await client.resyncSubtitle(token.key, videoid, subid);
   };
 
 
