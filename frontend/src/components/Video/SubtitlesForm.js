@@ -79,6 +79,11 @@ function SubtitleForm ({video, token}){
         onClose();
     };
 
+  const handleResync = async (videoid, subid) => {
+    console.log(videoid);
+    console.log(subid);
+  };
+
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -108,6 +113,10 @@ function SubtitleForm ({video, token}){
                   <option selected value="eng">English</option>
                 </select>
                 </Box>
+                <ModalHeader color="black"> Resync existing subtitle:</ModalHeader>
+                    {video.subtitles.map(sub =>
+                       <Button mb={4} onClick={handleResync.bind(this, video.id, sub.id)} >{sub.language} </Button>)}
+                
           </ModalBody>
 
           <ModalFooter>

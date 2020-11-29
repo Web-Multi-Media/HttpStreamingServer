@@ -9,6 +9,7 @@ from StreamServerApp.serializers.videos import VideoSerializer, \
     SeriesSerializer, MoviesSerializer, SeriesListSerializer, VideoListSerializer
 from StreamServerApp.models import Video, Series, Movie, Subtitle
 import subprocess
+from django.core.cache import caches
 
 
 def index(request):
@@ -116,5 +117,6 @@ class MoviesViewSet(viewsets.ModelViewSet):
 
 
 def request_sync_subtitles(request, video_id, subtitle_id):
-    sync_subtitles.delay(video_id, subtitle_id)
+    task_id = sync_subtitles.delay(video_id, subtitle_id)
+    print(task_id)
     return HttpResponse(status=201)

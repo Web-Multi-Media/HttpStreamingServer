@@ -15,7 +15,7 @@ Migrate the database:
 
 Populate the database:
 
-    docker-compose -f docker-compose-debug.yml run --rm web python3 manage.py populatedb
+    docker-compose -f docker-compose-debug.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py populatedb
 
 Run the server:
 
