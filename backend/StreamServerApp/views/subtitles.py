@@ -24,7 +24,8 @@ class SubtitleViewSet(viewsets.ModelViewSet):
             newsub = serializer.save(uploaded_data=self.request.data.get('datafile'))
             filename = os.path.splitext(datafile.name)[0]
             vtt_path = os.path.join(settings.VIDEO_ROOT, filename + ".vtt")
-            srt_path = os.path.join("/usr/src/app/",str(newsub.uploaded_data))
+            srt_path = os.path.join(
+                settings.BASE_DIR, str(newsub.uploaded_data))
             convert_subtitles_to_webvtt(str(newsub.uploaded_data), vtt_path)
             webvtt_subtitles_relative_path = os.path.relpath(
                 vtt_path, settings.VIDEO_ROOT)

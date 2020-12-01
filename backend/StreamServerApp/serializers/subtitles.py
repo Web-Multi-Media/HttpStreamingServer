@@ -13,6 +13,7 @@ class SubtitleListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 
             'webvtt_subtitle_url', 
+            'webvtt_sync_url',
             'language', 
             'video_id', 
         ]

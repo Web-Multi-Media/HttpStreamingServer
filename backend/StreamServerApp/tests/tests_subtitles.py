@@ -71,9 +71,8 @@ class SubtitlesTest(TestCase):
 
         data = {}
         fake_url = os.path.join(settings.VIDEO_URL, "folder2/spongebob2.mp4")
-        print(fake_url)
         video = Video.objects.create(name="spongebob2.mp4",
-                                     video_url=fake_url)
+                                     video_url=fake_url, video_folder="/usr/src/app/Videos/folder2/spongebob2.mp4")
 
         subtitle = Subtitle.objects.create(srt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.srt"),
         video_id = video, vtt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.vtt"))

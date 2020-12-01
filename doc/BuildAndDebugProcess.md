@@ -11,7 +11,7 @@ Build the frontend:
 
 Migrate the database:
 
-    docker-compose -f docker-compose-debug.yml run --rm web python3 manage.py migrate
+    docker-compose -f docker-compose-debug.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py migrate
 
 Populate the database:
 

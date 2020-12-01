@@ -29,7 +29,7 @@ services:
       - static_volume:/usr/src/app/staticfiles
       - /static/
       - ipython:/root/.ipython
-    command: bash -c "python3 /usr/src/app/manage.py runserver 0.0.0.0:8000"
+    command: bash -c "./wait-for-it.sh db:5432 -- python3 /usr/src/app/manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
       - redis
@@ -39,6 +39,7 @@ services:
     volumes:
       - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
+      - ./nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
       - static_volume:/usr/src/app/staticfiles
     ports:
       - 1337:80

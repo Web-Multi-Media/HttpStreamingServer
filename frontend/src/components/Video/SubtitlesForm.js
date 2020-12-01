@@ -115,9 +115,8 @@ function SubtitleForm ({video, token}){
                 </select>
                 </Box>
                 <ModalHeader color="black"> Resync existing subtitle:</ModalHeader>
-                    {video.subtitles.map(sub =>
+                {!video.subtitles ? null  : video.subtitles.map(sub =>
                        <Button mb={4} onClick={handleResync.bind(this, video.id, sub.id)} >{sub.language} </Button>)}
-                
           </ModalBody>
 
           <ModalFooter>

@@ -179,7 +179,7 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename,
         raise("Dict is Empty")
 
     v = Video(name=filename,
-              video_folder=root,
+              video_folder=full_path,
               video_url=video_infos['remote_video_url'],
               video_codec=video_infos['video_codec_type'],
               audio_codec=video_infos['audio_codec_type'],
@@ -308,7 +308,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url, keep_files
     video_info = {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
                   'audio_codec_type': audio_codec_type, 'video_height': video_height,
                   'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
-                  'has_ov_subtitle':ov_subtitles}
+                  'has_ov_subtitle': ov_subtitles}
 
     return video_info
 
