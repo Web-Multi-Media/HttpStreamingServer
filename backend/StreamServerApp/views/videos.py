@@ -117,6 +117,13 @@ class MoviesViewSet(viewsets.ModelViewSet):
 
 
 def request_sync_subtitles(request, video_id, subtitle_id):
+    video = Video.objects.get(id=video_id)
+    if video is None:
+        return HttpResponse(status=404)
+
+    if video.webvtt_sync_url is not None:
+        return HttpResponse(status=303)
+
     task_id = cache.get(subtitle_id)
     if task_id is None:
         task_id = sync_subtitles.delay(video_id, subtitle_id)
