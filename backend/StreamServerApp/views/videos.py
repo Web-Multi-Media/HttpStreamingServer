@@ -121,7 +121,8 @@ def request_sync_subtitles(request, video_id, subtitle_id):
     if video is None:
         return HttpResponse(status=404)
 
-    if video.webvtt_sync_url is not None:
+    subtitle = Subtitle.objects.get(id=subtitle_id)
+    if subtitle.webvtt_sync_url:
         return HttpResponse(status=303)
 
     task_id = cache.get(subtitle_id)
