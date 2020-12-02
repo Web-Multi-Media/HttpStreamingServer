@@ -62,13 +62,12 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     onLoadedData={()=>{canPlay(video)} } onPlay={()=>{startVideo()} }
                     onPause={() => setTimer(false)}>
                     <source src={video.videoUrl} title='Video player' />
-                    {video.frSubtitleUrl && <track label="French" kind="subtitles" srcLang="fr" src={video.frSubtitleUrl} />}
                     {!video.subtitles ? null : video.subtitles.map((sub, index) =>
                         <>
                             {sub.webvtt_sync_url.length > 0 &&
-                                <track label={`Sync ${sub.language}`} default={index === 0} kind="subtitles" srcLang={sub.language} src={sub.webvtt_sync_url} />
+                                <track label={`Sync ${sub.language}`}  kind="subtitles" srcLang={sub.language} src={sub.webvtt_sync_url} />
                             }
-                            <track label={sub.language} kind="subtitles" srcLang={sub.language} src={sub.webvtt_subtitle_url} />
+                            <track label={sub.language} default={index === 0} kind="subtitles" srcLang={sub.language} src={sub.webvtt_subtitle_url} />
                         </>
                     )}
 
