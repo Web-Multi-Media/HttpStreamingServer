@@ -50,7 +50,7 @@ services:
 
   celery:
     build: ./backend
-
+    image: webmultimedia/http-streaming-server:master
     command: celery -A StreamingServer worker -l info
     volumes:
         - ./backend/:/usr/src/app/
