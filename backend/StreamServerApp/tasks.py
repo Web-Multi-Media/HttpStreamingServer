@@ -40,7 +40,7 @@ def get_subtitles_async(video_id, ov_subtitles):
         vtt_subtitle_url = webvtt_subtitles_full_path[language_str]
         if srt_subtitle_url and vtt_subtitle_url:
             webvtt_subtitles_relative_path = os.path.relpath(
-                vtt_subtitle_url, video_path)
+                vtt_subtitle_url, settings.VIDEO_ROOT)
             newsub = Subtitle()
             newsub.video_id = video
             newsub.vtt_path = vtt_subtitle_url

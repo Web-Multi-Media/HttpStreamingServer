@@ -16,7 +16,7 @@ from StreamServerApp.media_processing import extract_subtitle, generate_thumbnai
 from StreamServerApp.subtitles import get_subtitles
 
 from django.conf import settings
-from StreamServerApp.tasks import sync_subtitles
+from StreamServerApp.tasks import sync_subtitles, get_subtitles_async
 
 
 
@@ -87,3 +87,14 @@ class SubtitlesTest(TestCase):
         self.assertEqual(os.path.isfile("/usr/src/app/Videos/Friends S01E07 The One with the Blackout.en.srt"), True)
         self.assertEqual(os.path.isfile("/usr/src/app/Videos/Friends S01E07 The One with the Blackout.en.vtt"), True)
 
+    def test_get_subtitles_async(self):
+        video = Video.objects.create(
+            name="Man On The Moon.mp4", video_folder="/usr/src/app/Videos/folder2/Friends S01E07 The One with the Blackout.mp4")
+
+        get_subtitles_async(video.id, False)
+
+        expected_url = os.path.join(
+            settings.VIDEO_URL, "folder2/Friends S01E07 The One with the Blackout.en.vtt")
+
+        sub = video.subtitles.all()[0]
+        self.assertEqual(sub.webvtt_subtitle_url, expected_url)
