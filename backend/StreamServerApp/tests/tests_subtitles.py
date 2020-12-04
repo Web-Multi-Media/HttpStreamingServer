@@ -82,3 +82,8 @@ class SubtitlesTest(TestCase):
         expected_url = os.path.join(settings.VIDEO_URL, "subtitles/spongebob_sync.vtt")
         self.assertEqual(subtitle.webvtt_sync_url, expected_url)
 
+    def test_subtitles_download(self):
+        subtitles = get_subtitles("/usr/src/app/Videos/Friends S01E07 The One with the Blackout.mp4", False)
+        self.assertEqual(os.path.isfile("/usr/src/app/Videos/Friends S01E07 The One with the Blackout.en.srt"), True)
+        self.assertEqual(os.path.isfile("/usr/src/app/Videos/Friends S01E07 The One with the Blackout.en.vtt"), True)
+

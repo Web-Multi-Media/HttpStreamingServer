@@ -1,6 +1,7 @@
 import os
 from babelfish import Language
 from subliminal import Video, subtitle, region, download_best_subtitles, save_subtitles
+import io
 
 from StreamServerApp.media_processing import extract_subtitle, convert_subtitles_to_webvtt
 
@@ -14,6 +15,14 @@ def init_cache():
         print("Create subtitles cache data")
         region.configure('dogpile.cache.dbm', arguments={
             'filename': 'cachefile.dbm'}, replace_existing_backend=True)
+
+
+def remove_nullcharacters(fname):
+    flist = open(fname).readlines()
+    output = []
+    for s in flist:
+        output.append(s.replace('\0', ''))
+    return output
 
 
 def handle_subliminal_download(video, video_path, languages_to_retrieve):
@@ -39,6 +48,10 @@ def handle_subliminal_download(video, video_path, languages_to_retrieve):
                     video_path, retrieved_subtitle.language)
                 srt_subtitles_returned[
                     retrieved_subtitle.language.alpha3] = srt_fullpath
+                new_data = remove_nullcharacters(srt_fullpath)
+                with io.open(srt_fullpath, 'w', encoding='utf-8') as f:
+                    for line in new_data:
+                        f.write(line)
                 webvtt_fullpath = os.path.splitext(srt_fullpath)[0]+'.vtt'
                 if os.path.isfile(webvtt_fullpath):
                     # Add the subtitles path to subtitles_returned even if they are already downloaded/converted
