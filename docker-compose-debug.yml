@@ -15,7 +15,9 @@ services:
     volumes:
       - dbvolume:/var/lib/postgresql/data/
   web:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
     restart: always
     ports:
       - 8000:8000
@@ -59,7 +61,9 @@ services:
       - 3000:3000
 
   celery:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
 
     command: celery -A StreamingServer worker -l info
     volumes:

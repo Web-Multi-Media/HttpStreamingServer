@@ -14,6 +14,8 @@ FROM python:3.8
 
 RUN apt-get update -y && apt-get install -y ffmpeg
 
+COPY ./backend/openssl.cnf /etc/ssl/openssl.cnf
+
 ENV PYTHONUNBUFFERED 1
 COPY --from=0 /usr/src/frontend/build/ /usr/src/frontend/build/
 COPY ./backend /usr/src/app/

@@ -49,7 +49,9 @@ services:
       - web
 
   celery:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile.prod
     image: webmultimedia/http-streaming-server:master
     command: celery -A StreamingServer worker -l info
     volumes:
