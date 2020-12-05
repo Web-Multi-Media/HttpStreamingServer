@@ -59,6 +59,8 @@ services:
         - ./Videos/:/usr/src/app/Videos
     env_file:
         - .env
+    environment:
+      - DEPLOY_ENV=production
     depends_on:
         - db
         - redis
