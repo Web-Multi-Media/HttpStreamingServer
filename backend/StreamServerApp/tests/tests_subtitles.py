@@ -96,5 +96,5 @@ class SubtitlesTest(TestCase):
         expected_url = os.path.join(
             settings.VIDEO_URL, "folder2/Friends S01E07 The One with the Blackout.en.vtt")
 
-        sub = video.subtitles.all()[0]
+        sub = video.subtitles.filter(language="eng")[0]
         self.assertEqual(sub.webvtt_subtitle_url, expected_url)
