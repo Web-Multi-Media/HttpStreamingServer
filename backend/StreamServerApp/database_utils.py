@@ -104,16 +104,13 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False):
     count_series = 0
     count_movies = 0
 
-    database_old_files = Video.objects.values_list(
-        'name', 'video_folder', 'id')
-    fullpath_database_old_files = [
-        [os.path.join(folder, namein), id] for namein, folder, id in database_old_files]
+    database_old_files = Video.objects.values_list('video_folder', 'id')
 
     old_path_set = set()
 
     #We check here if old database files are still present on filesystem, if not, delete from db
     video_ids_to_delete = []
-    for old_files_path, old_video_id in fullpath_database_old_files:
+    for old_files_path, old_video_id in database_old_files:
         if os.path.isfile(old_files_path) is False:
             print(old_files_path+"will be deleted")
             video_ids_to_delete.append(old_video_id)
