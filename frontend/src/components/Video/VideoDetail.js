@@ -49,7 +49,8 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
     if (!video) {
         return null;
     }
-    console.log(video.subtitles)
+
+
     return (
         
         <div>
@@ -84,7 +85,8 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     </Button>
                 }
             </div>
-            <SubtitleForm video={video} token={authTokens}/>
+            {authTokens &&
+                <SubtitleForm video={video} token={authTokens} />}
 
         </div>
     );
