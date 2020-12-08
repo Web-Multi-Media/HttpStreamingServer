@@ -124,11 +124,13 @@ def request_sync_subtitles(request, video_id, subtitle_id):
     subtitle = Subtitle.objects.get(id=subtitle_id)
     if subtitle.webvtt_sync_url:
         return HttpResponse(status=303)
+    
+    task_signature = "resync_sub_{}".format(subtitle_id)
 
-    task_id = cache.get(subtitle_id)
+    task_id = cache.get(task_signature)
     if task_id is None:
         task_id = sync_subtitles.delay(video_id, subtitle_id)
-        cache.set(subtitle_id, task_id)
+        cache.set(task_signature, task_id)
         return HttpResponse(status=201)
     else:
         return HttpResponse(status=303)
