@@ -38,6 +38,15 @@ class SubtitlesTest(TestCase):
         #print(results)
         self.assertEqual(results['results'], [])
 
+    def test_subtitle_deleted_when_video_deleted(self):
+        video = Video.objects.create()
+
+        subtitle = Subtitle.objects.create(srt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.srt"),
+                                           video_id=video, vtt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.vtt"))
+        video.delete()
+        result = Subtitle.objects.filter(pk=subtitle.pk).exists()
+        self.assertFalse(result)
+
     def test_upload_file(self):
         url = reverse('subtitles-list')
         data = {}
