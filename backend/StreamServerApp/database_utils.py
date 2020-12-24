@@ -52,7 +52,7 @@ def populate_db_from_local_folder(base_path, remote_url, keep_files=False):
         Args:
         remote_url: baseurl for video access on the server
         base_path: Local Folder where the videos are stored
-        keep_files: Keep original files in case of convertion
+        keep_files: keep video files instead of deleting it in case of conversion
 
 
         this functions will only add videos to the database if
@@ -209,9 +209,9 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename,
             if created:
                 return_value = 1
 
-    v.save()
+        v.save()
 
-    get_subtitles_async.delay(v.id, video_infos['has_ov_subtitle'])
+        get_subtitles_async.delay(v.id, video_infos['has_ov_subtitle'])
 
     return return_value
 

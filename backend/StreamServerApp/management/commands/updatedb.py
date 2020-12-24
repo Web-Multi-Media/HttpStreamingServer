@@ -11,7 +11,7 @@ class Command(BaseCommand):
         parser.add_argument(
             '--keepfiles',
             action='store_true',
-            help='keep files instead of deleting it in case of conversion',
+            help='keep video files instead of deleting it in case of conversion',
         )
 
     def handle(self, *args, **kwargs):

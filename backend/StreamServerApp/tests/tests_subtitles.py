@@ -19,8 +19,6 @@ from django.conf import settings
 from StreamServerApp.tasks import sync_subtitles, get_subtitles_async
 
 
-
-
 class SubtitlesTest(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -29,6 +27,13 @@ class SubtitlesTest(TestCase):
         self.token = Token.objects.create(user=self.user)
         self.token.save()
         self.client.defaults['HTTP_AUTHORIZATION'] = str(self.token)
+
+    def test_subtitles_download(self):
+        subtitles = get_subtitles("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4", False)
+        self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.en.vtt"), True)
+        self.assertEqual(os.path.isfile("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.fr.vtt"), True)
+        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.en.vtt")
+        os.remove("/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.fr.vtt")
 
     def test_get_empty_history(self):
         response = self.client.get(reverse('subtitles-list'))
@@ -61,7 +66,6 @@ class SubtitlesTest(TestCase):
         expected_url = os.path.join(settings.VIDEO_URL, "test.vtt")
         self.assertEqual(sub.webvtt_subtitle_url, expected_url)
 
-
     def test_upload_unicode_file(self):
         url = reverse('subtitles-list')
         data = {}
@@ -84,7 +88,7 @@ class SubtitlesTest(TestCase):
                                      video_url=fake_url, video_folder="/usr/src/app/Videos/folder2/spongebob2.mp4")
 
         subtitle = Subtitle.objects.create(srt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.srt"),
-        video_id = video, vtt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.vtt"))
+                                           video_id=video, vtt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.vtt"))
 
         sync_subtitles(video.id, subtitle.id)
         subtitle.refresh_from_db()
