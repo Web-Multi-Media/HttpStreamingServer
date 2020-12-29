@@ -3,13 +3,17 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.search import TrigramSimilarity
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
+from StreamServerApp.subtitles import get_subtitles
+from StreamServerApp.media_processing import convert_subtitles_to_webvtt
+import os
+import subprocess
 
 
 class SearchManager(models.Manager):
     def search_trigramm(self, model_field, query):
         queryset = self.annotate(similarity=TrigramSimilarity(model_field, query)) \
-                .filter(similarity__gte=0.01) \
-                .order_by('-similarity')
+            .filter(similarity__gte=0.01) \
+            .order_by('-similarity')
         return queryset
 
 
@@ -50,7 +54,7 @@ class Video(models.Model):
     video_url = models.CharField(max_length=300, default="")
     video_folder = models.CharField(max_length=300, default="")
     thumbnail = models.CharField(max_length=300, default="")
-    
+
     # Relations to series and movies
     # on_delete=SET_NULL keeps videos indexed if we remove a serie or a video it belongs to
     series = models.ForeignKey(Series, null=True, on_delete=models.SET_NULL)
@@ -64,7 +68,6 @@ class Video(models.Model):
 
     objects = SearchManager()
 
-    
     @property
     def next_episode(self):
         if self.series:
@@ -80,11 +83,47 @@ class Video(models.Model):
         else:
             return 0
 
+    def get_subtitles(self, ov_subtitles):
+        video_path = self.video_folder
+        subtitles_list = get_subtitles(video_path, ov_subtitles)
+
+        webvtt_subtitles_full_path = subtitles_list[0]
+        srt_subtitles_full_path = subtitles_list[1]
+        webvtt_subtitles_remote_path = {}
+        for language_str, srt_subtitle_url in webvtt_subtitles_full_path.items():
+            webvtt_subtitles_remote_path[language_str] = ''
+            vtt_subtitle_url = webvtt_subtitles_full_path[language_str]
+            if srt_subtitle_url and vtt_subtitle_url:
+                webvtt_subtitles_relative_path = os.path.relpath(
+                    vtt_subtitle_url, settings.VIDEO_ROOT)
+                newsub = Subtitle()
+                newsub.video_id = self
+                newsub.vtt_path = vtt_subtitle_url
+                if srt_subtitles_full_path.get(language_str):
+                    newsub.srt_path = srt_subtitles_full_path[language_str]
+                newsub.webvtt_subtitle_url = os.path.join(
+                    settings.VIDEO_URL, webvtt_subtitles_relative_path)
+                newsub.language = language_str
+                newsub.save()
+
+    def sync_subtitles(self, subtitle_id):
+        video_path = self.video_folder
+        subtitle = Subtitle.objects.get(id=subtitle_id)
+        subtitle_path = subtitle.srt_path
+        webvtt_path = subtitle.vtt_path.replace('.vtt', '_sync.vtt')
+        sync_subtitle_path = subtitle_path.replace('.srt', '_sync.srt')
+        subprocess.run(["ffs", video_path, "-i", subtitle_path, "-o", sync_subtitle_path])
+        convert_subtitles_to_webvtt(sync_subtitle_path, webvtt_path)
+        subtitle.srt_sync_path = sync_subtitle_path
+        subtitle.vtt_sync_path = webvtt_path
+        subtitle.webvtt_sync_url = os.path.join(settings.VIDEO_URL, webvtt_path.split(settings.VIDEO_ROOT)[1])
+        subtitle.save()
+
 
 class UserVideoHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
-    time =  models.IntegerField()   # time in sec
+    time = models.IntegerField()   # time in sec
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
 
@@ -113,4 +152,3 @@ class Subtitle(models.Model):
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
     video_id = models.ForeignKey(Video, related_name='subtitles', on_delete=models.CASCADE)
     uploaded_data = models.FileField(upload_to='uploads/', default='')
-    
