@@ -10,47 +10,49 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
 
     const [timer, setTimer] = useState(false);
     const [count, setCount] = useState(0);
-
+    
     async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
         const video = await client.getVideoById(nextEpisodeID);
         handleVideoSelect(video);
     }
-
-
+    
+    
     function startVideo() {
         setTimer(true);
-
+        
     }
-
+    
     function canPlay(video) {
         console.log('canPlay')
         if (video.time > 0){
             document.getElementById("myVideo").currentTime = video.time;
         }
     }
-
-
+    
+    
     useEffect(() => {
         if(timer){
             const theThimer =
-                setInterval(async () =>{
-                    setCount(count + 1);
-                    const newHistory =  await client.updateHistory (authTokens.key, video.id, document.getElementById("myVideo").currentTime);
-                    setHistoryPager(newHistory);
-                }, 20000);
+            setInterval(async () =>{
+                setCount(count + 1);
+                const newHistory =  await client.updateHistory (authTokens.key, video.id, document.getElementById("myVideo").currentTime);
+                setHistoryPager(newHistory);
+            }, 20000);
             return () => {
                 console.log('clear');
                 clearInterval(theThimer);
             }
         }
     }, [timer, count]);
-
-
+    
+    
     if (!video) {
         return null;
     }
-    return (
 
+
+    return (
+        
         <div>
             <div className="ui embed">
                 <video
@@ -61,9 +63,16 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     onLoadedData={()=>{canPlay(video)} } onPlay={()=>{startVideo()} }
                     onPause={() => setTimer(false)}>
                     <source src={video.videoUrl} title='Video player' />
-                    {video.frSubtitleUrl && <track label="French" kind="subtitles" srcLang="fr" src={video.frSubtitleUrl} />}
-                    {video.enSubtitleUrl && <track label="English" kind="subtitles" srcLang="eng" src={video.enSubtitleUrl} />}
-                    {video.ovSubtitleUrl && <track label="OV" kind="subtitles" srcLang="ov" src={video.ovSubtitleUrl} />}
+                    {!video.subtitles ? null : video.subtitles.map((sub, index) =>
+                        <>
+                            {sub.webvtt_sync_url.length > 0 &&
+                                <track label={`Sync ${sub.language}`}  kind="subtitles" srcLang={sub.language} src={sub.webvtt_sync_url} />
+                            }
+                            <track label={sub.language} default={index === 0} kind="subtitles" srcLang={sub.language} src={sub.webvtt_subtitle_url} />
+                        </>
+                    )}
+
+                    
                 </video>
             </div>
             <div className="ui segment">
@@ -76,8 +85,8 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     </Button>
                 }
             </div>
-            <SubtitleForm
-            />
+            {authTokens &&
+                <SubtitleForm video={video} token={authTokens} />}
 
         </div>
     );

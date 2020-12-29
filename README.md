@@ -8,7 +8,7 @@ This project is a video presentation server based on Django Rest Framework and R
 
 
 Support is currently limited to H264 encoded content.
-Subtitles are added automatically if an adequate match is found (after a conversion from .srt to webvtt).
+Subtitles are added automatically if an adequate match is found. You can also upload you own subtitle or resync existing ones.
 
 
 How to use
@@ -30,7 +30,7 @@ Migrate the database:
 
 Populate the database:
 
-    docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py populatedb
+    docker-compose -f docker-compose-prod.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py populatedb
 
 Run the server:
 
@@ -41,17 +41,17 @@ Now the application should be accessible from your browser at `http://localhost:
 
 #### CONFIGURATION
 
-The videos contained in the Videos/ folder are updated everytime the app is launched.
+The videos contained in the Videos/ folder are indexed everytime the populatedb command is launched.
 
-If you want to manually triggers an update, use the following command
+If you want to trigger an update, use the following command
 
-    docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py populatedb
+    docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py updatedb
 
-If you want to reload videos while the app is running, you need to have a superuser created.
+If you want to manually modify the data, you can access the admin page with a superuser account. For that, create one with the following command.
 
     docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py createsuperuser
 
-then go to `http://localhost:1337/admin/`, select all Videos and check 'reload Videos' actions.
+then go to `http://localhost:1337/admin/`.
 
 The following variables can be configured in .env file:
 

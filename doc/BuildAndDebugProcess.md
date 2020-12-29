@@ -11,11 +11,11 @@ Build the frontend:
 
 Migrate the database:
 
-    docker-compose -f docker-compose-debug.yml run --rm web python3 manage.py migrate
+    docker-compose -f docker-compose-debug.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py migrate
 
 Populate the database:
 
-    docker-compose -f docker-compose-debug.yml run --rm web python3 manage.py populatedb
+    docker-compose -f docker-compose-debug.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py populatedb
 
 Run the server:
 
@@ -24,3 +24,13 @@ Run the server:
 Now the application should be accessible from your browser at `http://localhost:3000`.
 
 You can access Django REST Framework API from `http://localhost:8000`.
+
+TEST
+-------------------
+
+You can launch all the tests with:
+    docker-compose -f docker-compose-debug.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py test StreamServerApp.tests
+
+
+You can launch a specific test with:
+    docker-compose -f docker-compose-debug.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py test StreamServerApp.tests.tests_subtitles

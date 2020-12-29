@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { checkPropTypes } from 'prop-types';
 
 /**
  * initialize the client with the base url
@@ -15,7 +16,9 @@ const VIDEOS_ENDPOINT = '/videos';
 const SERIES_ENDPOINT = '/series';
 const SEASON_ENDPOINT = '/season';
 const MOVIES_ENDPOINT = '/movies';
+const SUBTITLES_ENDPOINT = '/subtitles';
 const HISTORY_ENDPOINT = '/history';
+const SYNC_ENDPOINT = '/sync_subtitles';
 
 
 function Client() {
@@ -61,10 +64,10 @@ function Client() {
      * @param endPoint
      *          API endpoint to which send the GET request
      * @returns {Response}
-     * 
+     *
      */
     this.getRequest = (endPoint, params={}) => http.get(`${endPoint}`, {
-        ...params, 
+        ...params,
         headers: {
             Authorization: this.token, // the token is a variable which holds the token
         },
@@ -78,16 +81,26 @@ function Client() {
      * @param body
      *          Body of the POST reuqest
      * @returns {Response}
-     * 
+     *
      */
-    this.postRequest = (endPoint, body={}, params={}) => http.post(`${endPoint}/`, {
-        ...params,
-        headers: {
+    this.postRequest = (endPoint, body={}, params=null, headers ={}) =>
+    {
+        const   axiosParams = {
+            headers: {
             Authorization: this.token, // the token is a variable which holds the token
             'X-CSRFToken': this.csrfcookie,
-        },
-        body,
-    });
+            ...headers
+            },
+            ...body,
+        };
+
+        if (params){
+            return http.post(`${endPoint}/`, params , axiosParams);
+        }
+        else {
+            return http.post(`${endPoint}/`, axiosParams);
+        }
+}
 
     /**
      * performs GET request to retrieve a single video by it's ID
@@ -111,11 +124,15 @@ function Client() {
      *          Video
      */
     this.updateHistory = async (token, id, timeStamp = 0) => {
-        const body = {
-            'video-id': id,
-            'video-time': timeStamp,
+        const body =
+        {
+            body:{
+                'video-id': id,
+                'video-time': timeStamp,}
         };
-        const response = await this.postRequest(HISTORY_ENDPOINT, body);
+
+        const response = await this.postRequest(HISTORY_ENDPOINT, body , null , {'content-type': 'multipart/form-data' } );
+
         return new MoviesPager(response.data);
     };
 
@@ -155,6 +172,35 @@ function Client() {
         response.data.results = response.data.results.map((result) => result.video_set.results[0]);
         return new MoviesPager(response.data);
     };
+
+    /**
+     * performs POST request to upload a new subtitles to a video
+     *
+        data['video_id'] = video.id
+        data['language'] = 'fra'
+        data['datafile'] = open('/usr/src/app/Videos/subtitles/test.srt', 'rb')
+     * @returns {Promise<Video>}
+     *          Video
+     */
+    this.uploadSubtitles = async (token, video_id, language, datafile) => {
+        /*const params = {
+            'datafile': datafile,
+            'language': language,
+            'video_id': video_id,
+        };*/
+
+        let params = new FormData();
+        params.append('datafile',datafile);
+        params.append('language',language);
+        params.append('video_id',video_id);
+        const response = await this.postRequest(SUBTITLES_ENDPOINT, null , params , {'content-type': 'multipart/form-data' } );
+        return response;
+    };
+
+    this.resyncSubtitle = async (token, video_id, subtitle_id) => {
+        const response = await this.getRequest(`${SYNC_ENDPOINT}/${video_id}/${subtitle_id}/`);
+    }
+
 };
 
 var client = new Client();
@@ -165,9 +211,7 @@ function Video(response) {
     this.name = response.movie !== null ? response.movie : response.name;
     this.videoUrl = response.video_url;
     this.thumbnail = response.thumbnail;
-    this.frSubtitleUrl = response.fr_subtitle_url;
-    this.enSubtitleUrl = response.en_subtitle_url;
-    this.ovSubtitleUrl = response.ov_subtitle_url;
+    this.subtitles = response.subtitles
     this.series = response.series;
     this.episode = response.episode;
     this.season = response.season;

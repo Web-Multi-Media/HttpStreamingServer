@@ -15,7 +15,9 @@ services:
     volumes:
       - dbvolume:/var/lib/postgresql/data/
   web:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
     restart: always
     ports:
       - 8000:8000
@@ -29,15 +31,17 @@ services:
       - static_volume:/usr/src/app/staticfiles
       - /static/
       - ipython:/root/.ipython
-    command: bash -c "python3 /usr/src/app/manage.py runserver 0.0.0.0:8000"
+    command: bash -c "./wait-for-it.sh db:5432 -- python3 /usr/src/app/manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
+      - redis
 
   nginx:
     build: ./nginx
     volumes:
       - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
+      - ./nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
       - static_volume:/usr/src/app/staticfiles
     ports:
       - 1337:80
@@ -55,3 +59,24 @@ services:
       - .env
     ports:
       - 3000:3000
+
+  celery:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+
+    command: celery -A StreamingServer worker -l info
+    volumes:
+        - ./backend/:/usr/src/app/
+        - ./Videos/:/usr/src/app/Videos
+    env_file:
+        - .env
+    depends_on:
+        - db
+        - redis
+
+  redis:
+    image: redis:alpine
+    command: redis-server --port 6380
+    ports:
+        - 6380:6380

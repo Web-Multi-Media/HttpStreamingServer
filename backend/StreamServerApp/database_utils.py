@@ -16,9 +16,10 @@ import subliminal
 from django.db import transaction
 import re
 
-from StreamServerApp.models import Video, Series, Movie
-from StreamServerApp.subtitles import get_subtitles, init_cache
+from StreamServerApp.models import Video, Series, Movie, Subtitle
+from StreamServerApp.subtitles import init_cache
 from StreamServerApp.media_processing import transmux_to_mp4, generate_thumbnail
+from StreamServerApp.tasks import get_subtitles_async
 
 
 def delete_DB_Infos():
@@ -46,13 +47,15 @@ def pretty(d, indent=0):
             print('\t' * (indent+1) + str(value))
 
 
-def populate_db_from_local_folder(base_path, remote_url):
+def populate_db_from_local_folder(base_path, remote_url, keep_files=False):
     """ # create all the videos infos in the database
         Args:
         remote_url: baseurl for video access on the server
         base_path: Local Folder where the videos are stored
+        keep_files: keep video files instead of deleting it in case of conversion
 
-        this functions will only add videos to the database if 
+
+        this functions will only add videos to the database if
         they are encoded with h264 codec
     """
     init_cache()
@@ -71,7 +74,7 @@ def populate_db_from_local_folder(base_path, remote_url):
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
                     with transaction.atomic():
                         retValue = add_one_video_to_database(
-                            full_path,  video_path, root, remote_url, filename)
+                            full_path,  video_path, root, remote_url, filename, keep_files)
                         if retValue == 1:
                             count_movies += 1
                         elif retValue == 2:
@@ -87,13 +90,13 @@ def populate_db_from_local_folder(base_path, remote_url):
         count_series, count_movies))
 
 
-def update_db_from_local_folder(base_path, remote_url):
+def update_db_from_local_folder(base_path, remote_url, keep_files=False):
     """ #  Update  the videos infos in the database
         Args:
         remote_url: baseurl for video access on the server
         base_path: Local Folder where the videos are stored
 
-        this functions will only add videos to the database if 
+        this functions will only add videos to the database if
         they are encoded with h264 codec
     """
     video_path = base_path
@@ -101,16 +104,13 @@ def update_db_from_local_folder(base_path, remote_url):
     count_series = 0
     count_movies = 0
 
-    database_old_files = Video.objects.values_list(
-        'name', 'video_folder', 'id')
-    fullpath_database_old_files = [
-        [os.path.join(folder, namein), id] for namein, folder, id in database_old_files]
+    database_old_files = Video.objects.values_list('video_folder', 'id')
 
     old_path_set = set()
 
     #We check here if old database files are still present on filesystem, if not, delete from db
     video_ids_to_delete = []
-    for old_files_path, old_video_id in fullpath_database_old_files:
+    for old_files_path, old_video_id in database_old_files:
         if os.path.isfile(old_files_path) is False:
             print(old_files_path+"will be deleted")
             video_ids_to_delete.append(old_video_id)
@@ -137,7 +137,7 @@ def update_db_from_local_folder(base_path, remote_url):
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
                     with transaction.atomic():
                         created = add_one_video_to_database(
-                            full_path,  video_path, root, remote_url, filename)
+                            full_path,  video_path, root, remote_url, filename, keep_files)
                         if created == 1:
                             count_movies += 1
                         elif created == 2:
@@ -156,7 +156,7 @@ def update_db_from_local_folder(base_path, remote_url):
         count_series, count_movies))
 
 
-def add_one_video_to_database(full_path, video_path, root, remote_url, filename):
+def add_one_video_to_database(full_path, video_path, root, remote_url, filename, keep_files=False):
     """ # create infos in the database for one video
 
         Args:
@@ -164,28 +164,27 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
         video_path: relative (to root) basepath (ie directory) containing video
         root: absolute path to directory containing all the videos
         remote_url: baseurl for video access on the server
+        keep_files: Keep files in case of convertion
 
         return 0 if noseries/movies was created, 1 if a movies was created, 2 if a series was created
 
     """
     # Print current working directory
     print("Current working dir : %s" % root)
-    video_infos = prepare_video(full_path, video_path, root, remote_url)
+    video_infos = prepare_video(full_path, video_path, root, remote_url, keep_files)
     if not video_infos:
         raise("Dict is Empty")
 
     v = Video(name=filename,
-              video_folder=root,
+              video_folder=full_path,
               video_url=video_infos['remote_video_url'],
               video_codec=video_infos['video_codec_type'],
               audio_codec=video_infos['audio_codec_type'],
               height=video_infos['video_height'],
               width=video_infos['video_width'],
               thumbnail=video_infos['remote_thumbnail_url'],
-              en_subtitle_url=video_infos['en_subtitles_remote_path'],
-              fr_subtitle_url=video_infos['fr_subtitles_remote_path'],
-              ov_subtitle_url=video_infos['ov_subtitles_remote_path']
               )
+
 
     # parse movie or series, episode & season
     return_value = 0
@@ -210,7 +209,9 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename)
             if created:
                 return_value = 1
 
-    v.save()
+        v.save()
+
+        get_subtitles_async.delay(v.id, video_infos['has_ov_subtitle'])
 
     return return_value
 
@@ -221,16 +222,17 @@ def populate_db_from_remote_server(remotePath, ListOfVideos):
     """
 
 
-def prepare_video(video_full_path, video_path, video_dir, remote_url):
+def prepare_video(video_full_path, video_path, video_dir, remote_url, keep_files=False):
     """ # Create thumbnail, transmux if necessayr and get all the videos infos.
         Args:
         full_path: full path to the video (eg: /Videos/folder1/video.mp4)
         video_path: path to the video basedir (eg: /Videos/)
         video_dir: path to the video dir (eg: /Videos/folder1/)
+        keep_files: Keep original files in case of convertion
 
         return: Dictionnary with video infos
 
-        this functions will only add videos to the database if 
+        this functions will only add videos to the database if
         they are encoded with h264/AAC codec
     """
     print("processing {}".format(video_full_path))
@@ -278,7 +280,7 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
         if(os.path.isfile(thumbnail_fullpath) is False):
             generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
-        subtitles_full_path = get_subtitles(video_full_path, ov_subtitles)
+
 
         #if file is mkv or has an audio codec different than AAC, transmux to mp4
         if(video_full_path.endswith(".mkv") or ("aac" not in audio_codec_type)):
@@ -288,18 +290,11 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
             else:
                 transmux_to_mp4(video_full_path, temp_mp4, False)
 
-            os.remove(video_full_path)
+            if not keep_files:
+                os.remove(video_full_path)
+
             relative_path = os.path.relpath(temp_mp4, video_path)
             video_full_path = temp_mp4
-
-        subtitles_remote_path = {}
-        for language_str, subtitle_url in subtitles_full_path.items():
-            subtitles_remote_path[language_str] = ''
-            if subtitle_url:
-                subtitles_relative_path = os.path.relpath(
-                    subtitle_url, video_path)
-                subtitles_remote_path[language_str] = os.path.join(
-                    remote_url, subtitles_relative_path)
 
     else:
         #Input is not h264, let's skip it
@@ -307,22 +302,23 @@ def prepare_video(video_full_path, video_path, video_dir, remote_url):
 
     remote_video_url = os.path.join(remote_url, relative_path)
     remote_thumbnail_url = os.path.join(remote_url, thumbnail_relativepath)
-    return {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
-            'audio_codec_type': audio_codec_type, 'video_height': video_height,
-            'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
-            'fr_subtitles_remote_path': subtitles_remote_path['fra'], 'en_subtitles_remote_path': subtitles_remote_path['eng'],
-            'ov_subtitles_remote_path': subtitles_remote_path['ov']}
+    video_info = {'remote_video_url': remote_video_url, 'video_codec_type': video_codec_type,
+                  'audio_codec_type': audio_codec_type, 'video_height': video_height,
+                  'video_width': video_width, 'remote_thumbnail_url': remote_thumbnail_url,
+                  'has_ov_subtitle': ov_subtitles}
+
+    return video_info
 
 
 def get_video_type_and_info(video_path):
     """ # Uses subliminal to parse information from filename.
-    
+
     Subliminal tells us if the video is a serie or not.
     If not, we assume it to be a movie, which is not necesarly the case (e.g. documentary, simple video).
     We use string.capwords() on title strings for consistency of capitalization.
     The subliminal fromname function as a bug when the input string begins with 1-, as a quick fix, we use a regular expression to
     get rid of the problematic characters. A future fix coulb be to be use imdb api for disambiguation.
-    
+
     Args:
     video_path: full path to the video (eg: /Videos/folder1/video.mp4)
 

@@ -199,3 +199,21 @@ if sentry_dsn:
         # django.contrib.auth) you may enable sending PII data.
         send_default_pii=True
     )
+
+# celery
+CELERY_BROKER_URL = 'redis://redis:6380'
+CELERY_RESULT_BACKEND = 'redis://redis:6380'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6380/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        },
+        "KEY_PREFIX": "example"
+    }
+}

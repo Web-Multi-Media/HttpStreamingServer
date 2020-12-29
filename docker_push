@@ -1,4 +1,5 @@
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+echo "Tagging branch: ${TRAVIS_BRANCH}"
 DOCKER_REPO="webmultimedia/http-streaming-server:${TRAVIS_BRANCH}"
-docker tag webmultimedia/http-streaming-server "$DOCKER_REPO"
+docker tag webmultimedia/http-streaming-server:master "$DOCKER_REPO"
 docker push "$DOCKER_REPO"

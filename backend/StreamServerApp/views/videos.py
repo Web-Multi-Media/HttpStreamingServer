@@ -1,11 +1,15 @@
+import os
 from django.shortcuts import render
 from django.conf import settings
+from django.http import HttpResponse
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
-
+from StreamServerApp.tasks import sync_subtitles
 from StreamServerApp.serializers.videos import VideoSerializer, \
-     SeriesSerializer, MoviesSerializer, SeriesListSerializer, VideoListSerializer
-from StreamServerApp.models import Video, Series, Movie
+    SeriesSerializer, MoviesSerializer, SeriesListSerializer, VideoListSerializer
+from StreamServerApp.models import Video, Series, Movie, Subtitle
+import subprocess
+from django.core.cache import cache
 
 
 def index(request):
@@ -22,19 +26,19 @@ class VideoViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """
-        Overwirte 
+        Overwirte
         """
         if self.action == 'list':
             return VideoListSerializer
         if self.action == 'retrieve':
-            return VideoSerializer   
+            return VideoSerializer
 
     def get_queryset(self):
         """
-        Optionally performs search on the videos, by using the `search_query` 
+        Optionally performs search on the videos, by using the `search_query`
         query parameter in the URL.
         """
-        
+
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
             queryset = Video.objects.search_trigramm('name', search_query).select_related('movie', 'series')
@@ -53,7 +57,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """
-        Overwirte 
+        Overwirte
         """
         if self.action == 'list':
             return SeriesListSerializer
@@ -62,7 +66,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Optionally performs search on the series, by using the `search_query` 
+        Optionally performs search on the series, by using the `search_query`
         query parameter in the URL.
         """
         search_query = self.request.query_params.get('search_query', None)
@@ -100,13 +104,34 @@ class MoviesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Optionally performs search on the movies, by using the `search_query` 
+        Optionally performs search on the movies, by using the `search_query`
         query parameter in the URL.
         """
-        
+
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
             queryset = Movie.objects.search_trigramm('title', search_query).prefetch_related('video_set')
         else:
             queryset = Movie.objects.prefetch_related('video_set').all()
         return queryset
+
+
+def request_sync_subtitles(request, video_id, subtitle_id):
+    video = Video.objects.get(id=video_id)
+    if video is None:
+        return HttpResponse(status=404)
+
+    subtitle = Subtitle.objects.get(id=subtitle_id)
+    if subtitle.webvtt_sync_url:
+        return HttpResponse(status=303)
+    
+    task_signature = "resync_sub_{}".format(subtitle_id)
+
+    task_id = cache.get(task_signature)
+    if task_id is None:
+        task_id = sync_subtitles.delay(subtitle_id)
+        cache.set(task_signature, task_id)
+        return HttpResponse(status=201)
+    else:
+        return HttpResponse(status=303)
+
