@@ -6,9 +6,9 @@ from django.conf import settings
 
 
 @shared_task
-def sync_subtitles(video_id, subtitle_id):
-    video = Video.objects.get(id=video_id)
-    video.sync_subtitles(subtitle_id)
+def sync_subtitles(subtitle_id):
+    subtitle = Subtitle.objects.get(id=subtitle_id)
+    subtitle.resync()
     return 0
 
 

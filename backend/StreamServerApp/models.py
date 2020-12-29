@@ -84,6 +84,10 @@ class Video(models.Model):
             return 0
 
     def get_subtitles(self, ov_subtitles):
+        """ # get subtitles for the current instance of video.
+            Args:
+            ov_subtitles: boolean (True if input has subtitles, False if not).
+        """
         video_path = self.video_folder
         subtitles_list = get_subtitles(video_path, ov_subtitles)
 
@@ -105,19 +109,6 @@ class Video(models.Model):
                     settings.VIDEO_URL, webvtt_subtitles_relative_path)
                 newsub.language = language_str
                 newsub.save()
-
-    def sync_subtitles(self, subtitle_id):
-        video_path = self.video_folder
-        subtitle = Subtitle.objects.get(id=subtitle_id)
-        subtitle_path = subtitle.srt_path
-        webvtt_path = subtitle.vtt_path.replace('.vtt', '_sync.vtt')
-        sync_subtitle_path = subtitle_path.replace('.srt', '_sync.srt')
-        subprocess.run(["ffs", video_path, "-i", subtitle_path, "-o", sync_subtitle_path])
-        convert_subtitles_to_webvtt(sync_subtitle_path, webvtt_path)
-        subtitle.srt_sync_path = sync_subtitle_path
-        subtitle.vtt_sync_path = webvtt_path
-        subtitle.webvtt_sync_url = os.path.join(settings.VIDEO_URL, webvtt_path.split(settings.VIDEO_ROOT)[1])
-        subtitle.save()
 
 
 class UserVideoHistory(models.Model):
@@ -152,3 +143,19 @@ class Subtitle(models.Model):
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
     video_id = models.ForeignKey(Video, related_name='subtitles', on_delete=models.CASCADE)
     uploaded_data = models.FileField(upload_to='uploads/', default='')
+
+    def resync(self):
+        """ # resync current instance of sub
+            Args:
+            subtitle_id: subtitles id
+        """
+        video_path = self.video_id.video_folder
+        subtitle_path = self.srt_path
+        webvtt_path = self.vtt_path.replace('.vtt', '_sync.vtt')
+        sync_subtitle_path = subtitle_path.replace('.srt', '_sync.srt')
+        subprocess.run(["ffs", video_path, "-i", subtitle_path, "-o", sync_subtitle_path])
+        convert_subtitles_to_webvtt(sync_subtitle_path, webvtt_path)
+        self.srt_sync_path = sync_subtitle_path
+        self.vtt_sync_path = webvtt_path
+        self.webvtt_sync_url = os.path.join(settings.VIDEO_URL, webvtt_path.split(settings.VIDEO_ROOT)[1])
+        self.save()

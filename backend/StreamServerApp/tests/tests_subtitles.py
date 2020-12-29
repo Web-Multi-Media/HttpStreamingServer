@@ -90,7 +90,7 @@ class SubtitlesTest(TestCase):
         subtitle = Subtitle.objects.create(srt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.srt"),
                                            video_id=video, vtt_path=os.path.join(settings.VIDEO_ROOT, "subtitles/spongebob.vtt"))
 
-        sync_subtitles(video.id, subtitle.id)
+        sync_subtitles(subtitle.id)
         subtitle.refresh_from_db()
         expected_url = os.path.join(settings.VIDEO_URL, "subtitles/spongebob_sync.vtt")
         self.assertEqual(subtitle.webvtt_sync_url, expected_url)
