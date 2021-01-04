@@ -211,7 +211,8 @@ def add_one_video_to_database(full_path, video_path, root, remote_url, filename,
 
         v.save()
 
-        get_subtitles_async.delay(v.id, video_infos['has_ov_subtitle'])
+        #we use oncommit because autocommit is not enabled.
+        transaction.on_commit(lambda: get_subtitles_async.delay(v.id, video_infos['has_ov_subtitle']))
 
     return return_value
 
