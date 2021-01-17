@@ -9,12 +9,14 @@ import {
     Button,
     useDisclosure,
     Input,
-    Box
+    Box,
+    Text
   } from "@chakra-ui/core";
 import React, {useEffect, useState, useRef} from 'react';
 import { client } from '../../api/djangoAPI';
 
 import VTTConverter from 'srt-webvtt';
+
 
 
 function SubtitleForm ({video, token}){
@@ -27,6 +29,13 @@ function SubtitleForm ({video, token}){
     const handleClick = event => {
       hiddenFileInput.current.click();
     };
+
+    function SendButton({isFileSelected}) {
+      if (isFileSelected) {
+        return <Button onClick={handleSubmit}>Send</Button>
+      }
+      return <Button isDisabled={true} onClick={handleSubmit}>Send</Button>
+    }
 
     const handleSubtitleChange = event => {
         let customsub = event.target.value;
@@ -64,20 +73,15 @@ function SubtitleForm ({video, token}){
   };
 
 
-
-    const handleSubtitleNameChange = event => {
-        setSubtitleName(event.target.value);
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault()
-        //console.log("sending subtitle Language " + subtitleLanguage)
-        const response = await client.uploadSubtitles(token.key, video.id, subtitleLanguage, selectedFiles[0]);
-        //console.log('r', response)
-        if (response.status != 201)
-            alert("Something went wront, are you connected ?");
-        onClose();
-    };
+  const handleSubmit = async (event) => {
+      event.preventDefault()
+      //console.log("sending subtitle Language " + subtitleLanguage)
+      const response = await client.uploadSubtitles(token.key, video.id, subtitleLanguage, selectedFiles[0]);
+      //console.log('r', response)
+      if (response.status != 201)
+          alert("Something went wront, are you connected ?");
+      onClose();
+  };
 
   const handleResync = async (videoid, subid) => {
     console.log(videoid);
@@ -89,47 +93,57 @@ function SubtitleForm ({video, token}){
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
+      <>
+        <Button onClick={onOpen}>Handle subtitles</Button>
 
-            <>
-      <Button onClick={onOpen}>Handle subtitles</Button>
-
-      <Modal isOpen={isOpen} onClose={onClose} onS isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader color="black"> Add Custom subtitles:</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody mt= {4}>
-            <Box m={4}>
-
-              <Button mb={4} onClick={handleClick} >Upload SUB </Button>
-              <Input type="file"
-                onChange={handleSubtitleChange}
-                accept=".srt"
-                ref={hiddenFileInput}
-                style={{display:'none'}}
+        <Modal isOpen={isOpen} onClose={onClose} onS isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader color="black"> Subtitles menu</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody >
+              <Box  mb={4} >
+              <Text color="black">Upload your subtitles:</Text>
+                <Button onClick={handleClick}>
+                  Upload SUB{" "}
+                </Button>
+                <Input
+                  type="file"
+                  onChange={handleSubtitleChange}
+                  accept=".srt"
+                  ref={hiddenFileInput}
+                  style={{ display: "none" }}
                 />
-              <Input mb={4} type="text" defaultValue="Custom Subtitle" value={subtitleName} onChange={handleSubtitleNameChange}/>
                 <select onChange={handleSubtitleLangChange}>
                   <option value="fra">French</option>
-                  <option selected value="eng">English</option>
+                  <option selected value="eng">
+                    English
+                  </option>
                 </select>
-                </Box>
-                <ModalHeader color="black"> Resync existing subtitle:</ModalHeader>
-                {!video.subtitles ? null  : video.subtitles.map(sub =>
-                       <Button mb={4} onClick={handleResync.bind(this, video.id, sub.id)} >{sub.language} </Button>)}
-          </ModalBody>
+              
+                <SendButton isFileSelected={selectedFiles}></SendButton>
+              <Text mt={4} color="black">Resync existing subtitles:</Text>
+              {!video.subtitles
+                ? null
+                : video.subtitles.map((sub) => (
+                    <Button
+                      onClick={handleResync.bind(this, video.id, sub.id)}
+                    >
+                      {sub.language}{" "}
+                    </Button>
+                  ))}
+              </Box>
+            </ModalBody>
 
-          <ModalFooter>
-            <Button mb={4} onClick={handleSubmit}  mr={3}>Send</Button>
-            <Button variantColor="blue"  onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
-
-    )
+            <ModalFooter>
+              <Button  onClick={onClose}>
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
+    );
 }
 
 export default SubtitleForm;
