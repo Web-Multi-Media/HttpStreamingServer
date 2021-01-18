@@ -6,6 +6,9 @@ services:
   - docker
   - docker-compose
 
+before_install:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
 install:
   - docker-compose -f docker-compose-prod.yml build
 
