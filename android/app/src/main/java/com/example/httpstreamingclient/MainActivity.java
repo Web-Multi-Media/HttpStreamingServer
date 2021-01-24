@@ -5,43 +5,73 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import com.google.gson.annotations.SerializedName;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Query;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
+
+
+//https://www.journaldev.com/13639/retrofit-android-example-tutorial
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String API_URL = "https:///streaming/the.ndero.ovh/streaming/";
+
+    public static class VideoList {
+        public final int count = 0;
+        public final String next = "";
+        public final String previous = "";
+
+        public List<Video> results = null;
+
+        public class Video  {
+
+            @SerializedName("id")
+            public Integer id;
+            @SerializedName("name")
+            public String name;
+
+        }
+    }
+
+    public interface StreamingServerInterface {
+        @GET("/videos?")
+        Call<VideoList> doGetUserList(@Query("page") String page);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final TextView textView = (TextView) findViewById(R.id.text);
-        // ...
+        // Create a very simple REST adapter which points the GitHub API.
+        Retrofit retrofit =
+                new Retrofit.Builder()
+                        .baseUrl(API_URL)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
 
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://streaming.ndero.ovh/streaming/videos/";
+        // Create an instance of our GitHub API interface.
+        //GitHub github = retrofit.create(GitHub.class);
+        StreamingServerInterface test = retrofit.create(StreamingServerInterface.class);
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        textView.setText("Response is: "+ response.substring(0,500));
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                textView.setText("That didn't work!");
-            }
-        });
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+
+
 
     }
 }
