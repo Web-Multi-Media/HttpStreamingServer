@@ -17,23 +17,24 @@ class SearchManager(models.Manager):
         return queryset
 
 
-class Movie(models.Model):
-    title = models.CharField(max_length=200)
+class CommonInfo(models.Model):
+    title = models.CharField(max_length=300)
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects = SearchManager()
+
+    class Meta:
+        abstract = True
 
     def __str__(self):
         return self.title
 
-    objects = SearchManager()
+
+class Movie(CommonInfo):
+    pass
 
 
-class Series(models.Model):
-    title = models.CharField(max_length=200)
+class Series(CommonInfo):
     thumbnail = models.CharField(max_length=300, default="")
-
-    def __str__(self):
-        return self.title
-
-    objects = SearchManager()
 
     @property
     def season_list(self):

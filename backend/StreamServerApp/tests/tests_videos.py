@@ -208,7 +208,10 @@ class MoviesTest(TestCase):
         newsub2 = Subtitle()
         newsub2.video_id = video2
         newsub2.save()
-        response = self.client.get(reverse('movies-list'))
+        data = {
+            'order_query': 'created_at'
+        }
+        response = self.client.get(reverse('movies-list'), data)
         decoded_content = json.loads(str(response.content, encoding='utf8'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(decoded_content['results'][0]['title'], 'The best test title ever')

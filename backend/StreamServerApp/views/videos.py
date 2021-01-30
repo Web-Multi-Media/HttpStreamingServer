@@ -70,10 +70,11 @@ class SeriesViewSet(viewsets.ModelViewSet):
         query parameter in the URL.
         """
         search_query = self.request.query_params.get('search_query', None)
+        order_query = self.request.query_params.get('order_query', "-created_at")
         if search_query:
-            queryset = Series.objects.search_trigramm('title', search_query)
+            queryset = Series.objects.search_trigramm('title', search_query).order_by(order_query)
         else:
-            queryset = Series.objects.all()
+            queryset = Series.objects.all().order_by(order_query)
         return queryset
 
 
@@ -109,10 +110,11 @@ class MoviesViewSet(viewsets.ModelViewSet):
         """
 
         search_query = self.request.query_params.get('search_query', None)
+        order_query = self.request.query_params.get('order_query', "-created_at")
         if search_query:
-            queryset = Movie.objects.search_trigramm('title', search_query).prefetch_related('video_set')
+            queryset = Movie.objects.search_trigramm('title', search_query).prefetch_related('video_set').order_by(order_query)
         else:
-            queryset = Movie.objects.prefetch_related('video_set').all()
+            queryset = Movie.objects.prefetch_related('video_set').all().order_by(order_query)
         return queryset
 
 
