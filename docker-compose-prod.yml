@@ -70,3 +70,19 @@ services:
     command: redis-server --port 6380
     ports:
         - 6380:6380
+
+  filesystem_watchdog:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    command:  python3 /usr/src/app/filesystem_watchdog.py
+    volumes:
+        - ./backend/:/usr/src/app/
+        - ./Videos/:/usr/src/app/Videos
+    environment:
+      - DJANGO_SETTINGS_MODULE=StreamingServer.settings
+    env_file:
+        - .env
+    depends_on:
+        - db
+        - redis
