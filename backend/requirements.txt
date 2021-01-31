@@ -12,6 +12,7 @@ django-rest-auth==0.9.5
 django-allauth==0.42.0
 django-rest-auth[with_social]
 django-redis==4.12.1 
+watchdog==1.0.2
 pycodestyle==2.6.0
 sentry-sdk==0.14.4
 celery==4.4.6

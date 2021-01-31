@@ -75,6 +75,22 @@ services:
         - db
         - redis
 
+  filesystem_watchdog:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    command:  python3 /usr/src/app/filesystem_watchdog.py
+    volumes:
+        - ./backend/:/usr/src/app/
+        - ./Videos/:/usr/src/app/Videos
+    environment:
+      - DJANGO_SETTINGS_MODULE=StreamingServer.settings
+    env_file:
+        - .env
+    depends_on:
+        - db
+        - redis
+
   redis:
     image: redis:alpine
     command: redis-server --port 6380
