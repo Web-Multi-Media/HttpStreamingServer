@@ -24,6 +24,7 @@ function SubtitleForm ({video, token}){
     const [selectedFiles, setSelectedFiles] = useState(undefined);
     const [subtitleName, setSubtitleName] = useState("Custom Subtitle");
     const [subtitleLanguage, setSubtitleLanguage] = useState("eng");
+    const [subLoadingList, setLoadingSubList] = useState([])
     const hiddenFileInput = useRef(null);
 
     const handleClick = event => {
@@ -35,6 +36,13 @@ function SubtitleForm ({video, token}){
         return <Button onClick={handleSubmit}>Send</Button>
       }
       return <Button isDisabled={true} onClick={handleSubmit}>Send</Button>
+    }
+
+    function ResyncButton({video, subtitle}) {
+      if (subtitle.webvtt_sync_url.length > 0) {
+        return <Button isDisabled={true} onClick={handleResync}>{subtitle.language}</Button>
+      }
+      return <Button onClick={handleResync.bind(this, video.id, subtitle.id)}>{subtitle.language}</Button>
     }
 
     const handleSubtitleChange = event => {
@@ -76,17 +84,16 @@ function SubtitleForm ({video, token}){
   const handleSubmit = async (event) => {
       event.preventDefault()
       //console.log("sending subtitle Language " + subtitleLanguage)
-      const response = await client.uploadSubtitles(token.key, video.id, subtitleLanguage, selectedFiles[0]);
-      //console.log('r', response)
+      const response = await client.uploadSubtitles(video.id, subtitleLanguage, selectedFiles[0]);
       if (response.status != 201)
           alert("Something went wront, are you connected ?");
       onClose();
   };
 
-  const handleResync = async (videoid, subid) => {
-    console.log(videoid);
-    console.log(subid);
-    const response = await client.resyncSubtitle(token.key, videoid, subid);
+  const handleResync = async (videoid, subid, ) => {
+    const response = await client.resyncSubtitle(videoid, subid);
+    setLoadingSubList([...subLoadingList,subid ]);
+    console.log(subLoadingList);
   };
 
 
@@ -126,11 +133,8 @@ function SubtitleForm ({video, token}){
               {!video.subtitles
                 ? null
                 : video.subtitles.map((sub) => (
-                    <Button
-                      onClick={handleResync.bind(this, video.id, sub.id)}
-                    >
-                      {sub.language}{" "}
-                    </Button>
+                    <ResyncButton video={video} subtitle={sub}>
+                    </ResyncButton>
                   ))}
               </Box>
             </ModalBody>

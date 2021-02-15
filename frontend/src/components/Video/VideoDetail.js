@@ -35,7 +35,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
             const theThimer =
             setInterval(async () =>{
                 setCount(count + 1);
-                const newHistory =  await client.updateHistory (authTokens.key, video.id, document.getElementById("myVideo").currentTime);
+                const newHistory =  await client.updateHistory (video.id, document.getElementById("myVideo").currentTime);
                 setHistoryPager(newHistory);
             }, 20000);
             return () => {

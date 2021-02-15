@@ -123,7 +123,7 @@ function Client() {
      * @returns {Promise<Video>}
      *          Video
      */
-    this.updateHistory = async (token, id, timeStamp = 0) => {
+    this.updateHistory = async (id, timeStamp = 0) => {
         const body =
         {
             body:{
@@ -182,13 +182,7 @@ function Client() {
      * @returns {Promise<Video>}
      *          Video
      */
-    this.uploadSubtitles = async (token, video_id, language, datafile) => {
-        /*const params = {
-            'datafile': datafile,
-            'language': language,
-            'video_id': video_id,
-        };*/
-
+    this.uploadSubtitles = async ( video_id, language, datafile) => {
         let params = new FormData();
         params.append('datafile',datafile);
         params.append('language',language);
@@ -197,7 +191,7 @@ function Client() {
         return response;
     };
 
-    this.resyncSubtitle = async (token, video_id, subtitle_id) => {
+    this.resyncSubtitle = async (video_id, subtitle_id) => {
         const response = await this.getRequest(`${SYNC_ENDPOINT}/${video_id}/${subtitle_id}/`);
     }
 
