@@ -3,7 +3,7 @@ from django.urls.conf import include
 from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
 
-from .views import videos, subtitles
+from .views import videos, subtitles, tasks
 from .views import accounts
 
 
@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url('^series/(?P<series>.+)/season/(?P<season>.+)/$', videos.SeriesSeaonViewSet.as_view()),
     url(r'^history/', accounts.History.as_view(), name='history'),
+    url(r'^tasks/(?P<task_id>.+)', tasks.Task.as_view(), name='task'),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
     url(r'^sync_subtitles/(?P<video_id>.+)/(?P<subtitle_id>.+)/$', videos.request_sync_subtitles)
