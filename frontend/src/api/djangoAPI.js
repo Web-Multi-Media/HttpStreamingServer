@@ -16,6 +16,7 @@ const VIDEOS_ENDPOINT = '/videos';
 const SERIES_ENDPOINT = '/series';
 const SEASON_ENDPOINT = '/season';
 const MOVIES_ENDPOINT = '/movies';
+const TASKS_ENDPOINT = '/tasks';
 const SUBTITLES_ENDPOINT = '/subtitles';
 const HISTORY_ENDPOINT = '/history';
 const SYNC_ENDPOINT = '/sync_subtitles';
@@ -193,7 +194,21 @@ function Client() {
 
     this.resyncSubtitle = async (video_id, subtitle_id) => {
         const response = await this.getRequest(`${SYNC_ENDPOINT}/${video_id}/${subtitle_id}/`);
+        return response;
     }
+
+    /**
+     * performs GET request to a task status
+     *
+     * @param id
+     *          Task's id
+     * @returns {Promise<Video>}
+     *          Video
+     */
+    this.getTaskStatusByID = async (id) => {
+        const response = await this.getRequest(`${TASKS_ENDPOINT}/${id}/`);
+        return response.data;
+    };
 
 };
 

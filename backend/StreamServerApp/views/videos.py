@@ -1,7 +1,7 @@
 import os
 from django.shortcuts import render
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from StreamServerApp.tasks import sync_subtitles
@@ -133,7 +133,7 @@ def request_sync_subtitles(request, video_id, subtitle_id):
 
         task_id = sync_subtitles.delay(subtitle_id)
         cache.set(task_signature, task_id)
-        return HttpResponse(status=201, content=str(task_id))
+        return JsonResponse(status=201, data={'taskid':str(task_id)})
     else:
         return HttpResponse(status=303)
 

@@ -18,6 +18,9 @@ import { client } from '../../api/djangoAPI';
 import VTTConverter from 'srt-webvtt';
 
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function SubtitleForm ({video, token}){
 
@@ -92,8 +95,11 @@ function SubtitleForm ({video, token}){
 
   const handleResync = async (videoid, subid, ) => {
     const response = await client.resyncSubtitle(videoid, subid);
-    setLoadingSubList([...subLoadingList,subid ]);
-    console.log(subLoadingList);
+    while (1){
+        var response2 =  await client.getTaskStatusByID(response.data.taskid);
+        if (response2.state === "SUCCESS")
+            break;
+    }
   };
 
 
