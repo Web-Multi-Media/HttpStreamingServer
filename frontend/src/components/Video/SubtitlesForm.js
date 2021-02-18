@@ -6,6 +6,7 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
+    CircularProgress,
     Button,
     useDisclosure,
     Input,
@@ -18,9 +19,9 @@ import { client } from '../../api/djangoAPI';
 import VTTConverter from 'srt-webvtt';
 
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+const wait = ms => new Promise(
+  (resolve, reject) => setTimeout(resolve, ms)
+);
 
 function SubtitleForm ({video, token}){
 
@@ -41,11 +42,17 @@ function SubtitleForm ({video, token}){
       return <Button isDisabled={true} onClick={handleSubmit}>Send</Button>
     }
 
-    function ResyncButton({video, subtitle}) {
+    function ResyncButton({ video, subtitle }) {
+      const [substate, setSubState] = useState("pending")
       if (subtitle.webvtt_sync_url.length > 0) {
-        return <Button isDisabled={true} onClick={handleResync}>{subtitle.language}</Button>
+        return <Button isDisabled={true}>{subtitle.language}</Button>
+      } else if (substate === "loading") {
+        return <Button isDisabled={true} color='yellow' >{subtitle.language} </Button>
+      } else if (substate === "finished") {
+        return <Button isDisabled={true} color='green' >{subtitle.language} </Button>
+      } else {
+        return <Button onClick={handleResync.bind(this, video.id, subtitle.id, setSubState)}>{subtitle.language}</Button>
       }
-      return <Button onClick={handleResync.bind(this, video.id, subtitle.id)}>{subtitle.language}</Button>
     }
 
     const handleSubtitleChange = event => {
@@ -93,13 +100,19 @@ function SubtitleForm ({video, token}){
       onClose();
   };
 
-  const handleResync = async (videoid, subid, ) => {
+  const handleResync = async (videoid, subid, setsubstate) => {
     const response = await client.resyncSubtitle(videoid, subid);
-    while (1){
-        var response2 =  await client.getTaskStatusByID(response.data.taskid);
-        if (response2.state === "SUCCESS")
-            break;
+    const task_id = response.data.taskid;
+    setsubstate("loading");
+    while(1){
+      await wait(1000);
+      const response2 = await client.getTaskStatusByID(task_id);
+      if (response2.state === "SUCCESS"){
+        setsubstate("finished");
+        break;
+      }
     }
+    
   };
 
 
