@@ -6,7 +6,6 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    CircularProgress,
     Button,
     useDisclosure,
     Input,
@@ -28,7 +27,6 @@ function SubtitleForm ({video, token}){
     const [selectedFiles, setSelectedFiles] = useState(undefined);
     const [subtitleName, setSubtitleName] = useState("Custom Subtitle");
     const [subtitleLanguage, setSubtitleLanguage] = useState("eng");
-    const [subLoadingList, setLoadingSubList] = useState([])
     const hiddenFileInput = useRef(null);
 
     const handleClick = event => {
@@ -47,9 +45,11 @@ function SubtitleForm ({video, token}){
       if (subtitle.webvtt_sync_url.length > 0) {
         return <Button isDisabled={true}>{subtitle.language}</Button>
       } else if (substate === "loading") {
-        return <Button isDisabled={true} color='yellow' >{subtitle.language} </Button>
+        return <Button isDisabled={true} style={{backgroundColor: "yellow"}} >{subtitle.language} </Button>
       } else if (substate === "finished") {
-        return <Button isDisabled={true} color='green' >{subtitle.language} </Button>
+        return <Button isDisabled={true} style={{backgroundColor: "green"}} >{subtitle.language} </Button>
+      } else if (substate === "failure") {
+        return <Button isDisabled={true} style={{backgroundColor: "red"}} >{subtitle.language} </Button>
       } else {
         return <Button onClick={handleResync.bind(this, video.id, subtitle.id, setSubState)}>{subtitle.language}</Button>
       }
@@ -109,6 +109,22 @@ function SubtitleForm ({video, token}){
       const response2 = await client.getTaskStatusByID(task_id);
       if (response2.state === "SUCCESS"){
         setsubstate("finished");
+        const sub = await client.getSubtitleById(subid);
+        console.log(sub.webvttSyncUrl);
+        let track = document.createElement("track");
+        track.id = "my-sub-track";
+        track.kind = "captions";
+        track.label = sub.language + "Synced";
+        track.src = sub.webvttSyncUrl;
+        let videoElement = document.getElementById("myVideo");
+        track.addEventListener("load", function () {
+          this.mode = "showing";
+          video.textTracks[0].mode = "showing"; // thanks Firefox
+        });
+        videoElement.appendChild(track);
+        break;
+      }else if (response2.state === "FAILURE"){
+        setsubstate("failure");
         break;
       }
     }

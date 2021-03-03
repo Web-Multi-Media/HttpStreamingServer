@@ -210,6 +210,20 @@ function Client() {
         return response.data;
     };
 
+    /**
+     * performs GET request to retrieve a single subtitle by it's ID
+     *
+     * @param id
+     *          subtitle's id
+     * @returns {Promise<Subtitle>}
+     *          Video
+     */
+
+    this.getSubtitleById = async (id) => {
+        const response = await this.getRequest(`${SUBTITLES_ENDPOINT}/${id}/`);
+        return new Subtitle(response.data);
+    };
+
 };
 
 var client = new Client();
@@ -280,6 +294,14 @@ MoviesPager.prototype.getNextPage = async function () {
     this.videos = response.data.results.map((video) => new Video(video));
     this.nextPageUrl = response.data.next;
 };
+
+function Subtitle(response) {
+    this.id = response.id;
+    this.language = response.language;
+    this.videoId = response.video_id;
+    this.webvttSubtitleUrl = response.webvtt_subtitle_url;
+    this.webvttSyncUrl = response.webvtt_sync_url;
+}
 
 
 export { client };
