@@ -14,4 +14,4 @@ class Task(APIView):
 
         print("task id = {} ".format(task_id))
         state = result.AsyncResult(task_id).state
-        return JsonResponse(status=200, data={'state':str(state)})
+        return JsonResponse(status=200, data={'state': str(state)})

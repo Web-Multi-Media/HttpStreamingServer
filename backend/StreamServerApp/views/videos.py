@@ -133,7 +133,7 @@ def request_sync_subtitles(request, video_id, subtitle_id):
 
         task_id = sync_subtitles.delay(subtitle_id)
         cache.set(task_signature, task_id)
-        return JsonResponse(status=201, data={'taskid':str(task_id)})
+        return JsonResponse(status=201, data={'taskid': str(task_id)})
     else:
         return HttpResponse(status=303)
 
