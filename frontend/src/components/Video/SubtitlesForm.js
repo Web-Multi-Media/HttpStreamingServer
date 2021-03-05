@@ -104,8 +104,8 @@ function SubtitleForm ({video, token}){
     const response = await client.resyncSubtitle(videoid, subid);
     const task_id = response.data.taskid;
     setsubstate("loading");
-    while(1){
-      await wait(1000);
+    var IntervalHandler = setInterval(async function(){     
+      
       const response2 = await client.getTaskStatusByID(task_id);
       if (response2.state === "SUCCESS"){
         setsubstate("finished");
@@ -122,12 +122,13 @@ function SubtitleForm ({video, token}){
           video.textTracks[0].mode = "showing"; // thanks Firefox
         });
         videoElement.appendChild(track);
-        break;
+        clearInterval(IntervalHandler);
       }else if (response2.state === "FAILURE"){
         setsubstate("failure");
-        break;
-      }
-    }
+        clearInterval(IntervalHandler);
+      } 
+    
+    }, 3000);
     
   };
 
