@@ -66,21 +66,6 @@ function SubtitleForm({ video, token }) {
     hiddenFileInput.current.click();
   };
 
-  function ResyncButton({ video, subtitle }) {
-    const [substate, setSubState] = useState("pending");
-    return (
-      <Button
-        className={classes.margin}
-        variant="contained"
-        disabled={subtitle.webvtt_sync_url.length > 0}
-        style={getBackgroundStyle(substate)}
-        onClick={handleResync.bind(this, video.id, subtitle.id, setSubState)}
-      >
-        {subtitle.language}
-      </Button>
-    );
-  }
-
   const handleSubtitleChange = (event) => {
     let customsub = event.target.value;
     var ext = customsub.substr(customsub.lastIndexOf(".") + 1);
@@ -160,6 +145,8 @@ function SubtitleForm({ video, token }) {
 
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
+  const [substate, setSubState] = useState("pending");
+
   const classes = useStyles();
 
   const handleOpen = () => {
@@ -231,7 +218,20 @@ function SubtitleForm({ video, token }) {
               {!video.subtitles
                 ? null
                 : video.subtitles.map((sub) => (
-                    <ResyncButton video={video} subtitle={sub}></ResyncButton>
+                    <Button
+                      className={classes.margin}
+                      variant="contained"
+                      disabled={sub.webvtt_sync_url.length > 0}
+                      style={getBackgroundStyle(substate)}
+                      onClick={handleResync.bind(
+                        this,
+                        video.id,
+                        sub.id,
+                        setSubState
+                      )}
+                    >
+                      {sub.language}
+                    </Button>
                   ))}
             </div>
           </div>
