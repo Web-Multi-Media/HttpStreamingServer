@@ -38,8 +38,14 @@ Run the server:
 
 Now the application should be accessible from your browser at `http://localhost:1337/streaming/`.
 
+A built-in torrent server is available at: `http://localhost:1337/transmission/web/`
+
 
 #### CONFIGURATION
+
+Change torrent admin password:
+
+    docker-compose -f docker-compose-prod.yml run --rm nginx htpasswd -c /usr/torrent/.htpasswd user1
 
 The videos contained in the Videos/ folder are indexed everytime the populatedb command is launched.
 

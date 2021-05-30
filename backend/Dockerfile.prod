@@ -12,15 +12,28 @@ RUN npm run build
 
 FROM python:3.8
 
-RUN apt-get update -y && apt-get install -y ffmpeg
+RUN apt-get update -y && apt-get install -y ffmpeg transmission-daemon
+
+RUN service transmission-daemon stop
+COPY ./backend/transmission.json /etc/transmission-daemon/settings.json
+RUN service transmission-daemon start
+RUN update-rc.d transmission-daemon defaults
+
 
 COPY ./backend/openssl.cnf /etc/ssl/openssl.cnf
 
 ENV PYTHONUNBUFFERED 1
 COPY --from=0 /usr/src/frontend/build/ /usr/src/frontend/build/
-COPY ./backend /usr/src/app/
+
+ADD ./backend/requirements.txt /srv/requirements.txt
+RUN pip install -r /srv/requirements.txt
+
 WORKDIR /usr/src/app
 
-RUN pip3 install -r requirements.txt
+RUN mkdir /usr/torrent/
+RUN chgrp -R debian-transmission /usr/torrent/
+RUN chmod -R 777 /usr/torrent/
+VOLUME /usr/torrent/
+RUN usermod -a -G debian-transmission root
 
 

@@ -20,3 +20,4 @@ class Command(BaseCommand):
             keep_files = True
         delete_DB_Infos()
         populate_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL, keep_files)
+        populate_db_from_local_folder("/usr/torrent/", "/torrents/", keep_files)

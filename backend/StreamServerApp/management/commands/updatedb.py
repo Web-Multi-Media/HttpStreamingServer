@@ -19,3 +19,4 @@ class Command(BaseCommand):
         if kwargs['keepfiles']:
             keep_files = True
         update_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL, keep_files)
+        update_db_from_local_folder("/usr/torrent/", "/torrents/", keep_files)

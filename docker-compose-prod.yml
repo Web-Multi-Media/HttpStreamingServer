@@ -4,6 +4,7 @@ volumes:
   dbvolume:
   ipython:
   static_volume:
+  torrent:
 
 services:
   db:
@@ -20,8 +21,8 @@ services:
       context: .
       dockerfile: ./backend/Dockerfile.prod
     restart: always
-    expose:
-      - 8000
+    ports:
+      - 51413:51413
     env_file:
       - .env
     environment:
@@ -32,7 +33,8 @@ services:
       - ./backend/:/usr/src/app/
       - /static/
       - ipython:/root/.ipython
-    command: bash -c "python3 /usr/src/app/manage.py collectstatic --no-input && gunicorn StreamingServer.wsgi:application --bind 0.0.0.0:8000"
+      - torrent:/usr/torrent/:rw
+    command: bash -c "service transmission-daemon start && python3 /usr/src/app/manage.py collectstatic --no-input && gunicorn StreamingServer.wsgi:application --bind 0.0.0.0:8000"
     depends_on:
       - db
       - redis
@@ -43,6 +45,7 @@ services:
       - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
       - static_volume:/usr/src/app/staticfiles
+      - torrent:/usr/torrent/:rw
     ports:
       - 1337:80
     depends_on:
