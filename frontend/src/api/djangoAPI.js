@@ -36,6 +36,16 @@ function Client() {
     };
 
     /**
+     * Procedure to reset the user API token in the axios http client
+     *
+     * @param token
+     *          user API token
+     */
+     this.resetToken = () => {
+        this.token = null;
+    };
+
+    /**
      * Returns the csrf cookie
      *
      * @returns {str}
@@ -222,6 +232,62 @@ function Client() {
     this.getSubtitleById = async (id) => {
         const response = await this.getRequest(`${SUBTITLES_ENDPOINT}/${id}/`);
         return new Subtitle(response.data);
+    };
+
+    /**
+     * performs POST request to logout
+     *
+     * @param id
+     *          subtitle's id
+     * @returns {Promise<Subtitle>}
+     *          Video
+     */
+
+    this.logout = async () => {
+        const response = await client.postRequest("/rest-auth/logout", null);
+    };
+
+    /**
+     * performs POST request to login
+     *
+     *
+     * @param username, password, email
+     *          
+     * @returns 
+     *          
+     */
+
+     this.login = async (username, password, email) => {
+        const param = {
+    
+            'username': username,
+            'password': password,
+            'email': "",
+          
+        };
+        const response = await client.postRequest("/rest-auth/login", param );
+        return response;
+    };
+
+    /**
+     * performs POST request to signup
+     *
+     * @param username, password, email
+     *          
+     * @returns 
+     *          
+     */
+
+     this.signup = async (username, password, password2) => {
+        const param = {
+    
+            'username': username,
+            'password1': password,
+            'password2': password2,
+          
+        };
+        const response = await client.postRequest("/rest-auth/registration", param );
+        return response;
     };
 
 };

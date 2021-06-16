@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from StreamServerApp.subtitles import get_subtitles
 from StreamServerApp.media_processing import convert_subtitles_to_webvtt
+from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
 import os
 import subprocess
 
@@ -89,8 +90,19 @@ class Video(models.Model):
             Args:
             ov_subtitles: boolean (True if input has subtitles, False if not).
         """
-        video_path = self.video_folder
-        subtitles_list = get_subtitles(video_path, ov_subtitles)
+        video_infos = []
+        fileinfos_path = "{}/fileinfo.json".format(
+            os.path.split(self.video_folder)[0])
+        if os.path.isfile(fileinfos_path):
+            video_infos = readfileinfo(fileinfos_path)
+            if not video_infos:
+                print("video infos are empty, don't add subs")
+                return 0
+        else:
+            return 0
+
+        print("get sub for {}".format(video_infos["video_full_path"]))
+        subtitles_list = get_subtitles(video_infos["video_full_path"], ov_subtitles)
 
         webvtt_subtitles_full_path = subtitles_list[0]
         srt_subtitles_full_path = subtitles_list[1]

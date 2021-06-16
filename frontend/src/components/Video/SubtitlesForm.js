@@ -70,7 +70,7 @@ function SubtitleForm ({video, token}){
         track.id= "my-sub-track";
         track.kind = "captions";
         track.label = subtitleName;
-        let videoElement = document.getElementById("myVideo");
+        let videoElement = document.getElementById("videoPlayer");
         videoElement.appendChild(track);
         vttConverter
         .getURL()
@@ -116,7 +116,7 @@ function SubtitleForm ({video, token}){
         track.kind = "captions";
         track.label = sub.language + "Synced";
         track.src = sub.webvttSyncUrl;
-        let videoElement = document.getElementById("myVideo");
+        let videoElement = document.getElementById("videoPlayer");
         track.addEventListener("load", function () {
           this.mode = "showing";
           video.textTracks[0].mode = "showing"; // thanks Firefox
