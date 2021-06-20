@@ -60,6 +60,7 @@ services:
     volumes:
         - ./backend/:/usr/src/app/
         - ./Videos/:/usr/src/app/Videos
+        - torrent:/usr/torrent/:rw
     env_file:
         - .env
     environment:

@@ -73,7 +73,8 @@ def populate_db_from_local_folder(base_path, remote_url, keep_files=False):
             full_path = os.path.join(root, filename)
 
             if isfile(full_path) and (full_path.endswith(".mp4")
-                                      or full_path.endswith(".mkv")):
+                                      or full_path.endswith(".mkv")
+                                      or full_path.endswith(".avi")):
                 try:
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
                     with transaction.atomic():
@@ -154,7 +155,8 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False):
                 continue
 
             if isfile(full_path) and (full_path.endswith(".mp4")
-                                      or full_path.endswith(".mkv")):
+                                      or full_path.endswith(".mkv")
+                                      or full_path.endswith(".avi")):
                 try:
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
                     with transaction.atomic():
@@ -260,7 +262,7 @@ def add_one_video_to_database(full_path,
 
         #we use oncommit because autocommit is not enabled.
         transaction.on_commit(lambda: get_subtitles_async.delay(
-            v.id, video_infos['has_ov_subtitle']))
+            v.id, video_infos['has_ov_subtitle'], video_path, remote_url))
 
     return return_value
 
@@ -340,7 +342,7 @@ def add_one_manifest_to_database(full_path,
 
         #we use oncommit because autocommit is not enabled.
         transaction.on_commit(lambda: get_subtitles_async.delay(
-            v.id, video_infos['has_ov_subtitle']))
+            v.id, video_infos['has_ov_subtitle'], video_path, remote_url))
 
     return return_value
 
@@ -412,17 +414,24 @@ def prepare_video(video_full_path,
     audio_codec_type = audio_stream['codec_name']
     audio_elementary_stream_path = "{}.m4a".format(
         os.path.splitext(video_full_path)[0])
-    video_elementary_stream_path = "{}.264".format(
+    video_elementary_stream_path_480 = "{}_480.264".format(
+        os.path.splitext(video_full_path)[0])
+    video_elementary_stream_path_720 = "{}_720.264".format(
         os.path.splitext(video_full_path)[0])
     dash_output_directory = os.path.splitext(video_full_path)[0]
     temp_mpd = "{}/playlist.mpd".format(dash_output_directory)
 
-    if "aac" not in audio_codec_type:
+    if "aac" in audio_codec_type:
         extract_audio(video_full_path, audio_elementary_stream_path)
     else:
         aac_encoder(video_full_path, audio_elementary_stream_path)
 
-    h264_encoder(video_full_path, video_elementary_stream_path)
+    h264_encoder(
+        video_full_path,
+        video_elementary_stream_path_720, 720, 1800000)
+    h264_encoder(
+        video_full_path,
+        video_elementary_stream_path_480, 480, 800000)
 
     relative_path = os.path.relpath(video_full_path, video_path)
 
@@ -437,10 +446,11 @@ def prepare_video(video_full_path,
         generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
     #Dash_packaging
-    dash_packager(video_elementary_stream_path, audio_elementary_stream_path,
+    dash_packager(video_elementary_stream_path_480, video_elementary_stream_path_720, audio_elementary_stream_path,
                   dash_output_directory)
 
-    os.remove(video_elementary_stream_path)
+    os.remove(video_elementary_stream_path_720)
+    os.remove(video_elementary_stream_path_480)
     os.remove(audio_elementary_stream_path)
 
     if not keep_files:

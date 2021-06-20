@@ -85,7 +85,7 @@ class Video(models.Model):
         else:
             return 0
 
-    def get_subtitles(self, ov_subtitles):
+    def get_subtitles(self, ov_subtitles, video_path, remote_url):
         """ # get subtitles for the current instance of video.
             Args:
             ov_subtitles: boolean (True if input has subtitles, False if not).
@@ -99,6 +99,7 @@ class Video(models.Model):
                 print("video infos are empty, don't add subs")
                 return 0
         else:
+            print("{} is not a file ".format(fileinfos_path))
             return 0
 
         print("get sub for {}".format(video_infos["video_full_path"]))
@@ -112,16 +113,19 @@ class Video(models.Model):
             vtt_subtitle_url = webvtt_subtitles_full_path[language_str]
             if srt_subtitle_url and vtt_subtitle_url:
                 webvtt_subtitles_relative_path = os.path.relpath(
-                    vtt_subtitle_url, settings.VIDEO_ROOT)
+                    vtt_subtitle_url, video_path)
                 newsub = Subtitle()
                 newsub.video_id = self
                 newsub.vtt_path = vtt_subtitle_url
                 if srt_subtitles_full_path.get(language_str):
                     newsub.srt_path = srt_subtitles_full_path[language_str]
                 newsub.webvtt_subtitle_url = os.path.join(
-                    settings.VIDEO_URL, webvtt_subtitles_relative_path)
+                    remote_url, webvtt_subtitles_relative_path)
                 newsub.language = language_str
                 newsub.save()
+
+    def __str__(self):
+        return '{}'.format(self.name)
 
 
 class UserVideoHistory(models.Model):

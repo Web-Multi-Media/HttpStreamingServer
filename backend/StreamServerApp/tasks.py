@@ -13,7 +13,7 @@ def sync_subtitles(subtitle_id):
 
 
 @shared_task
-def get_subtitles_async(video_id, ov_subtitles):
+def get_subtitles_async(video_id, ov_subtitles, video_path, remote_url):
     video = Video.objects.get(id=video_id)
-    video.get_subtitles(ov_subtitles)
+    video.get_subtitles(ov_subtitles, video_path, remote_url)
     return 0

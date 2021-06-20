@@ -136,7 +136,7 @@ class SubtitlesTest(TestCase):
                 "/usr/src/app/Videos/Friends S01E07 The One with the Blackout.en.vtt"
             ), True)
 
-    def test_get_subtitles_async(self):
+    def test_get_subtitles_async_1(self):
         path_to_dash_asset = "/usr/src/app/Videos/testsub/"
         if not os.path.isdir(path_to_dash_asset):
             #os.mkdir("/usr/test/FriendsS01E07TheOnewiththeBlackout/", exist_ok=True)
@@ -153,7 +153,7 @@ class SubtitlesTest(TestCase):
             name="Man On The Moon.mp4",
             video_folder="{}/playlist.mpd".format(path_to_dash_asset))
 
-        get_subtitles_async(video.id, False)
+        get_subtitles_async(video.id, False, "/usr/src/app/Videos/", "/Videos/")
 
         expected_url = os.path.join(
             settings.VIDEO_URL,
@@ -162,3 +162,31 @@ class SubtitlesTest(TestCase):
         assert (len(video.subtitles.filter(language="eng")) > 0)
         sub = video.subtitles.filter(language="eng")[0]
         self.assertEqual(sub.webvtt_subtitle_url, expected_url)
+
+    def test_get_subtitles_async_2(self):
+        path_to_dash_asset = "/usr/torrent/testsub/"
+        if not os.path.isdir(path_to_dash_asset):
+            #os.mkdir("/usr/test/FriendsS01E07TheOnewiththeBlackout/", exist_ok=True)
+            pathlib.Path(path_to_dash_asset).mkdir(parents=True, exist_ok=True)
+
+        video_info = {
+            "video_full_path":
+            "{}/Friends S01E07 The One with the Blackout.mp4".format(
+                path_to_dash_asset)
+        }
+        createfileinfo("{}/fileinfo.json".format(path_to_dash_asset),
+                       video_info)
+        video = Video.objects.create(
+            name="Man On The Moon.mp4",
+            video_folder="{}/playlist.mpd".format(path_to_dash_asset))
+
+        get_subtitles_async(video.id, False, "/usr/torrent/", "/torrents/")
+
+        expected_url = os.path.join(
+            "/torrents/",
+            "testsub/Friends S01E07 The One with the Blackout.en.vtt")
+
+        assert (len(video.subtitles.filter(language="eng")) > 0)
+        sub = video.subtitles.filter(language="eng")[0]
+        self.assertEqual(sub.webvtt_subtitle_url, expected_url)
+
