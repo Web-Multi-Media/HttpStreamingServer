@@ -25,9 +25,8 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
     }
     
     function canPlay(video) {
-        console.log('canPlay')
         if (video.time > 0){
-            document.getElementById("myVideo").currentTime = video.time;
+            player.seek(video.time);
         }
     }
 
@@ -49,7 +48,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
             const theThimer =
             setInterval(async () =>{
                 setCount(count + 1);
-                const newHistory =  await client.updateHistory (video.id, document.getElementById("myVideo").currentTime);
+                const newHistory =  await client.updateHistory (video.id, Math.round( player.time() ));
                 setHistoryPager(newHistory);
             }, 20000);
             return () => {
@@ -71,7 +70,9 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
             <div className="ui embed">
                 <div>
                     <video id="videoPlayer" controls
-                        onLoadedData={() => { canPlay(video) }} onPlay={() => { startVideo() }}
+                        onLoadedData={() => { 
+                            canPlay(video) }} onPlay={() => { startVideo() 
+                        }}
                         onPause={() => setTimer(false)}>
                         <source />
                         {!video.subtitles ? null : video.subtitles.map((sub, index) =>

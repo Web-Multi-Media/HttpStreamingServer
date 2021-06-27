@@ -45,7 +45,7 @@ A built-in torrent server is available at: `http://localhost:1337/transmission/w
 
 Change torrent admin password:
 
-    docker-compose -f docker-compose-prod.yml run --rm nginx htpasswd -c /usr/torrent/.htpasswd user1
+    docker-compose -f docker-compose-prod.yml run --rm nginx htpasswd -c /usr/torrent/.htpasswd admin
 
 The videos contained in the Videos/ folder are indexed everytime the populatedb command is launched.
 

@@ -23,6 +23,7 @@ from StreamServerApp.media_management.encoder import h264_encoder, aac_encoder, 
 from StreamServerApp.media_management.dash_packager import dash_packager
 from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
 from StreamServerApp.tasks import get_subtitles_async
+from StreamingServer import settings
 
 
 def delete_DB_Infos():
@@ -418,6 +419,7 @@ def prepare_video(video_full_path,
         os.path.splitext(video_full_path)[0])
     video_elementary_stream_path_720 = "{}_720.264".format(
         os.path.splitext(video_full_path)[0])
+
     dash_output_directory = os.path.splitext(video_full_path)[0]
     temp_mpd = "{}/playlist.mpd".format(dash_output_directory)
 

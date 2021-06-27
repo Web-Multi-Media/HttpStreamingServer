@@ -52,19 +52,19 @@ class Video(models.Model):
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
     audio_codec = models.CharField(max_length=100, default="")
-    metadata = models.CharField(max_length=100, default="")
+    metadata = models.CharField(max_length=100, blank=True, default="")
     video_url = models.CharField(max_length=300, default="")
     video_folder = models.CharField(max_length=300, default="")
     thumbnail = models.CharField(max_length=300, default="")
 
     # Relations to series and movies
     # on_delete=SET_NULL keeps videos indexed if we remove a serie or a video it belongs to
-    series = models.ForeignKey(Series, null=True, on_delete=models.SET_NULL)
-    movie = models.ForeignKey(Movie, null=True, on_delete=models.SET_NULL)
+    series = models.ForeignKey(Series, blank=True, null=True, on_delete=models.SET_NULL)
+    movie = models.ForeignKey(Movie, blank=True, null=True, on_delete=models.SET_NULL)
 
     # For series & movie episodes and series seasons
-    episode = models.PositiveSmallIntegerField(default=None, null=True, db_index=True)
-    season = models.PositiveSmallIntegerField(default=None, null=True, db_index=True)
+    episode = models.PositiveSmallIntegerField(default=None, blank=True,  null=True, db_index=True)
+    season = models.PositiveSmallIntegerField(default=None, blank=True, null=True, db_index=True)
 
     history = models.ManyToManyField(User, through='UserVideoHistory')
 
