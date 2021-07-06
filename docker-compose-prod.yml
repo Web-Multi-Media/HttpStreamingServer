@@ -16,7 +16,7 @@ services:
     volumes:
       - dbvolume:/var/lib/postgresql/data/
   web:
-    image: webmultimedia/http-streaming-server:dash
+    image: webmultimedia/http-streaming-server:master
     build:
       context: .
       dockerfile: ./backend/Dockerfile.prod
@@ -55,7 +55,7 @@ services:
     build:
       context: .
       dockerfile: ./backend/Dockerfile.prod
-    image: webmultimedia/http-streaming-server:dash
+    image: webmultimedia/http-streaming-server:master
     command: celery -A StreamingServer worker -l info
     volumes:
         - ./backend/:/usr/src/app/
