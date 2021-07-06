@@ -16,14 +16,8 @@ function Signup({toggleModalBox, setDisplayModal}) {
   const [errorMessages, setErrorMessage] = useState([]);
 
   async function postSignup() {
-    const param = {
-      'username': username,
-      'password1': password1,
-      'password2': password2,
-
-    };
     try {
-      const response = await client.postRequest("/rest-auth/registration", null, param);
+      const response = await client.signup(username, password1, password2)
       if (response.status === 201) {
         setAuthTokens(response.data);
         setLoggedIn(true);

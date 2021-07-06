@@ -5,7 +5,7 @@ import User from '../login/User';
 import { AuthContext, useAuth } from '../context/auth';
 import Button from "@material-ui/core/Button";
 
-export default function Header({ handleFormSubmit, displayModal }) {
+export default function Header({ handleFormSubmit, displayModal, client }) {
     const { authTokens } = useAuth();
     return (
         <header className="headerBar">
@@ -31,6 +31,7 @@ export default function Header({ handleFormSubmit, displayModal }) {
                     <div className="headerButton">
                         <User
                             displayModal={displayModal}
+                            client={client}
                         />
                     </div>
                         }

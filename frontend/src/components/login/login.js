@@ -6,7 +6,7 @@ import { useAuth } from "../context/auth";
 import { client } from '../../api/djangoAPI';
 import '../Modal.css'
 
-function Login({toggleModalBox, setDisplayModal}) {
+function Login({toggleModalBox, setDisplayModal, client}) {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessages, setErrorMessage] = useState([]);
@@ -15,15 +15,9 @@ function Login({toggleModalBox, setDisplayModal}) {
   const { setAuthTokens } = useAuth();
 
   async function postLogin() {
-    const param = {
-    
-        'username': username,
-        'password': password,
-        'email': "",
-      
-    };
+
     try {
-      const response = await client.postRequest("/rest-auth/login", param );
+      const response = await client.login(username, password, "");
       if (response.status === 200) {
         setAuthTokens(response.data);
         setLoggedIn(true);

@@ -39,15 +39,24 @@ function App(props) {
                 utils.getUrlVideo(location, setSelectedVideo)
             ]);
         };
-        async function anyNameFunction() {
+        async function GetHistory() {
             // Set the token for the API client
             client.setToken(authTokens);
-            if(authTokens && authTokens.key !== ""){
-                const history = await client.getHistory(authTokens.key);
-                setHistoryPager(history)
+            try{
+                if(authTokens && authTokens.key !== ""){
+                    const history = await client.getHistory(authTokens.key);
+                    setHistoryPager(history)
+                }
+            }
+            catch{
+                // We catch here the exception if a token was retrieved locally in the browser but not present
+                // in the server anymore.
+                existingTokens = '';
+                client.resetToken();
+                client.logout();
             }
         }    // Execute the created function directly
-        anyNameFunction(authTokens);
+        GetHistory(authTokens);
         fetchData();
     }, [authTokens]);
 
@@ -106,6 +115,7 @@ function App(props) {
             <Header
                 handleFormSubmit={handleSubmit}
                 displayModal={displayModalBox}
+                client={client}
             />
             <Carousels
                 video={selectedVideo}
@@ -122,11 +132,13 @@ function App(props) {
             <Login
                 toggleModalBox={toggleModalBox}
                 setDisplayModal={setDisplayModal}
+                client={client}
             />}
             {(displayModal && !toggleModal) &&
             <Signup
                 toggleModalBox={toggleModalBox}
                 setDisplayModal={setDisplayModal}
+                client={client}
            />}
 
         </AuthContext.Provider>

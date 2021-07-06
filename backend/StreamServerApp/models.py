@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from StreamServerApp.subtitles import get_subtitles
 from StreamServerApp.media_processing import convert_subtitles_to_webvtt
+from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
 import os
 import subprocess
 
@@ -51,19 +52,19 @@ class Video(models.Model):
     height = models.IntegerField(default=0)
     width = models.IntegerField(default=0)
     audio_codec = models.CharField(max_length=100, default="")
-    metadata = models.CharField(max_length=100, default="")
+    metadata = models.CharField(max_length=100, blank=True, default="")
     video_url = models.CharField(max_length=300, default="")
     video_folder = models.CharField(max_length=300, default="")
     thumbnail = models.CharField(max_length=300, default="")
 
     # Relations to series and movies
     # on_delete=SET_NULL keeps videos indexed if we remove a serie or a video it belongs to
-    series = models.ForeignKey(Series, null=True, on_delete=models.SET_NULL)
-    movie = models.ForeignKey(Movie, null=True, on_delete=models.SET_NULL)
+    series = models.ForeignKey(Series, blank=True, null=True, on_delete=models.SET_NULL)
+    movie = models.ForeignKey(Movie, blank=True, null=True, on_delete=models.SET_NULL)
 
     # For series & movie episodes and series seasons
-    episode = models.PositiveSmallIntegerField(default=None, null=True, db_index=True)
-    season = models.PositiveSmallIntegerField(default=None, null=True, db_index=True)
+    episode = models.PositiveSmallIntegerField(default=None, blank=True,  null=True, db_index=True)
+    season = models.PositiveSmallIntegerField(default=None, blank=True, null=True, db_index=True)
 
     history = models.ManyToManyField(User, through='UserVideoHistory')
 
@@ -84,13 +85,25 @@ class Video(models.Model):
         else:
             return 0
 
-    def get_subtitles(self, ov_subtitles):
+    def get_subtitles(self, ov_subtitles, video_path, remote_url):
         """ # get subtitles for the current instance of video.
             Args:
             ov_subtitles: boolean (True if input has subtitles, False if not).
         """
-        video_path = self.video_folder
-        subtitles_list = get_subtitles(video_path, ov_subtitles)
+        video_infos = []
+        fileinfos_path = "{}/fileinfo.json".format(
+            os.path.split(self.video_folder)[0])
+        if os.path.isfile(fileinfos_path):
+            video_infos = readfileinfo(fileinfos_path)
+            if not video_infos:
+                print("video infos are empty, don't add subs")
+                return 0
+        else:
+            print("{} is not a file ".format(fileinfos_path))
+            return 0
+
+        print("get sub for {}".format(video_infos["video_full_path"]))
+        subtitles_list = get_subtitles(video_infos["video_full_path"], ov_subtitles)
 
         webvtt_subtitles_full_path = subtitles_list[0]
         srt_subtitles_full_path = subtitles_list[1]
@@ -100,16 +113,19 @@ class Video(models.Model):
             vtt_subtitle_url = webvtt_subtitles_full_path[language_str]
             if srt_subtitle_url and vtt_subtitle_url:
                 webvtt_subtitles_relative_path = os.path.relpath(
-                    vtt_subtitle_url, settings.VIDEO_ROOT)
+                    vtt_subtitle_url, video_path)
                 newsub = Subtitle()
                 newsub.video_id = self
                 newsub.vtt_path = vtt_subtitle_url
                 if srt_subtitles_full_path.get(language_str):
                     newsub.srt_path = srt_subtitles_full_path[language_str]
                 newsub.webvtt_subtitle_url = os.path.join(
-                    settings.VIDEO_URL, webvtt_subtitles_relative_path)
+                    remote_url, webvtt_subtitles_relative_path)
                 newsub.language = language_str
                 newsub.save()
+
+    def __str__(self):
+        return '{}'.format(self.name)
 
 
 class UserVideoHistory(models.Model):
