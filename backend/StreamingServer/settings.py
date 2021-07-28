@@ -217,3 +217,7 @@ CACHES = {
         "KEY_PREFIX": "example"
     }
 }
+
+if os.getenv('DEPLOY_BEHIND_PROXY') == 'true':
+    USE_X_FORWARDED_HOST = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
