@@ -4,6 +4,10 @@ import './Header.css';
 import User from '../login/User';
 import { AuthContext, useAuth } from '../context/auth';
 import Button from "@material-ui/core/Button";
+import {
+    BrowserRouter as Router,
+    Link
+  } from "react-router-dom";
 
 export default function Header({ handleFormSubmit, displayModal, client }) {
     const { authTokens } = useAuth();
@@ -13,6 +17,8 @@ export default function Header({ handleFormSubmit, displayModal, client }) {
             <h1>
                 HOMEMADE NETFLIX
             </h1>
+
+
 
             <div className="leftBar">
                 <div className="leftBarElement">
@@ -34,7 +40,16 @@ export default function Header({ handleFormSubmit, displayModal, client }) {
                             client={client}
                         />
                     </div>
-                        }
+
+                }
+
+                <Link to="/transmission/web/" className="headerButton">
+                    <div className="torrentbutton">
+                        <Button variant="contained" color="secondary" className="headerButton">
+                            Add Torrent
+                        </Button>
+                    </div>
+                </Link>
             </div>
         </header>
     );
