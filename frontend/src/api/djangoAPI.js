@@ -180,7 +180,12 @@ function Client() {
     this.searchMovies = async (searchQuery) => {
         const params = searchQuery ? { search_query: searchQuery } : null;
         const response = await this.getRequest(MOVIES_ENDPOINT, { params });
-        response.data.results = response.data.results.map((result) => result.video_set.results[0]);
+        response.data.results = response.data.results.reduce( (result, element) => {
+            //We filter here empty movies set
+            if (element.video_set.count > 0)
+                result.push(element.video_set.results[0]);
+            return result;
+        }, []);
         return new MoviesPager(response.data);
     };
 
