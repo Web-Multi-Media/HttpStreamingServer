@@ -15,10 +15,10 @@ export default function Header({ handleFormSubmit, displayModal, client }) {
         <header className="headerBar">
 
             <h1>
+                <a href="/streaming/">
                 HOMEMADE NETFLIX
+                </a>
             </h1>
-
-
 
             <div className="leftBar">
                 <div className="leftBarElement">
@@ -43,13 +43,15 @@ export default function Header({ handleFormSubmit, displayModal, client }) {
 
                 }
 
-                <Link to="/transmission/web/" className="headerButton">
-                    <div className="torrentbutton">
-                        <Button variant="contained" color="secondary" className="headerButton">
+
+                <div className="headerButton">
+                    <Button variant="contained" color="secondary" className="headerButton">
+                        <a href="/transmission/web/">
                             Add Torrent
-                        </Button>
-                    </div>
-                </Link>
+                        </a>
+                    </Button>
+                </div>
+
             </div>
         </header>
     );
