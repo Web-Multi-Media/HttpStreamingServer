@@ -15,6 +15,7 @@ import traceback
 import subliminal
 from django.db import transaction
 import re
+from celery import shared_task
 
 from StreamServerApp.models import Video, Series, Movie, Subtitle
 from StreamServerApp.subtitles import init_cache
@@ -522,3 +523,10 @@ def get_video_type_and_info(video_path):
             'type': 'Movie',
             'title': string.capwords(video.title),
         }
+
+
+@shared_task
+def update_db_from_local_folder_async(keep_files):
+    update_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL, keep_files)
+    update_db_from_local_folder("/usr/torrent/", "/torrents/", keep_files)
+    return 0
