@@ -81,6 +81,9 @@ class PopulateTestCase(TestCase):
 
 class UpdateTestCase(TestCase):
     def test_update_db(self):
+        Video.objects.all().delete()
+        Movie.objects.all().delete()
+        Series.objects.all().delete()
         if os.path.isdir("/usr/src/app/Videos/test_update_db/"):
             shutil.rmtree('/usr/src/app/Videos/test_update_db/',
                           ignore_errors=True)
@@ -126,7 +129,9 @@ class RestUpdatedTest(TestCase):
             content_type='application/json',
             data=json.dumps({
                 'headers': {
-                    'Authorization': str(self.token)
+                    'Authorization': str(self.token),
+                    'keep_files': True,
+                    'dryrun': True,
                 }
             })
         )
