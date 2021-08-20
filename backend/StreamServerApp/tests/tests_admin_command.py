@@ -109,3 +109,25 @@ class UpdateTestCase(TestCase):
         update_db_from_local_folder("/usr/src/app/Videos/folder1/", settings.VIDEO_URL)
         self.assertEqual(Series.objects.count(), 1)
         self.assertEqual(Movie.objects.count(), 1)'''
+
+
+class RestUpdatedTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(
+            username='test_user', password='top_secret')
+        self.token = Token.objects.create(user=self.user)
+        self.token.save()
+        self.client.defaults['HTTP_AUTHORIZATION'] = str(self.token)
+
+    def test_updatedb_with_valid_token(self):
+        response = self.client.post(
+            reverse('updatedb'),
+            content_type='application/json',
+            data=json.dumps({
+                'headers': {
+                    'Authorization': str(self.token)
+                }
+            })
+        )
+        self.assertEqual(response.status_code, 200)

@@ -26,25 +26,15 @@ Migrate the database:
 
     docker-compose -f docker-compose-prod.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py migrate
 
-Populate the database:
-
-    docker-compose -f docker-compose-prod.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py populatedb
-
 Run the server:
 
     docker-compose -f docker-compose-prod.yml up
 
 Now the application should be accessible from your browser at `http://localhost:1337/streaming/`.
 
-A built-in torrent server is available at: `http://localhost:1337/transmission/web/`
+You can add torrent (see next section to configure torrent section password).
 
-Once your torrent download is finished, you can trigger an update with:
-
-    docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py updatedb
-
-Encoding time can be quite long (We generate SD and HD layers), so you shoud probabably run this command in a background process.
-
-    docker-compose -f docker-compose-prod.yml run -d --rm web python3 manage.py updatedb
+You need to create a account to update the database from the GUI (click on the login button)
 
 
 
@@ -53,12 +43,6 @@ Encoding time can be quite long (We generate SD and HD layers), so you shoud pro
 Change torrent admin password:
 
     docker-compose -f docker-compose-prod.yml run --rm nginx htpasswd -c /usr/torrent/.htpasswd admin
-
-The videos contained in the Videos/ folder are indexed everytime the populatedb command is launched.
-
-If you want to trigger an update, use the following command
-
-    docker-compose -f docker-compose-prod.yml run --rm web python3 manage.py updatedb
 
 If you want to manually modify the data, you can access the admin page with a superuser account. For that, create one with the following command.
 

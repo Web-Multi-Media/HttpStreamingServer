@@ -1,5 +1,6 @@
 import React from 'react';
 import SearchBar from '../Searchbar';
+import UpdateVideos from '../Video/UpdateVideos';
 import './Header.css';
 import User from '../login/User';
 import { AuthContext, useAuth } from '../context/auth';
@@ -45,11 +46,19 @@ export default function Header({ handleFormSubmit, displayModal, client }) {
 
 
                 <div className="headerButton">
-                    <Button variant="contained" color="secondary" className="headerButton">
+                    <Button variant="contained" color="primary" className="headerButton">
                         <a href="/transmission/web/">
                             Add Torrent
                         </a>
                     </Button>
+                </div>
+
+                <div className="headerButton">
+                {authTokens &&
+                    <UpdateVideos
+                        client={client}
+                    />
+                }
                 </div>
 
             </div>

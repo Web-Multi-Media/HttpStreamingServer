@@ -20,6 +20,7 @@ const TASKS_ENDPOINT = '/tasks';
 const SUBTITLES_ENDPOINT = '/subtitles';
 const HISTORY_ENDPOINT = '/history';
 const SYNC_ENDPOINT = '/sync_subtitles';
+const UPDATE_ENDPOINT = '/updatedb'
 
 
 function Client() {
@@ -295,7 +296,28 @@ function Client() {
         return response;
     };
 
+    /**
+     * performs POST request to update video database
+     *
+     * @param id
+     *          video's id
+     * @returns {Promise<Video>}
+     *          Video
+     */
+    this.updatevideodb = async () => {
+            const body =
+            {
+                body:{}
+            };
+    
+            const response = await this.postRequest(UPDATE_ENDPOINT, body , null , {'content-type': 'multipart/form-data' } );
+            return response;
+            //return new MoviesPager(response.data);
+    };
+
 };
+
+
 
 var client = new Client();
 

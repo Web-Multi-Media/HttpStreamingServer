@@ -122,6 +122,8 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False):
         this functions will only add videos to the database if
         they are encoded with h264 codec
     """
+
+    init_cache()
     video_path = base_path
     idx = 0
     count_series = 0
