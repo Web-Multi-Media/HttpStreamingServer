@@ -44,5 +44,5 @@ class RestUpdate(APIView):
             cache.set("is_updating", "false")
             return Response({}, status=status.HTTP_200_OK)
         else:
-            return Response({}, status=status.HTTP_429_TOO_MANY_REQUESTS)
+            return Response({}, status=status.HTTP_226_IM_USED)
    

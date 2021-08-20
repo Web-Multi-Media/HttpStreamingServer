@@ -10,9 +10,10 @@ function UpdateVideo( {client}) {
     try {
       const response = await client.updatevideodb();
       if (response.status === 200) {
-        console.log("cool");
-      } else if(response.status === 429) {
-        console.log("still cool");
+        alert("The update was successfly triggered. Please refresh your window in a while \
+(This might take a long time, as we reencode content).");
+      } else if(response.status === 226) {
+        alert("An update is already running. Please refresh your window in a while");
       }
     } catch (error) {
       console.log(error);
