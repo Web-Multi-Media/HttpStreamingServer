@@ -530,5 +530,5 @@ def get_video_type_and_info(video_path):
 def update_db_from_local_folder_async(keep_files):
     update_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL, keep_files)
     update_db_from_local_folder("/usr/torrent/", "/torrents/", keep_files)
-    cache.set("is_updating", "false")
+    cache.set("is_updating", "false", timeout=None)
     return 0
