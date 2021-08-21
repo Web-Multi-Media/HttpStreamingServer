@@ -16,6 +16,7 @@ import subliminal
 from django.db import transaction
 import re
 from celery import shared_task
+from django.core.cache import cache
 
 from StreamServerApp.models import Video, Series, Movie, Subtitle
 from StreamServerApp.subtitles import init_cache
@@ -529,4 +530,5 @@ def get_video_type_and_info(video_path):
 def update_db_from_local_folder_async(keep_files):
     update_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL, keep_files)
     update_db_from_local_folder("/usr/torrent/", "/torrents/", keep_files)
+    cache.set("is_updating", "false")
     return 0

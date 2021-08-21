@@ -38,7 +38,6 @@ class RestUpdate(APIView):
             is_updateing = cache.set("is_updating", "true")
             if not dryrun:
                 update_db_from_local_folder_async.delay(keep_files)     
-            cache.set("is_updating", "false")
             return Response({}, status=status.HTTP_200_OK)
         else:
             return Response({}, status=status.HTTP_226_IM_USED)
