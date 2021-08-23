@@ -15,7 +15,7 @@ from StreamServerApp.models import Video, Series, Movie, UserVideoHistory, Subti
 from StreamServerApp.media_processing import extract_subtitle, generate_thumbnail
 from StreamServerApp.subtitles import get_subtitles
 
-from StreamServerApp.database_utils import delete_DB_Infos, populate_db_from_local_folder, update_db_from_local_folder
+from StreamServerApp.database_utils import delete_DB_Infos, update_db_from_local_folder
 import subprocess
 
 import os, shutil
@@ -47,7 +47,7 @@ class PopulateTestCase(TestCase):
                           ignore_errors=True)
         copytree("/usr/src/app/Videos/folder1/",
                  "/usr/src/app/Videos/test_database_populate_command/")
-        populate_db_from_local_folder(
+        update_db_from_local_folder(
             "/usr/src/app/Videos/test_database_populate_command/",
             settings.VIDEO_URL)
         # a bit of a mess here to make sure to count only files in all folders...
@@ -60,7 +60,7 @@ class PopulateTestCase(TestCase):
         #call_command('populatedb')
         copytree("/usr/src/app/Videos/folder1/",
                  "/usr/src/app/Videos/test_movies_series_added_to_db/")
-        populate_db_from_local_folder(
+        update_db_from_local_folder(
             "/usr/src/app/Videos/test_movies_series_added_to_db/",
             settings.VIDEO_URL)
 

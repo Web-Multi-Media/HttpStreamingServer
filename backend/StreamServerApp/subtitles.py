@@ -65,11 +65,10 @@ def handle_subliminal_download(video, video_path, languages_to_retrieve):
     return webvtt_subtitles_returned, srt_subtitles_returned
 
 
-def get_subtitles(video_path, ov_subtitles):
+def get_subtitles(video_path):
     """ # get subtitles and convert them to web vtt
         Args:
         video_path: absolute path to videos
-        ov_subtitles: boolean (True if input has subtitles, False if not)
         return: empty string if no subtitles was found. Otherwise return dict of subtitle absolute location with str(Language) as key
     """
     languages_to_retrieve = {
@@ -78,15 +77,6 @@ def get_subtitles(video_path, ov_subtitles):
     }
     webvtt_fullpath = {}
     srt_fullpath = {}
-    webvtt_ov_fullpath = ''
-
-    if ov_subtitles:
-        try:
-            webvtt_ov_fullpath = os.path.splitext(video_path)[0]+'_ov.vtt'
-            extract_subtitle(video_path, webvtt_ov_fullpath)
-        except:
-            webvtt_ov_fullpath = ''
-
 
     try:
         video = Video.fromname(video_path)
@@ -99,12 +89,5 @@ def get_subtitles(video_path, ov_subtitles):
     except ValueError:
         #This usually happens when there is not enough data for subliminal to guess
         pass
-
-    webvtt_fullpath['ov'] = webvtt_ov_fullpath
-    for lang in languages_to_retrieve:
-        if lang not in webvtt_fullpath:
-            webvtt_fullpath[lang] = ''
-        if lang not in srt_fullpath:
-            srt_fullpath[lang] = ''
 
     return [webvtt_fullpath, srt_fullpath]

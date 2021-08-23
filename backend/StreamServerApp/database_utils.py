@@ -20,7 +20,7 @@ from django.core.cache import cache
 
 from StreamServerApp.models import Video, Series, Movie, Subtitle
 from StreamServerApp.subtitles import init_cache
-from StreamServerApp.media_processing import transmux_to_mp4, generate_thumbnail
+from StreamServerApp.media_processing import transmux_to_mp4, generate_thumbnail, extract_subtitle
 from StreamServerApp.media_management.encoder import h264_encoder, aac_encoder, extract_audio
 from StreamServerApp.media_management.dash_packager import dash_packager
 from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
@@ -40,79 +40,6 @@ def get_num_videos():
     """ Return the number of videos in the db
     """
     return Video.objects.count()
-
-
-def pretty(d, indent=0):
-    """ pretty print for nested dictionnary
-    """
-    for key, value in d.items():
-        print('\t' * indent + str(key))
-        if isinstance(value, dict):
-            pretty(value, indent + 1)
-        else:
-            print('\t' * (indent + 1) + str(value))
-
-
-def populate_db_from_local_folder(base_path, remote_url, keep_files=False):
-    """ # create all the videos infos in the database
-        Args:
-        remote_url: baseurl for video access on the server
-        base_path: Local Folder where the videos are stored
-        keep_files: keep video files instead of deleting it in case of conversion
-
-
-        this functions will only add videos to the database if
-        they are encoded with h264 codec
-    """
-    init_cache()
-    video_path = base_path
-    idx = 0
-    count_series = 0
-    count_movies = 0
-
-    for root, directories, filenames in os.walk(video_path):
-        idx += len(filenames)
-        for filename in filenames:
-            full_path = os.path.join(root, filename)
-
-            if isfile(full_path) and (full_path.endswith(".mp4")
-                                      or full_path.endswith(".mkv")
-                                      or full_path.endswith(".avi")):
-                try:
-                    # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
-                    with transaction.atomic():
-                        retValue = add_one_video_to_database(
-                            full_path, video_path, root, remote_url, filename,
-                            keep_files)
-                        if retValue == 1:
-                            count_movies += 1
-                        elif retValue == 2:
-                            count_series += 1
-
-                except Exception as ex:
-                    print("An error occured")
-                    traceback.print_exception(type(ex), ex, ex.__traceback__)
-                    continue
-            elif isfile(full_path) and (full_path.endswith(".mpd")):
-                try:
-                    # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
-                    with transaction.atomic():
-                        retValue = add_one_manifest_to_database(
-                            full_path, video_path, root, remote_url, filename,
-                            keep_files)
-                        if retValue == 1:
-                            count_movies += 1
-                        elif retValue == 2:
-                            count_series += 1
-
-                except Exception as ex:
-                    print("An error occured")
-                    traceback.print_exception(type(ex), ex, ex.__traceback__)
-                    continue
-
-    print("{} videos were added to the database".format(get_num_videos()))
-    print('{} series and {} movies were created'.format(
-        count_series, count_movies))
 
 
 def update_db_from_local_folder(base_path, remote_url, keep_files=False):
@@ -264,10 +191,19 @@ def add_one_video_to_database(full_path,
                 return_value = 1
 
         v.save()
+        if video_infos["ov_subtitle"]:
+            ov_sub = Subtitle()
+            webvtt_subtitles_relative_path = os.path.relpath(
+                video_infos["ov_subtitle"], video_path)
+            ov_sub.webvtt_subtitle_url = os.path.join(
+                remote_url, webvtt_subtitles_relative_path)
+            ov_sub.language = Subtitle.OV
+            ov_sub.video_id = v
+            ov_sub.save()
 
         #we use oncommit because autocommit is not enabled.
         transaction.on_commit(lambda: get_subtitles_async.delay(
-            v.id, video_infos['has_ov_subtitle'], video_path, remote_url))
+            v.id, video_path, remote_url))
 
     return return_value
 
@@ -347,7 +283,7 @@ def add_one_manifest_to_database(full_path,
 
         #we use oncommit because autocommit is not enabled.
         transaction.on_commit(lambda: get_subtitles_async.delay(
-            v.id, video_infos['has_ov_subtitle'], video_path, remote_url))
+            v.id, video_path, remote_url))
 
     return return_value
 
@@ -407,14 +343,17 @@ def prepare_video(video_full_path,
         print('No audio stream found', file=sys.stderr)
         return {}
 
-    ov_subtitles = False
+    webvtt_ov_fullpath = None
     subtitles_stream = next(
         (stream
          for stream in probe['streams'] if stream['codec_type'] == 'subtitle'),
         None)
     if subtitles_stream is not None:
         print('Found Subtitles in the input stream')
-        ov_subtitles = True
+        webvtt_ov_fullpath = os.path.splitext(video_full_path)[0]+'_ov.vtt'
+        print(video_full_path)
+        print(webvtt_ov_fullpath)
+        extract_subtitle(video_full_path, webvtt_ov_fullpath)
 
     audio_codec_type = audio_stream['codec_name']
     audio_elementary_stream_path = "{}.m4a".format(
@@ -473,7 +412,7 @@ def prepare_video(video_full_path,
         'video_height': video_height,
         'video_width': video_width,
         'remote_thumbnail_url': remote_thumbnail_url,
-        'has_ov_subtitle': ov_subtitles,
+        'ov_subtitle': webvtt_ov_fullpath,
         'video_full_path': video_full_path,
         'mpd_path': temp_mpd
     }

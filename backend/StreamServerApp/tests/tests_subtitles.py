@@ -34,8 +34,7 @@ class SubtitlesTest(TestCase):
 
     def test_subtitles_download(self):
         subtitles = get_subtitles(
-            "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4",
-            False)
+            "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4")
         self.assertEqual(
             os.path.isfile(
                 "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.en.vtt"
@@ -125,8 +124,7 @@ class SubtitlesTest(TestCase):
 
     def test_subtitles_download(self):
         subtitles = get_subtitles(
-            "/usr/src/app/Videos/Friends S01E07 The One with the Blackout.mp4",
-            False)
+            "/usr/src/app/Videos/Friends S01E07 The One with the Blackout.mp4")
         self.assertEqual(
             os.path.isfile(
                 "/usr/src/app/Videos/Friends S01E07 The One with the Blackout.en.srt"
@@ -153,7 +151,7 @@ class SubtitlesTest(TestCase):
             name="Man On The Moon.mp4",
             video_folder="{}/playlist.mpd".format(path_to_dash_asset))
 
-        get_subtitles_async(video.id, False, "/usr/src/app/Videos/", "/Videos/")
+        get_subtitles_async(video.id, "/usr/src/app/Videos/", "/Videos/")
 
         expected_url = os.path.join(
             settings.VIDEO_URL,
@@ -180,7 +178,7 @@ class SubtitlesTest(TestCase):
             name="Man On The Moon.mp4",
             video_folder="{}/playlist.mpd".format(path_to_dash_asset))
 
-        get_subtitles_async(video.id, False, "/usr/torrent/", "/torrents/")
+        get_subtitles_async(video.id, "/usr/torrent/", "/torrents/")
 
         expected_url = os.path.join(
             "/torrents/",

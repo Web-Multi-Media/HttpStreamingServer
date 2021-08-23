@@ -85,7 +85,7 @@ class Video(models.Model):
         else:
             return 0
 
-    def get_subtitles(self, ov_subtitles, video_path, remote_url):
+    def get_subtitles(self, video_path, remote_url):
         """ # get subtitles for the current instance of video.
             Args:
             ov_subtitles: boolean (True if input has subtitles, False if not).
@@ -103,7 +103,7 @@ class Video(models.Model):
             return 0
 
         print("get sub for {}".format(video_infos["video_full_path"]))
-        subtitles_list = get_subtitles(video_infos["video_full_path"], ov_subtitles)
+        subtitles_list = get_subtitles(video_infos["video_full_path"])
 
         webvtt_subtitles_full_path = subtitles_list[0]
         srt_subtitles_full_path = subtitles_list[1]
