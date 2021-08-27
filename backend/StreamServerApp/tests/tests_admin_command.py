@@ -129,7 +129,7 @@ class RestUpdatedTest(TestCase):
             content_type='application/json',
             data=json.dumps({
                 'headers': {
-                    'Authorization': str(self.token),
+                    'Authorization': "Token " + str(self.token),
                     'keep_files': True,
                     'dryrun': True,
                 }

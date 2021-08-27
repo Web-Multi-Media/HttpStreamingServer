@@ -1,4 +1,4 @@
-import React from "react";
+import React , { useEffect, useState } from 'react';
 import { useAuth } from "../context/auth";
 import Button from "@material-ui/core/Button";
 //import { client } from '../../api/djangoAPI';
@@ -6,22 +6,35 @@ import './User.css'
 
 function UserInfo({displayModal, client}) {
   const { setAuthTokens } = useAuth();
+  const { authTokens } = useAuth();
 
-  async function postlogout() {
-    client.logout();
-  }
+  const [userinfo, setUserInfo] = useState(null);
+  useEffect( () => {
+      async function getInfos() {
+          if (authTokens && authTokens.key !== "") {
+              const response = await client.getUserInfo();
+              setUserInfo(response);
+          }
+      }
+      getInfos();
+  }, [authTokens]);
+
 
   function logOut() {
     setAuthTokens();
     displayModal(false);
-    postlogout();
+    client.logout()
   }
 
 
   return (
-        <Button onClick={logOut} variant="contained" color="primary">
-            Log out
-        </Button>
+    <div className="headerButton" variant="contained">
+      {userinfo &&
+      <Button onClick={logOut} variant="contained" color="primary">
+           {userinfo.username} {"\n"} (Log out)
+      </Button> 
+      }
+    </div>
   );
 }
 

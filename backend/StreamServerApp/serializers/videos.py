@@ -36,7 +36,7 @@ class VideoSerializer(serializers.ModelSerializer):
 
     def get_video_time_history(self, obj):
         try:
-            user = self.context['request'].api_user
+            user = self.context['request'].user
             return obj.return_user_time_history(user)
         except:
             pass

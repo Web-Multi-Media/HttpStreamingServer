@@ -10,14 +10,32 @@ import Carousels from "./Carousels/Carousels";
 const utils = require ("./../utils/utils");
 
 function App(props) {
+    
     var existingTokens;
-    try{
-        existingTokens = JSON.parse(localStorage.getItem("tokens"));
-    }
-    catch{
-        existingTokens = '';
-    }
-    const [authTokens, setAuthTokens] = useState(existingTokens);
+    const [authTokens, setAuthTokens] = useState(null);
+    useEffect( () => {
+        async function checktoken(){
+        try{
+             existingTokens = JSON.parse(localStorage.getItem("tokens"));
+             if(existingTokens){
+                 client.setToken(existingTokens);
+                 //We try to get user info here to check if the token is still valid
+                 await client.getUserInfo();
+                 setAuthTokens(existingTokens);
+             }
+         }
+         catch {
+             console.log("Token is invalid, logout and reset localstorage");
+             setAuthTokens(null);
+             client.resetToken();
+             client.logout();
+             localStorage.removeItem("tokens");
+         }
+       }
+       checktoken();
+    
+       }, []);
+    
     const [pager, setPager] = useState(null);
     const [displayModal, setDisplayModal] = useState(false);
     const [toggleModal, setToggleModal] = useState(true);
@@ -40,23 +58,22 @@ function App(props) {
             ]);
         };
         async function GetHistory() {
-            // Set the token for the API client
-            client.setToken(authTokens);
             try{
                 if(authTokens && authTokens.key !== ""){
-                    const history = await client.getHistory(authTokens.key);
+                    const history = await client.getHistory();
                     setHistoryPager(history)
                 }
             }
             catch{
                 // We catch here the exception if a token was retrieved locally in the browser but not present
                 // in the server anymore.
-                existingTokens = '';
+                setAuthTokens(null);
                 client.resetToken();
                 client.logout();
+                localStorage.removeItem("tokens");
             }
         }    // Execute the created function directly
-        GetHistory(authTokens);
+        GetHistory();
         fetchData();
     }, [authTokens]);
 

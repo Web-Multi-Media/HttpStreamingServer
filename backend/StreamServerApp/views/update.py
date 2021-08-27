@@ -11,7 +11,7 @@ from django.core.cache import cache
 class RestUpdate(APIView):
     def post(self, request):
         try:
-            user = request.api_user
+            user = request.user
             #return self.get_history(request, user)
         except Exception as ex:
             traceback.print_exception(type(ex), ex, ex.__traceback__)

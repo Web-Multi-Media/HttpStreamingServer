@@ -1,14 +1,11 @@
-import React from 'react';
+import React , { useEffect, useState } from 'react';
 import SearchBar from '../Searchbar';
 import UpdateVideos from '../Video/UpdateVideos';
 import './Header.css';
 import User from '../login/User';
-import { AuthContext, useAuth } from '../context/auth';
+import {useAuth } from '../context/auth';
 import Button from "@material-ui/core/Button";
-import {
-    BrowserRouter as Router,
-    Link
-  } from "react-router-dom";
+
 
 export default function Header({ handleFormSubmit, displayModal, client }) {
     const { authTokens } = useAuth();

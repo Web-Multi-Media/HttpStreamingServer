@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
-import axios from 'axios';
 import { Card, Form, Input, Button, Error } from "./AuthForm";
 import { useAuth } from "../context/auth";
 import { client } from '../../api/djangoAPI';
@@ -11,7 +10,6 @@ function Signup({toggleModalBox, setDisplayModal}) {
   const [username, setUserName] = useState("");
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
-  const email = ""
   const { setAuthTokens } = useAuth();
   const [errorMessages, setErrorMessage] = useState([]);
 
@@ -20,6 +18,7 @@ function Signup({toggleModalBox, setDisplayModal}) {
       const response = await client.signup(username, password1, password2)
       if (response.status === 201) {
         setAuthTokens(response.data);
+        client.setToken(response.data);
         setLoggedIn(true);
       } else {
         setIsError(true);
@@ -32,7 +31,7 @@ function Signup({toggleModalBox, setDisplayModal}) {
   }
 
   function search(event) {
-    if(event.keyCode == 13) {
+    if(event.keyCode === 13) {
       postSignup();
     }
   }

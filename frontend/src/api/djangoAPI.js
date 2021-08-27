@@ -20,8 +20,8 @@ const TASKS_ENDPOINT = '/tasks';
 const SUBTITLES_ENDPOINT = '/subtitles';
 const HISTORY_ENDPOINT = '/history';
 const SYNC_ENDPOINT = '/sync_subtitles';
-const UPDATE_ENDPOINT = '/updatedb'
-
+const UPDATE_ENDPOINT = '/updatedb';
+const AUTH_ENDPOINT = '/rest-auth';
 
 function Client() {
     this.token = null;
@@ -33,7 +33,18 @@ function Client() {
      *          user API token
      */
     this.setToken = (token) => {
-        this.token = token ? token.key : "";
+        console.log("set Token " + token.key );
+        this.token = token ? `Token ${token.key}` : "";
+    };
+
+    /**
+     * Procedure to reset the user API token in the axios http client
+     *
+     * @param token
+     *          user API token
+     */
+    this.isLoggedIn = () => {
+        return !(this.token === (null) ||  this.token === "")
     };
 
     /**
@@ -95,23 +106,19 @@ function Client() {
      * @returns {Response}
      *
      */
-    this.postRequest = (endPoint, body={}, params=null, headers ={}) =>
+    this.postRequest = (endPoint, param={}, extra_header=null) =>
     {
-        const   axiosParams = {
-            headers: {
-            Authorization: this.token, // the token is a variable which holds the token
-            'X-CSRFToken': this.csrfcookie,
-            ...headers
-            },
-            ...body,
+
+        const options = {
+            headers : {
+                Authorization: this.token ? this.token:'', // the token is a variable which holds the token
+                'X-CSRFToken': this.csrfcookie ? this.csrfcookie:'',
+                ...extra_header
+            }
         };
 
-        if (params){
-            return http.post(`${endPoint}/`, params , axiosParams);
-        }
-        else {
-            return http.post(`${endPoint}/`, axiosParams);
-        }
+
+        return http.post(`${endPoint}/`, param , options);
 }
 
     /**
@@ -123,8 +130,14 @@ function Client() {
      *          Video
      */
     this.getVideoById = async (id) => {
-        const response = await this.getRequest(`${VIDEOS_ENDPOINT}/${id}/`);
-        return new Video(response.data);
+
+        try{
+            const response = await this.getRequest(`${VIDEOS_ENDPOINT}/${id}/`);
+            return new Video(response.data);
+        } catch ( error ) {
+            console.log( "Error caught and rethrown in ():", error.message );
+            throw( error );
+        }
     };
 
     /**
@@ -142,10 +155,13 @@ function Client() {
                 'video-id': id,
                 'video-time': timeStamp,}
         };
-
-        const response = await this.postRequest(HISTORY_ENDPOINT, body , null , {'content-type': 'multipart/form-data' } );
-
-        return new MoviesPager(response.data);
+        try {
+            const response = await this.postRequest(HISTORY_ENDPOINT, body, { 'content-type': 'application/json' });
+            return new MoviesPager(response.data);
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
     };
 
 
@@ -157,9 +173,14 @@ function Client() {
      * @returns {Promise<Video>}
      *          Video
      */
-    this.getHistory = async (token) => {
-        const response = await this.getRequest(HISTORY_ENDPOINT);
-        return new MoviesPager(response.data);
+    this.getHistory = async () => {
+        try {
+            const response = await this.getRequest(HISTORY_ENDPOINT);
+            return new MoviesPager(response.data);
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
     };
 
     /**
@@ -173,21 +194,30 @@ function Client() {
      */
     this.searchSeries = async (searchQuery) => {
         const params = searchQuery ? { search_query: searchQuery } : null;
-        const response = await this.getRequest(SERIES_ENDPOINT, { params });
-
-        return new SeriesPager(response.data);
+        try {
+            const response = await this.getRequest(SERIES_ENDPOINT, { params });
+            return new SeriesPager(response.data);
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
     };
 
     this.searchMovies = async (searchQuery) => {
         const params = searchQuery ? { search_query: searchQuery } : null;
-        const response = await this.getRequest(MOVIES_ENDPOINT, { params });
-        response.data.results = response.data.results.reduce( (result, element) => {
-            //We filter here empty movies set
-            if (element.video_set.count > 0)
-                result.push(element.video_set.results[0]);
-            return result;
-        }, []);
-        return new MoviesPager(response.data);
+        try {
+            const response = await this.getRequest(MOVIES_ENDPOINT, { params });
+            response.data.results = response.data.results.reduce((result, element) => {
+                //We filter here empty movies set
+                if (element.video_set.count > 0)
+                    result.push(element.video_set.results[0]);
+                return result;
+            }, []);
+            return new MoviesPager(response.data);
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
     };
 
     /**
@@ -204,8 +234,14 @@ function Client() {
         params.append('datafile',datafile);
         params.append('language',language);
         params.append('video_id',video_id);
-        const response = await this.postRequest(SUBTITLES_ENDPOINT, null , params , {'content-type': 'multipart/form-data' } );
-        return response;
+        try {
+            const response = await this.postRequest(SUBTITLES_ENDPOINT, params, { 'content-type': 'multipart/form-data' });
+            return response;
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
+        
     };
 
     this.resyncSubtitle = async (video_id, subtitle_id) => {
@@ -222,8 +258,13 @@ function Client() {
      *          Video
      */
     this.getTaskStatusByID = async (id) => {
-        const response = await this.getRequest(`${TASKS_ENDPOINT}/${id}/`);
-        return response.data;
+        try {
+            const response = await this.getRequest(`${TASKS_ENDPOINT}/${id}/`);
+            return response.data;
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
     };
 
     /**
@@ -236,8 +277,13 @@ function Client() {
      */
 
     this.getSubtitleById = async (id) => {
-        const response = await this.getRequest(`${SUBTITLES_ENDPOINT}/${id}/`);
-        return new Subtitle(response.data);
+        try {
+            const response = await this.getRequest(`${SUBTITLES_ENDPOINT}/${id}/`);
+            return new Subtitle(response.data);
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
     };
 
     /**
@@ -250,7 +296,13 @@ function Client() {
      */
 
     this.logout = async () => {
-        const response = await client.postRequest("/rest-auth/logout", null);
+        try{
+            const response = await client.postRequest("/rest-auth/logout", null);
+            this.token = "";
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
     };
 
     /**
@@ -271,8 +323,13 @@ function Client() {
             'email': "",
           
         };
-        const response = await client.postRequest("/rest-auth/login", param );
-        return response;
+        try{
+            const response = await client.postRequest("/rest-auth/login", param );
+            return response;
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
     };
 
     /**
@@ -292,27 +349,48 @@ function Client() {
             'password2': password2,
           
         };
-        const response = await client.postRequest("/rest-auth/registration", param );
-        return response;
+         try {
+             const response = await client.postRequest("/rest-auth/registration", param);
+             return response;
+         } catch (error) {
+             console.log("Error caught and rethrown in ():", error.message);
+             throw (error);
+         }
     };
 
     /**
      * performs POST request to update video database
      *
-     * @param id
-     *          video's id
-     * @returns {Promise<Video>}
-     *          Video
+     * @returns response
      */
     this.updatevideodb = async () => {
             const body =
             {
                 body:{}
             };
-    
-            const response = await this.postRequest(UPDATE_ENDPOINT, body , null , {'content-type': 'multipart/form-data' } );
-            return response;
-            //return new MoviesPager(response.data);
+            try{
+                const response = await this.postRequest(UPDATE_ENDPOINT, body , null , {'content-type': 'multipart/form-data' } );
+                return response;
+            } catch (error) {
+                console.log("Error caught and rethrown in ():", error.message);
+                throw (error);
+            }
+    };
+
+    /**
+     * performs GET request to get user infos
+     *
+     * @returns response
+     */
+
+    this.getUserInfo = async () => {
+        try {
+            const response = await this.getRequest(`${AUTH_ENDPOINT}/user/`);
+            return response.data;
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
     };
 
 };

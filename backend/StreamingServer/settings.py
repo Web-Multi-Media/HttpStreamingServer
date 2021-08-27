@@ -108,7 +108,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'StreamingServer.middleware.UserAuthMiddleware',
+    #'StreamingServer.middleware.UserAuthMiddleware',
 ]
 
 ROOT_URLCONF = 'StreamingServer.urls'
@@ -180,7 +180,10 @@ CORS_ALLOW_CREDENTIALS = False
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
      # the page size must be greater (strictly) than SLIDES_OF_CAROUSEL in VideoCarouselSlick.js
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
 }
 
 # https://django-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional

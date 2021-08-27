@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Link, Redirect } from "react-router-dom";
-import axios from 'axios';
 import { Card, Form, Input, Button, Error } from "./AuthForm";
 import { useAuth } from "../context/auth";
-import { client } from '../../api/djangoAPI';
 import '../Modal.css'
 
 function Login({toggleModalBox, setDisplayModal, client}) {
@@ -19,6 +17,9 @@ function Login({toggleModalBox, setDisplayModal, client}) {
     try {
       const response = await client.login(username, password, "");
       if (response.status === 200) {
+        if(response.data.key){
+          client.setToken(response.data);
+       }
         setAuthTokens(response.data);
         setLoggedIn(true);
       } else {
@@ -32,7 +33,7 @@ function Login({toggleModalBox, setDisplayModal, client}) {
   }
 
   function search(event) {
-    if(event.keyCode == 13) {
+    if(event.keyCode === 13) {
       postLogin();
     }
   }

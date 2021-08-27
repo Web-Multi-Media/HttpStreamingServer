@@ -120,12 +120,13 @@ class UtilsTest(TestCase):
 
 class HistoryTest(TestCase):
     def setUp(self):
-        self.client = APIClient()
         self.user = User.objects.create_user(
             username='test_user', password='top_secret')
         self.token = Token.objects.create(user=self.user)
         self.token.save()
-        self.client.defaults['HTTP_AUTHORIZATION'] = str(self.token)
+        self.client = Client(HTTP_AUTHORIZATION='Token ' + str(self.token))
+        self.client.defaults['HTTP_AUTHORIZATION'] = "Token " + str(self.token)
+        
 
     def test_get_empty_history(self):
         response = self.client.get(reverse('history'))
@@ -145,7 +146,7 @@ class HistoryTest(TestCase):
                     'video-time': 10,
                 },
                 'headers': {
-                    'Authorization': str(self.token)
+                    'Authorization': "Token " + str(self.token)
                 }
             })
         )

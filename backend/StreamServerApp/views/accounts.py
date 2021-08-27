@@ -9,12 +9,16 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from StreamServerApp.serializers.videos import VideoListSerializer
 from StreamServerApp.models import Video, UserVideoHistory
+from rest_framework import permissions
 
 
 class History(APIView, LimitOffsetPagination):
     """
     Get, create and update user history
     """
+
+    permission_classes = [permissions.IsAuthenticated]
+
     def get_history(self, request, user):
         queryset = Video.objects.select_related('movie', 'series').filter(history=user).order_by('-uservideohistory__updated_at')
         results = self.paginate_queryset(queryset, request, view=self)
@@ -23,7 +27,7 @@ class History(APIView, LimitOffsetPagination):
 
     def get(self, request):
         try:
-            user = request.api_user
+            user = request.user
             return self.get_history(request, user)
 
         except Exception as ex:
@@ -34,7 +38,7 @@ class History(APIView, LimitOffsetPagination):
         try:
             video_id = request.data.get('body').get('video-id')
             time = request.data.get('body').get('video-time', 0)
-            user = request.api_user
+            user = request.user
             video = Video.objects.get(id=video_id)
 
             # For series we only keep one video history
