@@ -1,4 +1,4 @@
-import React , { useEffect, useState } from 'react';
+import React  from 'react';
 import SearchBar from '../Searchbar';
 import UpdateVideos from '../Video/UpdateVideos';
 import './Header.css';
@@ -7,7 +7,7 @@ import {useAuth } from '../context/auth';
 import Button from "@material-ui/core/Button";
 
 
-export default function Header({ handleFormSubmit, displayModal, client }) {
+export default function Header({ handleFormSubmit, displayModal, client, userinfos , setUserInfos}) {
     const { authTokens } = useAuth();
     return (
         <header className="headerBar">
@@ -36,6 +36,7 @@ export default function Header({ handleFormSubmit, displayModal, client }) {
                         <User
                             displayModal={displayModal}
                             client={client}
+                            userinfos={userinfos}
                         />
                     </div>
 

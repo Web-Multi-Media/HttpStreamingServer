@@ -4,7 +4,7 @@ import { Card, Form, Input, Button, Error } from "./AuthForm";
 import { useAuth } from "../context/auth";
 import '../Modal.css'
 
-function Login({toggleModalBox, setDisplayModal, client}) {
+function Login({toggleModalBox, setDisplayModal, client, userinfos, setUserInfos }) {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessages, setErrorMessage] = useState([]);
@@ -22,6 +22,8 @@ function Login({toggleModalBox, setDisplayModal, client}) {
        }
         setAuthTokens(response.data);
         setLoggedIn(true);
+        const user_response_info = await client.getUserInfo();
+        setUserInfos(user_response_info);
       } else {
         setIsError(true);
         setErrorMessage(Object.values(response.data));

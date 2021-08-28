@@ -4,7 +4,7 @@ import { Card, Form, Input, Button, Error } from "./AuthForm";
 import { useAuth } from "../context/auth";
 import { client } from '../../api/djangoAPI';
 
-function Signup({toggleModalBox, setDisplayModal}) {
+function Signup({toggleModalBox, setDisplayModal,  userinfos, setUserInfos}) {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
   const [username, setUserName] = useState("");
@@ -20,6 +20,8 @@ function Signup({toggleModalBox, setDisplayModal}) {
         setAuthTokens(response.data);
         client.setToken(response.data);
         setLoggedIn(true);
+        const user_response_info = await client.getUserInfo();
+        setUserInfos(user_response_info);
       } else {
         setIsError(true);
         setErrorMessage(Object.values(response.data));

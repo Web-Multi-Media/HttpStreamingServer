@@ -13,16 +13,18 @@ function App(props) {
     
     var existingTokens;
     const [authTokens, setAuthTokens] = useState(null);
+    const [userInfos, setUserInfos] = useState(null);
     useEffect( () => {
         async function checktoken(){
         try{
-             existingTokens = JSON.parse(localStorage.getItem("tokens"));
-             if(existingTokens){
-                 client.setToken(existingTokens);
-                 //We try to get user info here to check if the token is still valid
-                 await client.getUserInfo();
-                 setAuthTokens(existingTokens);
-             }
+            existingTokens = JSON.parse(localStorage.getItem("tokens"));
+            if (existingTokens) {
+                client.setToken(existingTokens);
+                //We try to get user info here to check if the token is still valid
+                setAuthTokens(existingTokens);
+                const user_response_info = await client.getUserInfo();
+                setUserInfos(user_response_info);
+            }
          }
          catch {
              console.log("Token is invalid, logout and reset localstorage");
@@ -133,6 +135,8 @@ function App(props) {
                 handleFormSubmit={handleSubmit}
                 displayModal={displayModalBox}
                 client={client}
+                userinfos={userInfos}
+                setUserInfos={setUserInfos}
             />
             <Carousels
                 video={selectedVideo}
@@ -150,12 +154,16 @@ function App(props) {
                 toggleModalBox={toggleModalBox}
                 setDisplayModal={setDisplayModal}
                 client={client}
+                userinfos={userInfos}
+                setUserInfos={setUserInfos}
             />}
             {(displayModal && !toggleModal) &&
             <Signup
                 toggleModalBox={toggleModalBox}
                 setDisplayModal={setDisplayModal}
                 client={client}
+                userinfos={userInfos}
+                setUserInfos={setUserInfos}
            />}
 
         </AuthContext.Provider>
