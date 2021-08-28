@@ -38,10 +38,8 @@ function Client() {
     };
 
     /**
-     * Procedure to reset the user API token in the axios http client
+     * Procedure to check if the client token is set
      *
-     * @param token
-     *          user API token
      */
     this.isLoggedIn = () => {
         return !(this.token === (null) ||  this.token === "")
@@ -111,7 +109,7 @@ function Client() {
 
         const options = {
             headers : {
-                Authorization: this.token ? this.token:'', // the token is a variable which holds the token
+                Authorization: (this.token !==null) ? this.token:'', // the token is a variable which holds the token
                 'X-CSRFToken': this.csrfcookie ? this.csrfcookie:'',
                 ...extra_header
             }

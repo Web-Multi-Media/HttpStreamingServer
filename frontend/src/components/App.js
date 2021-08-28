@@ -59,7 +59,7 @@ function App(props) {
         };
         async function GetHistory() {
             try{
-                if(authTokens && authTokens.key !== ""){
+                if(authTokens && authTokens.key !== "" && client.isLoggedIn()){
                     const history = await client.getHistory();
                     setHistoryPager(history)
                 }

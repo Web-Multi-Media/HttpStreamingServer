@@ -11,7 +11,7 @@ function UserInfo({displayModal, client}) {
   const [userinfo, setUserInfo] = useState(null);
   useEffect( () => {
       async function getInfos() {
-          if (authTokens && authTokens.key !== "") {
+          if (authTokens && authTokens.key !== "" && client.isLoggedIn()) {
               const response = await client.getUserInfo();
               setUserInfo(response);
           }
