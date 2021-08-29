@@ -371,12 +371,15 @@ def prepare_video(video_full_path,
     else:
         aac_encoder(video_full_path, audio_elementary_stream_path)
 
+    high_layer_bitrate = os.getenv('720P_LAYER_BITRATE', 2400000)
+    low_layer_bitrate = os.getenv('480P_LAYER_BITRATE', 400000)
+
     h264_encoder(
         video_full_path,
-        video_elementary_stream_path_720, 720, 1800000)
+        video_elementary_stream_path_720, 720, high_layer_bitrate)
     h264_encoder(
         video_full_path,
-        video_elementary_stream_path_480, 480, 800000)
+        video_elementary_stream_path_480, 480, low_layer_bitrate)
 
     relative_path = os.path.relpath(video_full_path, video_path)
 
@@ -391,7 +394,7 @@ def prepare_video(video_full_path,
         generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
     #Dash_packaging
-    dash_packager(video_elementary_stream_path_480, video_elementary_stream_path_720, audio_elementary_stream_path,
+    dash_packager(video_elementary_stream_path_480, low_layer_bitrate, video_elementary_stream_path_720, high_layer_bitrate, audio_elementary_stream_path,
                   dash_output_directory)
 
     os.remove(video_elementary_stream_path_720)

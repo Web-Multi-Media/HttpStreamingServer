@@ -38,6 +38,8 @@ class TestDash(TestCase):
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
             "/usr/src/app/Videos/lebowsky.m4a")
         dash_packager("/usr/src/app/Videos/lebowsky_480.264",
+                      800000,
                       "/usr/src/app/Videos/lebowsky_720.264",
+                      1800000,
                       "/usr/src/app/Videos/lebowsky.m4a",
                       "/usr/src/app/Videos/lebowskydash/")
