@@ -1,6 +1,5 @@
-import os
+import os, shutil
 import json
-import shutil
 from os.path import isfile
 from django.urls import reverse
 from django.core.management import call_command
@@ -13,7 +12,7 @@ from rest_framework.test import APIClient
 from StreamServerApp.database_utils import get_num_videos, get_video_type_and_info
 from StreamServerApp.models import Video, Series, Movie, UserVideoHistory, Subtitle
 from StreamServerApp.media_processing import extract_subtitle, generate_thumbnail
-from StreamServerApp.subtitles import get_subtitles
+from StreamServerApp.media_management.encoder import h264_encoder
 
 
 def add_series_videos(num_videos=2):
@@ -292,3 +291,17 @@ class ModelsTest(TestCase):
         self.assertEqual(episodes.count(), 2)
         self.assertEqual(list(episodes.values_list('episode', flat=True)), [1, 2])
 
+
+class EncodingTest(TestCase):
+    #docker-compose -f docker-compose-prod.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py test StreamServerApp.tests.tests_videos.EncodingTest
+    def test_10bits_input(self):
+        testdir = "/usr/src/app/test_10bits/"
+        if not os.path.isdir(testdir):
+            os.mkdir(testdir)
+
+        input_test_file = "{}10bitsmovie.mkv".format(testdir)
+        output_test_file = "{}10bitsmovie.264".format(testdir)
+
+        shutil.copy2("/usr/src/app/Videos/10bitsmovie.mkv", input_test_file)
+
+        h264_encoder(input_test_file, output_test_file, 720, 400000)

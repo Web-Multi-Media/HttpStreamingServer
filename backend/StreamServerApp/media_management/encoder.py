@@ -4,10 +4,10 @@ import json
 
 
 def h264_encoder(filename, output, resolutionH, bitrate):
-    command = 'ffmpeg -y -i "{filename}" -vf format=yuv420p -filter:v scale=-2:"{resolution}" -c:v libx264 -b:v "{bitrate}" \
+    command = 'ffmpeg -y -i "{filename}" -filter:v scale=-2:"{resolution}" -c:v libx264 -b:v "{bitrate}" \
             -r 24 -x264opts \'keyint=48:min-keyint=48:no-scenecut\' \
             -movflags faststart -bufsize 8600k \
-            -profile:v main -preset veryfast -an  "{outputfile}"'.format(
+            -pix_fmt yuv420p -profile:v main -preset veryfast -an  "{outputfile}"'.format(
         outputfile=output, resolution=resolutionH, bitrate=bitrate, filename=filename)
 
     print(command)

@@ -40,28 +40,36 @@ class PopulateTestCase(TestCase):
 
         args = []
         opts = {}
+        testdir = "/usr/src/app/test_database_populate_command/"
         #call_command('populatedb', *args, **opts)
-        if os.path.isdir(
-                "/usr/src/app/Videos/test_database_populate_command/"):
-            shutil.rmtree('/usr/src/app/Videos/test_update_db/',
+        if os.path.isdir(testdir):
+            shutil.rmtree(testdir,
                           ignore_errors=True)
         copytree("/usr/src/app/Videos/folder1/",
-                 "/usr/src/app/Videos/test_database_populate_command/")
+                 testdir)
         update_db_from_local_folder(
-            "/usr/src/app/Videos/test_database_populate_command/",
+            testdir,
             settings.VIDEO_URL)
         # a bit of a mess here to make sure to count only files in all folders...
         self.assertEqual(get_num_videos(), 3)
 
     def test_movies_series_added_to_db(self):
+        Video.objects.all().delete()
+        Movie.objects.all().delete()
+        Series.objects.all().delete()
+
+        testdir = "/usr/src/app/test_movies_series_added_to_db/"
         # We check that only one Series instance is created (2 bing band theory episodes)
         # and 4 Movie instances are created.
         # We also check that the video fields are set correctly.
         #call_command('populatedb')
+        if os.path.isdir(testdir):
+            shutil.rmtree(testdir,
+                          ignore_errors=True)
         copytree("/usr/src/app/Videos/folder1/",
-                 "/usr/src/app/Videos/test_movies_series_added_to_db/")
+                 testdir)
         update_db_from_local_folder(
-            "/usr/src/app/Videos/test_movies_series_added_to_db/",
+            testdir,
             settings.VIDEO_URL)
 
         self.assertEqual(Series.objects.count(), 1)
@@ -84,15 +92,17 @@ class UpdateTestCase(TestCase):
         Video.objects.all().delete()
         Movie.objects.all().delete()
         Series.objects.all().delete()
-        if os.path.isdir("/usr/src/app/Videos/test_update_db/"):
-            shutil.rmtree('/usr/src/app/Videos/test_update_db/',
+
+        testdir = "/usr/src/app/test_update_db/"
+        if os.path.isdir(testdir):
+            shutil.rmtree(testdir,
                           ignore_errors=True)
         copytree("/usr/src/app/Videos/folder1/",
-                 "/usr/src/app/Videos/test_update_db/")
+                 testdir)
         self.assertEqual(Series.objects.count(), 0)
         self.assertEqual(Movie.objects.count(), 0)
         #call_command('updatedb')
-        update_db_from_local_folder("/usr/src/app/Videos/test_update_db/",
+        update_db_from_local_folder(testdir,
                                     settings.VIDEO_URL,
                                     keep_files=True)
         self.assertEqual(Video.objects.count(), 3)
@@ -100,10 +110,10 @@ class UpdateTestCase(TestCase):
         self.assertEqual(Movie.objects.count(), 1)
         shutil.copyfile(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            "/usr/src/app/Videos/test_update_db/Malcolm.in.the Middle.S03E14.Cynthia's.Back.mp4"
+            "{}Malcolm.in.the Middle.S03E14.Cynthia's.Back.mp4".format(testdir)
         )
         #call_command('updatedb')
-        update_db_from_local_folder("/usr/src/app/Videos/test_update_db/",
+        update_db_from_local_folder(testdir,
                                     settings.VIDEO_URL)
         self.assertEqual(Series.objects.count(), 2)
         self.assertEqual(Movie.objects.count(), 1)
