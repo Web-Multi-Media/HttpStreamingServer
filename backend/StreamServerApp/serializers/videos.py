@@ -11,7 +11,6 @@ from StreamServerApp.serializers.subtitles import SubtitleListSerializer
 class VideoListSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField(many=False)
     series = serializers.StringRelatedField(many=False)
-    subtitles = SubtitleListSerializer(many=True)
 
     class Meta:
         model = Video
@@ -20,7 +19,6 @@ class VideoListSerializer(serializers.ModelSerializer):
             'name',
             'video_url',
             'thumbnail',
-            'subtitles',
             'series',
             'movie',
             'episode',
