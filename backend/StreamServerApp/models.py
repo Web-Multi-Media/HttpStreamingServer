@@ -69,14 +69,17 @@ class Video(models.Model):
     history = models.ManyToManyField(User, through='UserVideoHistory')
 
     objects = SearchManager()
-
+    
     @property
     def next_episode(self):
         if self.series:
             try:
                 return self.series.video_set.get(episode=self.episode+1, season=self.season).id
             except ObjectDoesNotExist:
-                return None
+                try:
+                    return self.series.video_set.get(episode=1, season=self.season+1).id
+                except ObjectDoesNotExist:
+                    return None
 
     def return_user_time_history(self, user):
         video_history = self.uservideohistory_set.filter(user=user)
