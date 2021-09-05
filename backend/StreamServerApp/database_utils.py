@@ -374,17 +374,21 @@ def prepare_video(video_full_path,
         aac_encoder(video_full_path, audio_elementary_stream_path)
     
     #https://stackoverflow.com/questions/5024114/suggested-compression-ratio-with-h-264
-    high_layer_compression_ratio = int(os.getenv('HIGH_LAYER_COMPRESSION_RATIO_IN_PERCENTAGE', 7))
-    high_layer_bitrate = video_width * video_height * 24 * 4 * (high_layer_compression_ratio/100.0)
+    high_layer_compression_ratio = int(
+        os.getenv('HIGH_LAYER_COMPRESSION_RATIO_IN_PERCENTAGE', 7))
+    high_layer_bitrate = video_width * video_height * \
+        24 * 4 * (high_layer_compression_ratio/100.0)
     print("high_layer_bitrate = {}".format(high_layer_bitrate))
-    low_layer_bitrate = os.getenv('480P_LAYER_BITRATE', 400000)
+    low_layer_bitrate = int(os.getenv('480P_LAYER_BITRATE', 400000))
 
     h264_encoder(
         video_full_path,
         video_elementary_stream_path_high_layer, video_height, high_layer_bitrate)
-    h264_encoder(
-        video_full_path,
-        video_elementary_stream_path_480, 480, low_layer_bitrate)
+
+    if low_layer_bitrate > 0:
+        h264_encoder(
+            video_full_path,
+            video_elementary_stream_path_480, 480, low_layer_bitrate)
 
     relative_path = os.path.relpath(video_full_path, video_path)
 
@@ -404,7 +408,8 @@ def prepare_video(video_full_path,
                   dash_output_directory)
 
     os.remove(video_elementary_stream_path_high_layer)
-    os.remove(video_elementary_stream_path_480)
+    if low_layer_bitrate > 0:
+        os.remove(video_elementary_stream_path_480)
     os.remove(audio_elementary_stream_path)
 
     if not keep_files:

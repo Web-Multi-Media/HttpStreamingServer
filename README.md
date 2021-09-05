@@ -58,6 +58,8 @@ The following variables can be configured in .env file:
     HTTPSTREAMING_HOST=www.foo.com
     SENTRY_DSN=https://foo.ingest.sentry.io/bar
     REACT_APP_SENTRY_DSN=https://foo.ingest.sentry.io/bar
+    HIGH_LAYER_COMPRESSION_RATIO_IN_PERCENTAGE=7
+    480P_LAYER_BITRATE=400000
 
 
 #### Contributing

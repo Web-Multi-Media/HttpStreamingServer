@@ -44,3 +44,21 @@ class TestDash(TestCase):
                       720,
                       "/usr/src/app/Videos/lebowsky.m4a",
                       "/usr/src/app/Videos/lebowskydash/")
+
+        self.assertEqual(os.path.isfile(
+            "/usr/src/app/Videos/lebowskydash/segment_720p_1.m4s"), True)
+        self.assertEqual(os.path.isfile(
+            "/usr/src/app/Videos/lebowskydash/segment_480p_1.m4s"), True)
+
+        dash_packager("/usr/src/app/Videos/lebowsky_480.264",
+                      0,
+                      "/usr/src/app/Videos/lebowsky_720.264",
+                      1800000,
+                      720,
+                      "/usr/src/app/Videos/lebowsky.m4a",
+                      "/usr/src/app/Videos/lebowskydash2/")
+
+        self.assertEqual(os.path.isfile(
+            "/usr/src/app/Videos/lebowskydash2/segment_720p_1.m4s"), True)
+        self.assertEqual(os.path.isfile(
+            "/usr/src/app/Videos/lebowskydash2/segment_480p_1.m4s"), False)
