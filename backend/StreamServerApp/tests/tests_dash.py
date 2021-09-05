@@ -41,5 +41,6 @@ class TestDash(TestCase):
                       800000,
                       "/usr/src/app/Videos/lebowsky_720.264",
                       1800000,
+                      720,
                       "/usr/src/app/Videos/lebowsky.m4a",
                       "/usr/src/app/Videos/lebowskydash/")

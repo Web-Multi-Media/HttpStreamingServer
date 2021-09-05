@@ -326,9 +326,11 @@ def prepare_video(video_full_path,
         print('No video stream found', file=sys.stderr)
         return {}
 
+
     video_codec_type = video_stream['codec_name']
     video_width = video_stream['width']
     video_height = video_stream['height']
+
     if 'duration' in video_stream:
         duration = float(video_stream['duration'])
     elif 'duration' in probe['format']:
@@ -360,8 +362,8 @@ def prepare_video(video_full_path,
         os.path.splitext(video_full_path)[0])
     video_elementary_stream_path_480 = "{}_480.264".format(
         os.path.splitext(video_full_path)[0])
-    video_elementary_stream_path_720 = "{}_720.264".format(
-        os.path.splitext(video_full_path)[0])
+    video_elementary_stream_path_high_layer = "{}_{}.264".format(
+        os.path.splitext(video_full_path)[0], video_height)
 
     dash_output_directory = os.path.splitext(video_full_path)[0]
     temp_mpd = "{}/playlist.mpd".format(dash_output_directory)
@@ -370,13 +372,16 @@ def prepare_video(video_full_path,
         extract_audio(video_full_path, audio_elementary_stream_path)
     else:
         aac_encoder(video_full_path, audio_elementary_stream_path)
-
-    high_layer_bitrate = os.getenv('720P_LAYER_BITRATE', 2400000)
+    
+    #https://stackoverflow.com/questions/5024114/suggested-compression-ratio-with-h-264
+    high_layer_compression_ratio = int(os.getenv('HIGH_LAYER_COMPRESSION_RATIO_IN_PERCENTAGE', 7))
+    high_layer_bitrate = video_width * video_height * 24 * 4 * (high_layer_compression_ratio/100.0)
+    print("high_layer_bitrate = {}".format(high_layer_bitrate))
     low_layer_bitrate = os.getenv('480P_LAYER_BITRATE', 400000)
 
     h264_encoder(
         video_full_path,
-        video_elementary_stream_path_720, 720, high_layer_bitrate)
+        video_elementary_stream_path_high_layer, video_height, high_layer_bitrate)
     h264_encoder(
         video_full_path,
         video_elementary_stream_path_480, 480, low_layer_bitrate)
@@ -394,10 +399,11 @@ def prepare_video(video_full_path,
         generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
     #Dash_packaging
-    dash_packager(video_elementary_stream_path_480, low_layer_bitrate, video_elementary_stream_path_720, high_layer_bitrate, audio_elementary_stream_path,
+    dash_packager(video_elementary_stream_path_480, low_layer_bitrate, 
+                  video_elementary_stream_path_high_layer, high_layer_bitrate, video_height, audio_elementary_stream_path,
                   dash_output_directory)
 
-    os.remove(video_elementary_stream_path_720)
+    os.remove(video_elementary_stream_path_high_layer)
     os.remove(video_elementary_stream_path_480)
     os.remove(audio_elementary_stream_path)
 
