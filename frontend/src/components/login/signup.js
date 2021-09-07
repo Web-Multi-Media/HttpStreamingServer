@@ -39,7 +39,7 @@ function Signup({toggleModalBox, setDisplayModal,  userinfos, setUserInfos}) {
   }
 
   if (isLoggedIn) {
-    return <Redirect to="/" />;
+    return <Redirect to="/streaming/" />;
   }
 
   return (

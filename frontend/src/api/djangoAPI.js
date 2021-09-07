@@ -403,7 +403,7 @@ function Video(response) {
     this.name = response.movie !== null ? response.movie : response.name;
     this.videoUrl = response.video_url;
     this.thumbnail = response.thumbnail;
-    this.subtitles = response.subtitles
+    this.subtitles = response.subtitles;
     this.series = response.series;
     this.episode = response.episode;
     this.season = response.season;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Route, useHistory, useLocation } from 'react-router-dom';
+import {useHistory, useLocation } from 'react-router-dom';
 import Login from './login/login';
 import Signup from './login/signup';
 import { AuthContext } from './context/auth';
@@ -41,7 +41,6 @@ function App(props) {
     const [pager, setPager] = useState(null);
     const [displayModal, setDisplayModal] = useState(false);
     const [toggleModal, setToggleModal] = useState(true);
-    const [videos, setVideos] = useState([]);
     const [selectedVideo, setSelectedVideo] = useState(null);
     const [moviesPager, setMoviesPager] = useState(null);
     const [historyPager, setHistoryPager] = useState(null);
@@ -55,7 +54,7 @@ function App(props) {
         // Create an scoped async function in the hook
         const fetchData = async () => {
             await Promise.all([
-                utils.getMoviesAndSeries(setPager, setVideos, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos),
+                utils.getMoviesAndSeries(setPager, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos),
                 utils.getUrlVideo(location, setSelectedVideo)
             ]);
         };
@@ -80,10 +79,8 @@ function App(props) {
     }, [authTokens]);
 
     const handleVideoSelect  = async (video) => {
-        const videoHistory = await client.getVideoById(video.id);
-        video.time = videoHistory.time;
-        video.nextEpisode = videoHistory.nextEpisode;
-        setSelectedVideo(video);
+        const videoFromUrlHistory = await client.getVideoById(video.id);
+        setSelectedVideo(videoFromUrlHistory);
         if (video) {
             history.push(`/streaming/?video=${video.id}`);
             document.title = video.name;
