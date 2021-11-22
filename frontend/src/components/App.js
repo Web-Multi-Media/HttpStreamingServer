@@ -47,6 +47,7 @@ function App(props) {
     const [seriesPager, setSeriesPager] = useState(null);
     const [moviesVideos, setMoviesVideos] = useState([]);
     const [seriesVideos, setSeriesVideos] = useState([]);
+    const [videos, setVideos] = useState([]);
     const location = useLocation();
     const history = useHistory();
 
@@ -54,7 +55,7 @@ function App(props) {
         // Create an scoped async function in the hook
         const fetchData = async () => {
             await Promise.all([
-                utils.getMoviesAndSeries(setPager, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos),
+                utils.getMoviesAndSeries(setPager, setVideos, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos),
                 utils.getUrlVideo(location, setSelectedVideo)
             ]);
         };
@@ -79,8 +80,11 @@ function App(props) {
     }, [authTokens]);
 
     const handleVideoSelect  = async (video) => {
-        const videoFromUrlHistory = await client.getVideoById(video.id);
-        setSelectedVideo(videoFromUrlHistory);
+        const videoHistory = await client.getVideoById(video.id);
+        video.time = videoHistory.time;
+        video.nextEpisode = videoHistory.nextEpisode;
+        video.subtitles = videoHistory.subtitles;
+        setSelectedVideo(video);
         if (video) {
             history.push(`/streaming/?video=${video.id}`);
             document.title = video.name;
