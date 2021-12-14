@@ -24,23 +24,6 @@ class VideoAdmin(admin.ModelAdmin):
         queryset.delete()
 
 
-class VideoAdmin(admin.ModelAdmin):
-    search_fields = ['name']
-    model = Video
-
-    def delete_queryset(self, request, queryset):
-        print(
-            '========================delete_queryset========================')
-        print(queryset)
-        #queryset.delete()
-        for videos in queryset:
-            print(videos.video_folder)
-            playlistdir = os.path.split(videos.video_folder)[0]
-            if os.path.isdir(playlistdir):
-                print("removing directory: {}".format(playlistdir))
-                shutil.rmtree(playlistdir, ignore_errors=True)
-
-        queryset.delete()
 
 
 class SeriesAdmin(admin.ModelAdmin):
@@ -59,6 +42,7 @@ class SeriesAdmin(admin.ModelAdmin):
                 if os.path.isdir(playlistdir):
                     print("removing directory: {}".format(playlistdir))
                     shutil.rmtree(playlistdir, ignore_errors=True)
+            video_queryset.delete()
 
         queryset.delete()
 
@@ -79,6 +63,7 @@ class MovieAdmin(admin.ModelAdmin):
                 if os.path.isdir(playlistdir):
                     print("removing directory: {}".format(playlistdir))
                     shutil.rmtree(playlistdir, ignore_errors=True)
+            video_queryset.delete()
 
         queryset.delete()
 
