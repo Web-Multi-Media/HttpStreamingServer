@@ -29,9 +29,7 @@ services:
       - DEPLOY_ENV=production
     volumes:
       - ./Videos/:/usr/src/app/Videos
-      # To be fixed, backend code is mapped here to share static files (react build) with nginx
-      - ./backend/:/usr/src/app/
-      - /static/
+      - static_volume:/usr/static/
       - ipython:/root/.ipython
       - torrent:/usr/torrent/:rw
     command: bash -c "service transmission-daemon start && python3 /usr/src/app/manage.py collectstatic --no-input && gunicorn StreamingServer.wsgi:application --bind 0.0.0.0:8000"
@@ -42,9 +40,8 @@ services:
   nginx:
     build: ./nginx
     volumes:
-      - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
-      - static_volume:/usr/src/app/staticfiles
+      - static_volume:/usr/static/
       - torrent:/usr/torrent/:rw
     ports:
       - 1337:80
@@ -58,7 +55,6 @@ services:
     image: webmultimedia/http-streaming-server:master
     command: celery -A StreamingServer worker -l info
     volumes:
-        - ./backend/:/usr/src/app/
         - ./Videos/:/usr/src/app/Videos
         - torrent:/usr/torrent/:rw
     env_file:
