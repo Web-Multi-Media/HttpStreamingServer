@@ -43,7 +43,7 @@ export default function Header({ handleFormSubmit, displayModal, client, userinf
                 }
 
 
-                <div className="headerButton">
+                <div className="headerButton hideifmobile">
                     <Button variant="contained" color="primary" className="headerButton">
                         <a href="/transmission/web/">
                             Add Torrent
@@ -51,7 +51,7 @@ export default function Header({ handleFormSubmit, displayModal, client, userinf
                     </Button>
                 </div>
 
-                <div className="headerButton">
+                <div className="headerButton hideifmobile">
                 {authTokens &&
                     <UpdateVideos
                         client={client}

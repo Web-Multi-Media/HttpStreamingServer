@@ -56,3 +56,9 @@
     }
 
 }
+
+@media screen and (max-width: 600px) {
+    .hideifmobile {
+      display: none;
+    }
+}
