@@ -7,6 +7,7 @@ import { client } from '../api/djangoAPI';
 import Header from "./header/Header";
 import './App.css'
 import Carousels from "./Carousels/Carousels";
+import AccessDenied from "./AccessDenied";
 const utils = require ("./../utils/utils");
 
 function App(props) {
@@ -139,17 +140,22 @@ function App(props) {
                 userinfos={userInfos}
                 setUserInfos={setUserInfos}
             />
-            <Carousels
-                video={selectedVideo}
-                handleVideoSelect={handleVideoSelect}
-                setHistoryPager={setHistoryPager}
-                authTokens={authTokens}
-                historyPager={historyPager}
-                seriesPager={seriesPager}
-                seriesVideos={seriesVideos}
-                moviesPager={moviesPager}
-                moviesVideos={moviesVideos}
-            />
+            {authTokens ?
+                <Carousels
+                    video={selectedVideo}
+                    handleVideoSelect={handleVideoSelect}
+                    setHistoryPager={setHistoryPager}
+                    authTokens={authTokens}
+                    historyPager={historyPager}
+                    seriesPager={seriesPager}
+                    seriesVideos={seriesVideos}
+                    moviesPager={moviesPager}
+                    moviesVideos={moviesVideos}
+                />
+                :
+                <AccessDenied/>
+            }
+            
             {(displayModal && toggleModal) &&
             <Login
                 toggleModalBox={toggleModalBox}

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
 from StreamServerApp.tasks import sync_subtitles
 from StreamServerApp.serializers.videos import VideoSerializer, \
     SeriesSerializer, MoviesSerializer, SeriesListSerializer, VideoListSerializer
@@ -20,6 +20,8 @@ class VideoViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `search` actions for Videos
     """
+
+    permission_classes = [permissions.IsAuthenticated]
 
     def _allowed_methods(self):
         return ['GET']
@@ -51,6 +53,8 @@ class SeriesViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `search` actions for Series
     """
+
+    permission_classes = [permissions.IsAuthenticated]
 
     def _allowed_methods(self):
         return ['GET']
@@ -84,6 +88,8 @@ class SeriesSeaonViewSet(generics.ListAPIView):
     """
     serializer_class = VideoListSerializer
 
+    permission_classes = [permissions.IsAuthenticated]
+
     def _allowed_methods(self):
         return ['GET']
 
@@ -99,6 +105,8 @@ class MoviesViewSet(viewsets.ModelViewSet):
     This viewset automatically provides `list` and `search` actions for Movies
     """
     serializer_class = MoviesSerializer
+
+    permission_classes = [permissions.IsAuthenticated]
 
     def _allowed_methods(self):
         return ['GET']

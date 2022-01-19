@@ -41,7 +41,12 @@ class LoadingTest(TestCase):
 
     def setUp(self):
             # Every test needs a client.
-            self.client = Client()
+        self.user = User.objects.create_user(
+            username='test_user', password='top_secret')
+        self.token = Token.objects.create(user=self.user)
+        self.token.save()
+        self.client = Client(HTTP_AUTHORIZATION='Token ' + str(self.token))
+        self.client.defaults['HTTP_AUTHORIZATION'] = "Token " + str(self.token)
 
     def test_search_video_without_query(self):
         response = self.client.get(reverse('videos-list'))
@@ -179,7 +184,12 @@ class HistoryTest(TestCase):
 
 class MoviesTest(TestCase):
     def setUp(self):
-        self.client = APIClient()
+        self.user = User.objects.create_user(
+            username='test_user2', password='top_secret')
+        self.token = Token.objects.create(user=self.user)
+        self.token.save()
+        self.client = Client(HTTP_AUTHORIZATION='Token ' + str(self.token))
+        self.client.defaults['HTTP_AUTHORIZATION'] = "Token " + str(self.token)
 
     def test_get_empty_movies(self):
         response = self.client.get(reverse('movies-list'))
@@ -232,16 +242,23 @@ class MoviesTest(TestCase):
 
 class VideosTest(TestCase):
     def setUp(self):
-        self.client = APIClient()
+        self.user = User.objects.create_user(
+            username='test_user3', password='top_secret')
+        self.token = Token.objects.create(user=self.user)
+        self.token.save()
+        self.client = Client(HTTP_AUTHORIZATION='Token ' + str(self.token))
+        self.client.defaults['HTTP_AUTHORIZATION'] = "Token " + str(self.token)
 
-    def test_video_detail_not_logged_in(self):
+    def test_video_detail_logged_in(self):
         serie, videos = add_series_videos()
         response = self.client.get(reverse('videos-detail', args=[videos[0].id]))
-        decoded_content = json.loads(str(response.content, encoding='utf8'))
         self.assertEqual(response.status_code, 200)
+
+        decoded_content = json.loads(str(response.content, encoding='utf8'))
+
         self.assertEqual(decoded_content['name'], 'test_name_1')
         self.assertIsNotNone(decoded_content['next_episode'])
-        self.assertIsNone(decoded_content['time'])
+        self.assertIsNotNone(decoded_content['time'])
 
     def test_videos_list_pagination(self):
         serie, videos = add_series_videos(15)
