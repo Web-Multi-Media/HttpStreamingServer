@@ -16,7 +16,7 @@ def h264_encoder(filename, output, resolutionH, bitrate):
 
 
 def aac_encoder(filename, output):
-    command = 'ffmpeg -y -i "{filename}" -map 0:1? -vn -c:a aac -b:a 128k -ar 48000 -ac 2 \
+    command = 'ffmpeg -y -i "{filename}" -map 0:1? -filter:a loudnorm -vn -c:a aac -b:a 128k -ar 48000 -ac 2 \
                 "{outputfile}"'.format(outputfile=output, filename=filename)
 
     print(command)
