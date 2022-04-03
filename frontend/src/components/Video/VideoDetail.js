@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import './VideoDetail.css'
 import SubtitleForm from "./SubtitlesForm"
 import dashjs from 'dashjs'
+import ResolutionSelector from './ResolutionSelector';
 
 
 function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }) {
@@ -35,7 +36,9 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
         if (video) {
             if (!playerIsInitialized) {
                 player.initialize(document.querySelector("#videoPlayer"), video.videoUrl, true);
-                setPlayerIsInitialized(true);
+                player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
+                    setPlayerIsInitialized(true);
+                });
             } else {
                 player.attachSource(video.videoUrl);
             }
@@ -89,6 +92,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
             <div className="ui segment">
                 <h4 className="ui header">{video.name}</h4>
             </div>
+            <ResolutionSelector playerref={player} video={video} playerIsInitialized={playerIsInitialized}/>
             <div className="ui segment">
                 {video.nextEpisode &&
                     <Button  onClick={() => HandleNextEpisode(handleVideoSelect,video.nextEpisode)} variant="contained" color="primary">
@@ -96,8 +100,10 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     </Button>
                 }
             </div>
+            <div className="hideifmobile">
             {authTokens &&
                 <SubtitleForm video={video} token={authTokens} />}
+            </div>
 
         </div>
     );
