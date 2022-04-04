@@ -33,6 +33,11 @@ export default function Carousels({
                     </div>
                 </div>
             )}
+            {(seriesVideos.length === 0 && moviesVideos.length === 0) && (
+                <div className="EmptyVideos">
+                    Your video database is empty. Please click on the Update Video button at the top side of the screen to run an update.
+                </div>
+            )}
             {seriesVideos.length > 0 && (
                 <div className="carrouselContainer">
                     <SeriesCarousel
@@ -42,8 +47,8 @@ export default function Carousels({
                     />
                 </div>
             )}
-            <div className="carrouselContainer">
-                <h4>MOVIES</h4>
+            <div className="carrouselContainer ">
+            {moviesVideos.length > 0 && <h4>MOVIES</h4>}
                 <div>
                     {moviesVideos.length > 0 && (
                         <VideoCarrouselSlick

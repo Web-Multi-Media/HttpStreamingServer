@@ -19,10 +19,12 @@ export default function Header({ handleFormSubmit, displayModal, client, userinf
             </h1>
 
             <div className="leftBar">
-                <div className="leftBarElement">
+                <div className="leftBarElement hideifmobile">
+                    {authTokens &&
                     <SearchBar
                         handleFormSubmit={handleFormSubmit}
                     />
+                    }
                 </div>
                 {!authTokens && (
                     <div className="headerButton">
@@ -44,11 +46,13 @@ export default function Header({ handleFormSubmit, displayModal, client, userinf
 
 
                 <div className="headerButton hideifmobile">
+                {authTokens &&
                     <Button variant="contained" color="primary" className="headerButton">
                         <a href="/transmission/web/">
                             Add Torrent
                         </a>
                     </Button>
+                }
                 </div>
 
                 <div className="headerButton hideifmobile">

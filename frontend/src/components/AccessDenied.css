@@ -1,6 +1,9 @@
 .AccessDenied {
     text-align: center;
+    position: absolute;
     width: 100%;
+    height: 50%;
     font-size: xx-large;
     font-family: 'Balsamiq Sans', cursive;
+    top: 50%;
 }
