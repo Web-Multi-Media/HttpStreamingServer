@@ -16,3 +16,14 @@
     font-family: 'Balsamiq Sans', cursive;
     top: 50%;
 }
+
+.CircularProgress {
+    text-align: center;
+    position: relative;
+    width: 50%;
+    height: 50%;
+    font-size: large;
+    font-family: 'Balsamiq Sans', cursive;
+    top: 75%;
+}
+

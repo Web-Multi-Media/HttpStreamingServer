@@ -3,11 +3,12 @@ import VideoDetail from '../Video/VideoDetail';
 import VideoCarrouselSlick from '../VideoCarrouselSlick';
 import SeriesCarousel from '../SeriesCarousel';
 import './Carousels.css';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 export default function Carousels({
     video, handleVideoSelect, setHistoryPager, authTokens,
-    historyPager, seriesPager, seriesVideos, moviesPager, moviesVideos,
+    historyPager, seriesPager, seriesVideos, moviesPager, moviesVideos, isInitialVideoDone
 }) {
     return (
         <div className="ui container" style={{ marginTop: '1em' }}>
@@ -33,9 +34,16 @@ export default function Carousels({
                     </div>
                 </div>
             )}
-            {(seriesVideos.length === 0 && moviesVideos.length === 0) && (
+            {((seriesVideos.length === 0 && moviesVideos.length === 0)
+              && isInitialVideoDone) && (
                 <div className="EmptyVideos">
                     Your video database is empty. Please click on the Update Video button at the top side of the screen to run an update.
+                </div>
+            )}
+            {((seriesVideos.length === 0 && moviesVideos.length === 0)
+              && !isInitialVideoDone) && (
+                <div className="CircularProgress">
+                   <CircularProgress />
                 </div>
             )}
             {seriesVideos.length > 0 && (

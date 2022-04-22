@@ -48,6 +48,7 @@ function App(props) {
     const [seriesPager, setSeriesPager] = useState(null);
     const [moviesVideos, setMoviesVideos] = useState([]);
     const [seriesVideos, setSeriesVideos] = useState([]);
+    const [isInitialVideoDone, setInitialVideoDone] = useState(false);
     const [videos, setVideos] = useState([]);
     const location = useLocation();
     const history = useHistory();
@@ -59,6 +60,7 @@ function App(props) {
                 utils.getMoviesAndSeries(setPager, setVideos, setSeriesPager, setSeriesVideos, setMoviesPager, setMoviesVideos),
                 utils.getUrlVideo(location, setSelectedVideo)
             ]);
+            setInitialVideoDone(true);
         };
         async function GetHistory() {
             try{
@@ -78,6 +80,7 @@ function App(props) {
         }    // Execute the created function directly
         GetHistory();
         fetchData();
+
     }, [authTokens]);
 
     const handleVideoSelect  = async (video) => {
@@ -151,6 +154,7 @@ function App(props) {
                     seriesVideos={seriesVideos}
                     moviesPager={moviesPager}
                     moviesVideos={moviesVideos}
+                    isInitialVideoDone={isInitialVideoDone}
                 />
                 :
                 <AccessDenied/>
