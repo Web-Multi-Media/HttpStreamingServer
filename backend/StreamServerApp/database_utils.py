@@ -360,8 +360,7 @@ def prepare_video(video_full_path,
     audio_codec_type = audio_stream['codec_name']
     audio_elementary_stream_path = "{}.m4a".format(
         os.path.splitext(video_full_path)[0])
-    video_elementary_stream_path_480 = "{}_480.264".format(
-        os.path.splitext(video_full_path)[0])
+
     video_elementary_stream_path_high_layer = "{}_{}.264".format(
         os.path.splitext(video_full_path)[0], video_height)
 
@@ -380,6 +379,9 @@ def prepare_video(video_full_path,
         24 * 4 * (high_layer_compression_ratio/100.0)
     print("high_layer_bitrate = {}".format(high_layer_bitrate))
     low_layer_bitrate = int(os.getenv('480P_LAYER_BITRATE', 400000))
+    low_layer_height = int(video_height / 2.0)
+    video_elementary_stream_path_low_layer = "{}_low.264".format(
+        os.path.splitext(video_full_path)[0])
 
     h264_encoder(
         video_full_path,
@@ -388,7 +390,7 @@ def prepare_video(video_full_path,
     if low_layer_bitrate > 0:
         h264_encoder(
             video_full_path,
-            video_elementary_stream_path_480, 480, low_layer_bitrate)
+            video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate)
 
     relative_path = os.path.relpath(video_full_path, video_path)
 
@@ -403,13 +405,13 @@ def prepare_video(video_full_path,
         generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
     #Dash_packaging
-    dash_packager(video_elementary_stream_path_480, low_layer_bitrate, 
+    dash_packager(video_elementary_stream_path_low_layer, low_layer_bitrate, low_layer_height,
                   video_elementary_stream_path_high_layer, high_layer_bitrate, video_height, audio_elementary_stream_path,
                   dash_output_directory)
 
     os.remove(video_elementary_stream_path_high_layer)
     if low_layer_bitrate > 0:
-        os.remove(video_elementary_stream_path_480)
+        os.remove(video_elementary_stream_path_low_layer)
     os.remove(audio_elementary_stream_path)
 
     if not keep_files:

@@ -28,17 +28,20 @@ class TestDash(TestCase):
         print("Init keyframe_analysis test ")
 
     def test_dash_packaging(self):
+        input_height = 720
+        low_layer_height = int(input_height / 2.0)
         h264_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
             "/usr/src/app/Videos/lebowsky_720.264", 720, 1800000)
         h264_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            "/usr/src/app/Videos/lebowsky_480.264", 480, 800000)
+            "/usr/src/app/Videos/lebowsky_low.264", low_layer_height, 800000)
         aac_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
             "/usr/src/app/Videos/lebowsky.m4a")
-        dash_packager("/usr/src/app/Videos/lebowsky_480.264",
+        dash_packager("/usr/src/app/Videos/lebowsky_low.264",
                       800000,
+                      low_layer_height,
                       "/usr/src/app/Videos/lebowsky_720.264",
                       1800000,
                       720,
@@ -48,10 +51,11 @@ class TestDash(TestCase):
         self.assertEqual(os.path.isfile(
             "/usr/src/app/Videos/lebowskydash/segment_720p_1.m4s"), True)
         self.assertEqual(os.path.isfile(
-            "/usr/src/app/Videos/lebowskydash/segment_480p_1.m4s"), True)
+            "/usr/src/app/Videos/lebowskydash/segment_{}p_1.m4s".format(low_layer_height)), True)
 
         dash_packager("/usr/src/app/Videos/lebowsky_480.264",
                       0,
+                      low_layer_height,
                       "/usr/src/app/Videos/lebowsky_720.264",
                       1800000,
                       720,
@@ -61,4 +65,4 @@ class TestDash(TestCase):
         self.assertEqual(os.path.isfile(
             "/usr/src/app/Videos/lebowskydash2/segment_720p_1.m4s"), True)
         self.assertEqual(os.path.isfile(
-            "/usr/src/app/Videos/lebowskydash2/segment_480p_1.m4s"), False)
+            "/usr/src/app/Videos/lebowskydash2/segment_{}p_1.m4s".format(low_layer_height)), False)
