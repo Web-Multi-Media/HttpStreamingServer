@@ -52,7 +52,7 @@ def extract_subtitle(input_file, output_file, subtitle_index = 0):
     Throw an exception if the return value of the subprocess is different than 0
 
     """
-    cmd = ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", input_file, "-map", "{}:s:0".format(subtitle_index), output_file]
+    cmd = ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", input_file, "-map", "0:s:{}".format(subtitle_index), output_file]
     if not os.path.isfile(output_file):
         run_ffmpeg_process(cmd)
 
