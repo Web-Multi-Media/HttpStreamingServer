@@ -164,7 +164,7 @@ def prepare_video(video_full_path,
             print(webvtt_ov_fullpath_tmp)
             extract_subtitle(video_full_path, webvtt_ov_fullpath_tmp, subtitles_index)
             webvtt_ov_fullpaths.append(webvtt_ov_fullpath_tmp)
-            subtitles_index = + 1
+            subtitles_index += 1
 
     audio_codec_type = audio_stream['codec_name']
     audio_elementary_stream_path = "{}.m4a".format(
