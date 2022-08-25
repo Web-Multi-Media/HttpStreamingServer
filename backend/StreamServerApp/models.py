@@ -179,3 +179,6 @@ class Subtitle(models.Model):
         self.vtt_sync_path = webvtt_path
         self.webvtt_sync_url = os.path.join(settings.VIDEO_URL, webvtt_path.split(settings.VIDEO_ROOT)[1])
         self.save()
+
+    def __str__(self):
+        return '{} {}'.format(self.language, self.webvtt_subtitle_url)

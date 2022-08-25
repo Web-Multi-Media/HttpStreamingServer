@@ -9,10 +9,11 @@ from django.conf import settings
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from StreamServerApp.database_utils import get_num_videos, get_video_type_and_info
+from StreamServerApp.database_utils import get_num_videos
 from StreamServerApp.models import Video, Series, Movie, UserVideoHistory, Subtitle
 from StreamServerApp.media_processing import extract_subtitle, generate_thumbnail
 from StreamServerApp.media_management.encoder import h264_encoder
+from StreamServerApp.media_processing import get_video_type_and_info
 
 
 def add_series_videos(num_videos=2):

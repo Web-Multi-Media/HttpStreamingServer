@@ -11,8 +11,8 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
-from StreamServerApp.database_utils import (get_num_videos,
-                                            get_video_type_and_info)
+from StreamServerApp.database_utils import (get_num_videos)
+from StreamServerApp.media_processing import (get_video_type_and_info)
 from StreamServerApp.media_management.fileinfo import (createfileinfo,
                                                        readfileinfo)
 from StreamServerApp.media_processing import (extract_subtitle,
