@@ -52,6 +52,7 @@ services:
     build: ./frontend
     volumes:
       - ./frontend/:/usr/src/app/
+      - /usr/src/app/node_modules
     command: bash -c "npm start"
     depends_on:
       - web
