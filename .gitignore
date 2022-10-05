@@ -140,7 +140,6 @@ db.sqlite3
 # OS files
 .DS_Store
 
-Videos/*
 backend/cachefile.*
 
 

@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/Web-Multi-Media/HttpStreamingServer.svg?branch=master)](https://travis-ci.com/Web-Multi-Media/HttpStreamingServer)
+[![Build Status](https://github.com/Web-Multi-Media/HttpStreamingServer/actions/workflows/docker-image.yml/badge.svg)](https://github.com/Web-Multi-Media/HttpStreamingServer/actions/workflows/docker-image.yml)
 
 Intro
 -------------------
@@ -32,10 +32,15 @@ Run the server:
 
 Now the application should be accessible from your browser at `http://localhost:1337/streaming/`.
 
-You can add torrent (see next section to configure torrent section password).
-
 You need to create a account to update the database from the GUI (click on the login button)
 
+You have two options to add videos. The first one is to use the provided Videos folder (./Videos) and just copy paste your content there, and then click on the update Videos button.
+
+The second option option is to use the built in torrent client. Configure the torrent admin password with the following command:
+
+    docker-compose -f docker-compose-prod.yml run --rm nginx htpasswd -c /usr/torrent/.htpasswd admin
+
+Then click on the Add Torrent button on the application. Once your download is finished, click on the update Videos button.
 
 
 #### CONFIGURATION
