@@ -40,7 +40,20 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     setPlayerIsInitialized(true);
                 });
             } else {
+                let videoElement = document.querySelector("#videoPlayer");
+                while (videoElement.firstChild) {
+                    videoElement.removeChild(videoElement.lastChild);
+                }
                 player.attachSource(video.videoUrl);
+                video.subtitles.map((sub, index) => {
+                    let track = document.createElement("track");
+                    track.id= "my-sub-track";
+                    track.kind = "captions";
+                    track.label = sub.language;
+                    track.src = sub.webvtt_subtitle_url;
+                    videoElement.appendChild(track);
+                }
+                )
             }
         }
     }, [video]);
