@@ -1,7 +1,7 @@
 import os
 import subprocess
 import json
-from StreamingServer.settings import customstderr, customstdout
+
 import re
 import subliminal
 import ffmpeg
@@ -10,16 +10,8 @@ import string
 from StreamServerApp.media_management.encoder import h264_encoder, aac_encoder, extract_audio
 from StreamServerApp.media_management.dash_packager import dash_packager
 from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
+from StreamServerApp.media_management.subprocess_wrapper import run_ffmpeg_process
 
-
-def run_ffmpeg_process(cmd):
-    completed_process_instance = subprocess.run(cmd, stdout=customstdout,
-                                            stderr=customstderr)
-    if completed_process_instance.returncode != 0:
-        print("An error occured while running ffmpeg subprocess")
-        print(completed_process_instance.stderr)
-        print(completed_process_instance.stdout)
-        raise Exception('ffmpeg_error', 'error')
 
 
 def convert_subtitles_to_webvtt(input_file, output_file):
@@ -162,8 +154,11 @@ def prepare_video(video_full_path,
             webvtt_ov_fullpath_tmp = os.path.splitext(video_full_path)[0]+'_ov_{}.vtt'.format(subtitles_index)
             print(video_full_path)
             print(webvtt_ov_fullpath_tmp)
-            extract_subtitle(video_full_path, webvtt_ov_fullpath_tmp, subtitles_index)
-            webvtt_ov_fullpaths.append(webvtt_ov_fullpath_tmp)
+            try:
+                extract_subtitle(video_full_path, webvtt_ov_fullpath_tmp, subtitles_index)
+                webvtt_ov_fullpaths.append(webvtt_ov_fullpath_tmp)
+            except:
+                print("Something went wrong with subtitle extraction, skipping track {}".format(subtitles_index))
             subtitles_index += 1
 
     audio_codec_type = audio_stream['codec_name']

@@ -25,15 +25,14 @@ STATIC_ROOT = '/usr/static/'
 
 ALLOWED_HOSTS = ['web', 'localhost']
 
+
 if os.getenv('DEPLOY_ENV', 'dev') == 'production':
     DEBUG = False
-    VERBOSE_OUTPUT = False
     ALLOWED_HOSTS.append(os.getenv('HTTPSTREAMING_HOST', ''))
     VIDEO_URL = '/Videos/'
     STATICFILES_DIRS = (os.path.join(BASE_DIR, '../frontend/build/static/'),)
 else:
     DEBUG = True
-    VERBOSE_OUTPUT = True
     VIDEO_URL = 'http://localhost:1337/Videos/'
     INTERNAL_IPS = ['127.0.0.1']
 
@@ -65,13 +64,14 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 
 VIDEO_ROOT = os.path.join(BASE_DIR, 'Videos/')
 
+SUBPROCESS_VERBOSE_OUTPUT = (os.getenv('SUBPROCESS_VERBOSE_OUTPUT', 'False') == 'True')
 
-if VERBOSE_OUTPUT:
-    customstdout = subprocess.PIPE
-    customstderr = subprocess.PIPE
+if SUBPROCESS_VERBOSE_OUTPUT:
+    customstdout = None
+    customstderr = None
 else:
-    customstdout = subprocess.DEVNULL
-    customstderr = subprocess.DEVNULL
+    customstdout = subprocess.PIPE
+    customstderr = subprocess.STDOUT
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/

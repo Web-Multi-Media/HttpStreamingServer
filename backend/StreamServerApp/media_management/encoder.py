@@ -1,33 +1,31 @@
-import os
-import subprocess
-import json
+
+from StreamServerApp.media_management.subprocess_wrapper import run_ffmpeg_process
 
 
 def h264_encoder(filename, output, resolutionH, bitrate):
-    command = 'ffmpeg -y -i "{filename}" -filter:v scale=-2:"{resolution}" -c:v libx264 -b:v "{bitrate}" \
-            -r 24 -x264opts \'keyint=48:min-keyint=48:no-scenecut\' \
-            -movflags faststart -bufsize 8600k \
-            -pix_fmt yuv420p -profile:v main -preset veryfast -an  "{outputfile}"'.format(
-        outputfile=output, resolution=resolutionH, bitrate=bitrate, filename=filename)
+    command = ["ffmpeg", "-y", "-i", filename, "-filter:v",  "scale=-2:{}".format(resolutionH),
+               "-c:v", "libx264",  "-b:v", str(int(bitrate)),
+               "-r", "24", "-x264opts", "keyint=48:min-keyint=48:no-scenecut",
+               "-movflags", "faststart", "-bufsize", "8600k",
+               "-pix_fmt", "yuv420p", "-profile:v", "main", "-preset", "veryfast",
+               "-an", "{}".format(output)]
 
     print(command)
-
-    response_json = subprocess.check_output(command, shell=True, stderr=None)
+    run_ffmpeg_process(command)
 
 
 def aac_encoder(filename, output):
-    command = 'ffmpeg -y -i "{filename}" -map 0:1? -filter:a loudnorm -vn -c:a aac -b:a 128k -ar 48000 -ac 2 \
-                "{outputfile}"'.format(outputfile=output, filename=filename)
+    command = ["ffmpeg", "-y", "-i", filename,
+               "-map", "0:1?", "-filter:a", "loudnorm", "-vn",  "-c:a", "aac",  "-b:a" , "128k",
+               "-ar",  "48000", "-ac", "2",
+               "{}".format(output)]
 
     print(command)
-
-    response_json = subprocess.check_output(command, shell=True, stderr=None)
+    run_ffmpeg_process(command)
 
 
 def extract_audio(filename, output):
-    command = 'ffmpeg -y -i "{filename}" -vn -acodec copy \
-                "{outputfile}"'.format(outputfile=output, filename=filename)
+    command = ["ffmpeg", "-y", "-i", filename, "-vn", "-acodec", "copy", 
+                output]
 
-    print(command)
-
-    response_json = subprocess.check_output(command, shell=True, stderr=None)
+    run_ffmpeg_process(command)
