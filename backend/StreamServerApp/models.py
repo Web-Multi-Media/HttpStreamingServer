@@ -55,6 +55,7 @@ class Video(models.Model):
     metadata = models.CharField(max_length=100, blank=True, default="")
     video_url = models.CharField(max_length=300, default="")
     video_folder = models.CharField(max_length=300, default="")
+    audio_path = models.CharField(max_length=300, default="")
     thumbnail = models.CharField(max_length=300, default="")
 
     # Relations to series and movies
@@ -169,7 +170,7 @@ class Subtitle(models.Model):
             Args:
             subtitle_id: subtitles id
         """
-        video_path = self.video_id.video_folder
+        video_path = self.video_id.audio_path
         subtitle_path = self.srt_path
         webvtt_path = self.vtt_path.replace('.vtt', '_sync.vtt')
         sync_subtitle_path = subtitle_path.replace('.srt', '_sync.srt')

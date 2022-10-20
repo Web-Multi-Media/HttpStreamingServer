@@ -16,7 +16,7 @@ from StreamServerApp.media_processing import (get_video_type_and_info)
 from StreamServerApp.media_management.fileinfo import (createfileinfo,
                                                        readfileinfo)
 from StreamServerApp.media_processing import (extract_subtitle,
-                                              generate_thumbnail)
+                                              generate_thumbnail, extract_audio)
 from StreamServerApp.models import (Movie, Series, Subtitle, UserVideoHistory,
                                     Video)
 from StreamServerApp.subtitles import get_subtitles
@@ -104,10 +104,18 @@ class SubtitlesTest(TestCase):
 
         data = {}
         fake_url = os.path.join(settings.VIDEO_URL, "folder2/spongebob2.mp4")
+
+        os.mkdir("/usr/src/app/Videos/folder2/testresync/")
+
+        extract_audio("/usr/src/app/Videos/folder2/spongebob2.mp4",
+                     "/usr/src/app/Videos/folder2/testresync/spongebob2.m4a"
+                      )
+
         video = Video.objects.create(
-            name="spongebob2.mp4",
+            name="spongebob2",
             video_url=fake_url,
-            video_folder="/usr/src/app/Videos/folder2/spongebob2.mp4")
+            video_folder="/usr/src/app/Videos/folder2/spongebob2/playlist.mpd",
+            audio_path="/usr/src/app/Videos/folder2/testresync/spongebob2.m4a")
 
         subtitle = Subtitle.objects.create(
             srt_path=os.path.join(settings.VIDEO_ROOT,

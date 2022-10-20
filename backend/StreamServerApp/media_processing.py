@@ -216,7 +216,6 @@ def prepare_video(video_full_path,
     os.remove(video_elementary_stream_path_high_layer)
     if low_layer_bitrate > 0:
         os.remove(video_elementary_stream_path_low_layer)
-    os.remove(audio_elementary_stream_path)
 
     if not keep_files:
         os.remove(video_full_path)
@@ -229,6 +228,7 @@ def prepare_video(video_full_path,
         'remote_video_url': remote_video_url,
         'video_codec_type': video_codec_type,
         'audio_codec_type': audio_codec_type,
+        'audio_path': audio_elementary_stream_path,
         'video_height': video_height,
         'video_width': video_width,
         'remote_thumbnail_url': remote_thumbnail_url,

@@ -25,7 +25,8 @@ def aac_encoder(filename, output):
 
 
 def extract_audio(filename, output):
+    print("Extracting Audio from {}".format(filename))
     command = ["ffmpeg", "-y", "-i", filename, "-vn", "-acodec", "copy", 
                 output]
-
+    print(command)
     run_ffmpeg_process(command)

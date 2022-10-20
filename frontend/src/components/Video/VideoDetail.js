@@ -50,7 +50,11 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     track.id= "my-sub-track";
                     track.kind = "captions";
                     track.label = sub.language;
-                    track.src = sub.webvtt_subtitle_url;
+                    if (sub.webvtt_sync_url) {
+                        track.src = sub.webvtt_sync_url;
+                    } else {
+                        track.src = sub.webvtt_subtitle_url;
+                    }
                     videoElement.appendChild(track);
                 }
                 )
