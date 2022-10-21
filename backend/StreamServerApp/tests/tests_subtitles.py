@@ -23,6 +23,36 @@ from StreamServerApp.subtitles import get_subtitles
 from StreamServerApp.tasks import get_subtitles_async, sync_subtitles
 
 
+def resync_test_template(test_instance, input_folder, root_url):
+    data = {}
+    fake_url = os.path.join(root_url, "folder2/spongebob2.mp4")
+
+    os.mkdir("{}/testresync/".format(input_folder))
+
+    extract_audio("/usr/src/app/Videos/folder2/spongebob2.mp4",
+                  "{}/testresync/spongebob2.m4a".format(input_folder)
+                  )
+
+    video = Video.objects.create(
+        name="spongebob2",
+        video_url=fake_url,
+        video_folder="{}/folder2/spongebob2/playlist.mpd".format(input_folder),
+        audio_path="{}/testresync/spongebob2.m4a".format(input_folder))
+
+    subtitle = Subtitle.objects.create(
+        srt_path=os.path.join(input_folder,
+                              "subtitles/spongebob.srt"),
+        video_id=video,
+        vtt_path=os.path.join(input_folder,
+                              "subtitles/spongebob.vtt"))
+
+    sync_subtitles(subtitle.id)
+    subtitle.refresh_from_db()
+    expected_url = os.path.join(root_url,
+                                "subtitles/spongebob_sync.vtt")
+    test_instance.assertEqual(subtitle.webvtt_sync_url, expected_url)
+
+
 class SubtitlesTest(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -100,35 +130,14 @@ class SubtitlesTest(TestCase):
         expected_url = os.path.join(settings.VIDEO_URL, "unicode_fr.vtt")
         self.assertEqual(sub.webvtt_subtitle_url, expected_url)
 
-    def test_resync_subtitle(self):
+    def test_resync_subtitle_1(self):
+        resync_test_template(self, "/usr/src/app/Videos", "/Videos")
 
-        data = {}
-        fake_url = os.path.join(settings.VIDEO_URL, "folder2/spongebob2.mp4")
+    def test_resync_subtitle_2(self):
+        os.mkdir("/usr/torrent/subtitles/")
+        shutil.copyfile("/usr/src/app/Videos/subtitles/spongebob.srt", "/usr/torrent/subtitles/spongebob.srt")
+        resync_test_template(self, "/usr/torrent/", "/torrents")
 
-        os.mkdir("/usr/src/app/Videos/folder2/testresync/")
-
-        extract_audio("/usr/src/app/Videos/folder2/spongebob2.mp4",
-                     "/usr/src/app/Videos/folder2/testresync/spongebob2.m4a"
-                      )
-
-        video = Video.objects.create(
-            name="spongebob2",
-            video_url=fake_url,
-            video_folder="/usr/src/app/Videos/folder2/spongebob2/playlist.mpd",
-            audio_path="/usr/src/app/Videos/folder2/testresync/spongebob2.m4a")
-
-        subtitle = Subtitle.objects.create(
-            srt_path=os.path.join(settings.VIDEO_ROOT,
-                                  "subtitles/spongebob.srt"),
-            video_id=video,
-            vtt_path=os.path.join(settings.VIDEO_ROOT,
-                                  "subtitles/spongebob.vtt"))
-
-        sync_subtitles(subtitle.id)
-        subtitle.refresh_from_db()
-        expected_url = os.path.join(settings.VIDEO_URL,
-                                    "subtitles/spongebob_sync.vtt")
-        self.assertEqual(subtitle.webvtt_sync_url, expected_url)
 
     def test_subtitles_download(self):
         subtitles = get_subtitles(

@@ -178,8 +178,15 @@ class Subtitle(models.Model):
         convert_subtitles_to_webvtt(sync_subtitle_path, webvtt_path)
         self.srt_sync_path = sync_subtitle_path
         self.vtt_sync_path = webvtt_path
-        self.webvtt_sync_url = os.path.join(settings.VIDEO_URL, webvtt_path.split(settings.VIDEO_ROOT)[1])
-        self.save()
+        if settings.VIDEO_ROOT in webvtt_path:
+            self.webvtt_sync_url = os.path.join(settings.VIDEO_URL, webvtt_path.split(settings.VIDEO_ROOT)[1])
+            self.save()
+        elif "/usr/torrent/" in webvtt_path:
+            self.webvtt_sync_url = os.path.join("/torrents", webvtt_path.split("/usr/torrent/")[1])
+            self.save()
+        else:
+            print("Something went wrong during resync")
+
 
     def __str__(self):
         return '{} {}'.format(self.language, self.webvtt_subtitle_url)
