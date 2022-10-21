@@ -196,6 +196,7 @@ def add_one_video_to_database(full_path,
                 ov_subtitle_path, video_path)
             ov_sub.webvtt_subtitle_url = os.path.join(
                 remote_url, webvtt_subtitles_relative_path)
+            ov_sub.vtt_path = ov_subtitle_path
             ov_sub.language = Subtitle.OV
             ov_sub.video_id = v
             ov_sub.save()

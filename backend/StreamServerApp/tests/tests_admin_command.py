@@ -11,7 +11,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
 from StreamServerApp.database_utils import get_num_videos
-from StreamServerApp.models import Video, Series, Movie, UserVideoHistory, Subtitle
+from StreamServerApp.models import Video, Series, Movie, UserVideoHistory, Subtitle, delete_video_related_assets
 from StreamServerApp.media_processing import extract_subtitle, generate_thumbnail
 from StreamServerApp.subtitles import get_subtitles
 
@@ -125,6 +125,41 @@ class UpdateTestCase(TestCase):
         update_db_from_local_folder("/usr/src/app/Videos/folder1/", settings.VIDEO_URL)
         self.assertEqual(Series.objects.count(), 1)
         self.assertEqual(Movie.objects.count(), 1)'''
+
+
+class RemoveTestCase(TestCase):
+    def test_remove_db(self):
+        Video.objects.all().delete()
+        Movie.objects.all().delete()
+        Series.objects.all().delete()
+
+        testdir = "/usr/src/app/test_remove_db/"
+        if os.path.isdir(testdir):
+            shutil.rmtree(testdir,
+                          ignore_errors=True)
+        copytree("/usr/src/app/Videos/folder1/",
+                 testdir)
+        self.assertEqual(Series.objects.count(), 0)
+        self.assertEqual(Movie.objects.count(), 0)
+        #call_command('updatedb')
+        update_db_from_local_folder(testdir,
+                                    settings.VIDEO_URL,
+                                    keep_files=True)
+        self.assertEqual(Video.objects.count(), 3)
+        self.assertEqual(Series.objects.count(), 1)
+        self.assertEqual(Movie.objects.count(), 1)
+        video = Video.objects.get(
+            name='The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4')
+        print(video)
+        self.assertEqual(os.path.isfile(video.audio_path), True)
+        self.assertEqual(os.path.isfile(video.video_folder), True)
+        ov_sub = Subtitle.objects.filter(video_id=video, language = "OV").first()
+        self.assertEqual(os.path.isfile(ov_sub.vtt_path), True)
+        delete_video_related_assets(video)
+        self.assertEqual(os.path.isfile(video.audio_path), False)
+        self.assertEqual(os.path.isfile(ov_sub.vtt_path), False)
+        self.assertEqual(os.path.isfile(video.video_folder), False)
+        video.delete()
 
 
 class RestUpdatedTest(TestCase):

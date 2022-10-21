@@ -8,6 +8,7 @@ from StreamServerApp.media_processing import convert_subtitles_to_webvtt
 from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
 import os
 import subprocess
+import shutil
 
 
 class SearchManager(models.Manager):
@@ -187,6 +188,38 @@ class Subtitle(models.Model):
         else:
             print("Something went wrong during resync")
 
-
     def __str__(self):
-        return '{} {}'.format(self.language, self.webvtt_subtitle_url)
+        return 'lang = {},\
+webvtt_subtitle_url = {} \
+webvtt_sync_url = {} \
+srt_path = {} \
+srt_sync_path = {} \
+vtt_path = {} \
+vtt_sync_path = {} \
+'.format(self.language,
+         self.webvtt_subtitle_url,
+         self.webvtt_sync_url,
+         self.srt_path, self.srt_sync_path, self.vtt_path, self.vtt_sync_path)
+
+
+#This function should be called before Video instance deletion
+def delete_video_related_assets(Video_input: Video) -> None:
+    print(Video_input.video_folder)
+    playlistdir = os.path.split(Video_input.video_folder)[0]
+    if os.path.isdir(playlistdir):
+        print("removing directory: {}".format(playlistdir))
+        shutil.rmtree(playlistdir, ignore_errors=True)
+    print("removing audio ", Video_input.audio_path)
+    if os.path.isfile(Video_input.audio_path):
+        os.remove(Video_input.audio_path)
+    print("removing subtitles")
+    subs = Subtitle.objects.filter(video_id=Video_input)
+    for sub in subs:
+        if os.path.isfile(sub.srt_path):
+            os.remove(sub.srt_path)
+        if os.path.isfile(sub.vtt_path):
+            os.remove(sub.vtt_path)
+        if os.path.isfile(sub.vtt_sync_path):
+            os.remove(sub.vtt_sync_path)
+        if os.path.isfile(sub.srt_sync_path):
+            os.remove(sub.srt_sync_path)

@@ -1,8 +1,10 @@
 from django.contrib import admin
-from StreamServerApp.models import Video, Movie, Series, Subtitle
+from StreamServerApp.models import Video, Movie, Series, Subtitle, delete_video_related_assets
 from django.conf import settings
 import os
 import shutil
+
+
 
 
 class VideoAdmin(admin.ModelAdmin):
@@ -13,17 +15,9 @@ class VideoAdmin(admin.ModelAdmin):
         print(
             '========================delete_queryset========================')
         print(queryset)
-        #queryset.delete()
-        for videos in queryset:
-            print(videos.video_folder)
-            playlistdir = os.path.split(videos.video_folder)[0]
-            if os.path.isdir(playlistdir):
-                print("removing directory: {}".format(playlistdir))
-                shutil.rmtree(playlistdir, ignore_errors=True)
-
+        for video in queryset:
+            delete_video_related_assets(video)
         queryset.delete()
-
-
 
 
 class SeriesAdmin(admin.ModelAdmin):
@@ -37,11 +31,8 @@ class SeriesAdmin(admin.ModelAdmin):
         #queryset.delete()
         for series in queryset:
             video_queryset = Video.objects.filter(series=series.id)
-            for videos in video_queryset:
-                playlistdir = os.path.split(videos.video_folder)[0]
-                if os.path.isdir(playlistdir):
-                    print("removing directory: {}".format(playlistdir))
-                    shutil.rmtree(playlistdir, ignore_errors=True)
+            for video in video_queryset:
+                delete_video_related_assets(video)
             video_queryset.delete()
 
         queryset.delete()
@@ -58,11 +49,8 @@ class MovieAdmin(admin.ModelAdmin):
         #queryset.delete()
         for movies in queryset:
             video_queryset = Video.objects.filter(movie=movies.id)
-            for videos in video_queryset:
-                playlistdir = os.path.split(videos.video_folder)[0]
-                if os.path.isdir(playlistdir):
-                    print("removing directory: {}".format(playlistdir))
-                    shutil.rmtree(playlistdir, ignore_errors=True)
+            for video in video_queryset:
+                delete_video_related_assets(video)
             video_queryset.delete()
 
         queryset.delete()
