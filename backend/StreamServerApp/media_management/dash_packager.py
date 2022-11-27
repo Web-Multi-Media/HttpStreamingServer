@@ -7,7 +7,7 @@ def dash_packager(video_layer_low_quality , low_layer_bitrate, low_layer_height,
     command = 'MP4Box -dash 4000 -frag 4000 -rap \
 -segment-name \'segment_$RepresentationID$_\' -fps 24 '
 
-    if low_layer_bitrate > 0:
+    if ((low_layer_bitrate > 0) and (low_layer_height > 0)):
         command += '"{video_layer_low}"#video:id={low_layer_height}p:#Bitrate={low_layer_bitrate} '.format(
             video_layer_low=video_layer_low_quality, low_layer_bitrate=low_layer_bitrate, low_layer_height=low_layer_height)
 

@@ -196,9 +196,15 @@ def prepare_video(video_full_path,
         video_elementary_stream_path_high_layer, video_height, high_layer_bitrate)
 
     if (low_layer_bitrate > 0 and low_layer_height > 0):
-        h264_encoder(
-            video_full_path,
-            video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate)
+        try:
+            h264_encoder(
+                video_full_path,
+                video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate)
+        except:
+            print("An exception occured during low layer encoding, skip this layer")
+            low_layer_bitrate = 0
+            low_layer_height = 0
+
 
     relative_path = os.path.relpath(video_full_path, video_path)
 
