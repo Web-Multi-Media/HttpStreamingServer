@@ -1,8 +1,9 @@
 
 from rest_framework import viewsets, generics
 from StreamServerApp.serializers.subtitles import SubtitleListSerializer
-from StreamServerApp.models import Subtitle
+from StreamServerApp.models import Subtitle, delete_subtitle
 from StreamServerApp.media_processing import convert_subtitles_to_webvtt
+from django.http import Http404
 import os
 from django.conf import settings
 
@@ -16,7 +17,7 @@ class SubtitleViewSet(viewsets.ModelViewSet):
     serializer_class = SubtitleListSerializer
 
     def _allowed_methods(self):
-        return ['GET', 'POST']
+        return ['GET', 'POST', 'DELETE']
 
     def perform_create(self, serializer):
         datafile = self.request.data.get('datafile')
@@ -35,3 +36,14 @@ class SubtitleViewSet(viewsets.ModelViewSet):
                                      )
 
             convert_subtitles_to_webvtt(str(newsub.uploaded_data), vtt_path)
+
+    def destroy(self, request, *args, **kwargs):
+       sub_pk = kwargs["pk"]
+       try:
+           print(sub_pk)
+           sub = Subtitle.objects.get(pk=sub_pk)
+           delete_subtitle(sub)
+       except Subtitle.DoesNotExist:
+           print("No MyModel matches the given query.")
+           raise Http404("No MyModel matches the given query.")
+       return super(SubtitleViewSet, self).destroy(request, *args, **kwargs)

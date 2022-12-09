@@ -117,7 +117,14 @@ function Client() {
 
 
         return http.post(`${endPoint}/`, param , options);
-}
+     }
+
+    this.deleteRequest = (endPoint, params={}) => http.delete(`${endPoint}`, {
+        ...params,
+        headers: {
+            Authorization: this.token, // the token is a variable which holds the token
+        },
+    });
 
     /**
      * performs GET request to retrieve a single video by it's ID
@@ -239,13 +246,22 @@ function Client() {
             console.log("Error caught and rethrown in ():", error.message);
             throw (error);
         }
-        
     };
 
     this.resyncSubtitle = async (video_id, subtitle_id) => {
         const response = await this.getRequest(`${SYNC_ENDPOINT}/${video_id}/${subtitle_id}/`);
         return response;
     }
+
+    this.deleteSubtitle = async ( subtitle_id) => {
+        try {
+            const response = await this.deleteRequest(`${SUBTITLES_ENDPOINT}/${subtitle_id}`);
+            return response;
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
+    };
 
     /**
      * performs GET request to a task status

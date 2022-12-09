@@ -201,6 +201,16 @@ vtt_sync_path = {} \
          self.webvtt_sync_url,
          self.srt_path, self.srt_sync_path, self.vtt_path, self.vtt_sync_path)
 
+def delete_subtitle(sub: Subtitle) -> None:
+    if os.path.isfile(sub.srt_path):
+        os.remove(sub.srt_path)
+    if os.path.isfile(sub.vtt_path):
+        os.remove(sub.vtt_path)
+    if os.path.isfile(sub.vtt_sync_path):
+        os.remove(sub.vtt_sync_path)
+    if os.path.isfile(sub.srt_sync_path):
+        os.remove(sub.srt_sync_path)
+
 
 #This function should be called before Video instance deletion
 def delete_video_related_assets(Video_input: Video) -> None:
@@ -215,11 +225,4 @@ def delete_video_related_assets(Video_input: Video) -> None:
     print("removing subtitles")
     subs = Subtitle.objects.filter(video_id=Video_input)
     for sub in subs:
-        if os.path.isfile(sub.srt_path):
-            os.remove(sub.srt_path)
-        if os.path.isfile(sub.vtt_path):
-            os.remove(sub.vtt_path)
-        if os.path.isfile(sub.vtt_sync_path):
-            os.remove(sub.vtt_sync_path)
-        if os.path.isfile(sub.srt_sync_path):
-            os.remove(sub.srt_sync_path)
+        delete_subtitle(sub)

@@ -119,7 +119,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
             </div>
             <div className="hideifmobile">
             {authTokens &&
-                <SubtitleForm video={video} token={authTokens} />}
+                <SubtitleForm video={video} token={authTokens} handleVideoSelect={handleVideoSelect}/>}
             </div>
 
         </div>

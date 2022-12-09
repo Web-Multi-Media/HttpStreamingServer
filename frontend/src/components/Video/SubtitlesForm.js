@@ -22,7 +22,7 @@ const wait = ms => new Promise(
   (resolve, reject) => setTimeout(resolve, ms)
 );
 
-function SubtitleForm ({video, token}){
+function SubtitleForm ({video, token, handleVideoSelect}){
 
     const [selectedFiles, setSelectedFiles] = useState(undefined);
     const [subtitleName, setSubtitleName] = useState("Custom Subtitle");
@@ -51,8 +51,12 @@ function SubtitleForm ({video, token}){
       } else if (substate === "failure") {
         return <Button isDisabled={true} style={{backgroundColor: "red"}} >{subtitle.language} </Button>
       } else {
-        return <Button onClick={handleResync.bind(this, video.id, subtitle.id, setSubState)}>{subtitle.language}</Button>
+        return <Button subId={subtitle.id} onClick={handleResync.bind(this, video.id, subtitle.id, setSubState)}>{subtitle.language}</Button>
       }
+    }
+
+    function DeleteButton({ video, subtitle }) {
+      return <Button subId={subtitle.id} onClick={handleDelete.bind(this, video, subtitle.id, handleVideoSelect )}>{subtitle.language}</Button>
     }
 
     const handleSubtitleChange = event => {
@@ -99,6 +103,12 @@ function SubtitleForm ({video, token}){
           alert("Something went wront, are you connected ?");
       onClose();
   };
+
+  const handleDelete = async (video, subid) => { 
+    console.log("Delete Sub  " + subid + "for video " + video.id);
+    const response = await client.deleteSubtitle(subid);
+    handleVideoSelect(video);
+  }
 
   const handleResync = async (videoid, subid, setsubstate) => {
     const response = await client.resyncSubtitle(videoid, subid);
@@ -171,6 +181,13 @@ function SubtitleForm ({video, token}){
                 : video.subtitles.map((sub) => (
                     <ResyncButton video={video} subtitle={sub}>
                     </ResyncButton>
+                  ))}
+              <Text mt={4} color="black">Delete existing subtitles:</Text>
+              {!video.subtitles
+                ? null
+                : video.subtitles.map((sub) => (
+                    <DeleteButton video={video} subtitle={sub}>
+                    </DeleteButton>
                   ))}
               </Box>
             </ModalBody>

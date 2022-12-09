@@ -41,7 +41,6 @@ services:
     volumes:
       - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
-      - ./nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
       - static_volume:/usr/src/app/staticfiles
     ports:
       - 1337:80
