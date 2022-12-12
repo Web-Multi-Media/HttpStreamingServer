@@ -21,6 +21,7 @@ from StreamServerApp.models import (Movie, Series, Subtitle, UserVideoHistory,
                                     Video)
 from StreamServerApp.subtitles import get_subtitles
 from StreamServerApp.tasks import get_subtitles_async, sync_subtitles
+from unittest.mock import patch
 
 
 def resync_test_template(test_instance, input_folder, root_url):
@@ -152,6 +153,22 @@ class SubtitlesTest(TestCase):
             ), True)
 
     def test_get_subtitles_async_1(self):
+        expected_url = os.path.join(
+            settings.VIDEO_URL,
+            "testsub/Friends S01E07 The One with the Blackout.en.vtt")
+
+        path_to_srt = os.path.join(
+            settings.VIDEO_ROOT,
+            "testsub/Friends S01E07 The One with the Blackout.en.vtt")
+
+        path_to_vtt = os.path.join(
+            settings.VIDEO_ROOT,
+            "testsub/Friends S01E07 The One with the Blackout.en.vtt")
+        
+        @patch('StreamServerApp.subtitles.handle_subliminal_download')
+        def test_foo(test_some_fn):
+            test_some_fn.return_value = path_to_srt, path_to_vtt 
+
         path_to_dash_asset = "/usr/src/app/Videos/testsub/"
         if not os.path.isdir(path_to_dash_asset):
             #os.mkdir("/usr/test/FriendsS01E07TheOnewiththeBlackout/", exist_ok=True)
@@ -169,10 +186,6 @@ class SubtitlesTest(TestCase):
             video_folder="{}/playlist.mpd".format(path_to_dash_asset))
 
         get_subtitles_async(video.id, "/usr/src/app/Videos/", "/Videos/")
-
-        expected_url = os.path.join(
-            settings.VIDEO_URL,
-            "testsub/Friends S01E07 The One with the Blackout.en.vtt")
 
         assert (len(video.subtitles.filter(language="eng")) > 0)
         sub = video.subtitles.filter(language="eng")[0]
