@@ -13,6 +13,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
     const [count, setCount] = useState(0);
     const [player, setPlayer] = useState(dashjs.MediaPlayer().create());
     const [playerIsInitialized, setPlayerIsInitialized] = useState(false);
+    const [Subtitles, setSubtitles] = useState();
     
     async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
         const video = await client.getVideoById(nextEpisodeID);
@@ -39,25 +40,11 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                 player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
                     setPlayerIsInitialized(true);
                 });
+                setSubtitles(video.subtitles);
             } else {
                 let videoElement = document.querySelector("#videoPlayer");
-                while (videoElement.firstChild) {
-                    videoElement.removeChild(videoElement.lastChild);
-                }
                 player.attachSource(video.videoUrl);
-                video.subtitles.map((sub, index) => {
-                    let track = document.createElement("track");
-                    track.id= "my-sub-track";
-                    track.kind = "captions";
-                    track.label = sub.language;
-                    if (sub.webvtt_sync_url) {
-                        track.src = sub.webvtt_sync_url;
-                    } else {
-                        track.src = sub.webvtt_subtitle_url;
-                    }
-                    videoElement.appendChild(track);
-                }
-                )
+                setSubtitles(video.subtitles);
             }
         }
     }, [video]);
@@ -95,12 +82,12 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                         }}
                         onPause={() => setTimer(false)}>
                         <source />
-                        {!video.subtitles ? null : video.subtitles.map((sub, index) =>
+                        {!Subtitles ? null : Subtitles.map((sub, index) =>
                             <>
                                 {sub.webvtt_sync_url.length > 0 &&
-                                    <track label={`Sync ${sub.language}`} kind="subtitles" srcLang={sub.language} src={sub.webvtt_sync_url} />
+                                    <track mode="showing" key={sub.webvtt_sync_url} label={`Sync ${sub.language}`} kind="subtitles" srcLang={sub.language} src={sub.webvtt_sync_url} />
                                 }
-                                <track label={sub.language} default={index === 0} kind="subtitles" srcLang={sub.language} src={sub.webvtt_subtitle_url} />
+                                <track mode="showing" key={sub.webvtt_subtitle_url} label={sub.language} default={index === 0} kind="subtitles" srcLang={sub.language} src={sub.webvtt_subtitle_url} />
                             </>
                         )}
                     </video>
