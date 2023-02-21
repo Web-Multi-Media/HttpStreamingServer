@@ -208,12 +208,11 @@ def prepare_video(video_full_path,
             h264_encoder(
                 video_full_path,
                 video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate)
+            video_tracks.append((video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate))
         except:
             print("An exception occured during low layer encoding, skip this layer")
             low_layer_bitrate = 0
             low_layer_height = 0
-
-        video_tracks.append((video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate))
 
 
     relative_path = os.path.relpath(video_full_path, video_path)
