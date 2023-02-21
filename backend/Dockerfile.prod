@@ -16,7 +16,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update -y && apt-get install -y transmission-daemon build-essential pkg-config git zlib1g-dev python3-pip
 
-RUN git clone --depth=1 --branch v1.0.1 https://github.com/gpac/gpac gpac_public && cd gpac_public && ./configure --static-mp4box && make && make install
+RUN git clone --depth=1 --branch v2.0.0 https://github.com/gpac/gpac gpac_public && cd gpac_public && ./configure --static-mp4box && make && make install
 
 RUN apt-get remove -y build-essential pkg-config git
 

@@ -107,9 +107,6 @@ def prepare_video(video_full_path,
         keep_files: Keep original files in case of convertion
 
         return: Dictionnary with video infos
-
-        this functions will only add videos to the database if
-        they are encoded with h264/AAC codec
     """
     print("processing {}".format(video_full_path))
     try:
@@ -118,6 +115,15 @@ def prepare_video(video_full_path,
         print(e.stderr, file=sys.stderr)
         raise
 
+    video_tracks = []
+    audio_tracks = []
+
+    webvtt_ov_fullpaths = []
+    subtitles_stream = None
+    subtitles_index = 0
+    audio_index = 0
+
+
     video_stream = next(
         (stream
          for stream in probe['streams'] if stream['codec_type'] == 'video'),
@@ -125,7 +131,6 @@ def prepare_video(video_full_path,
     if video_stream is None:
         print('No video stream found', file=sys.stderr)
         return {}
-
 
     video_codec_type = video_stream['codec_name']
     video_width = video_stream['width']
@@ -145,9 +150,6 @@ def prepare_video(video_full_path,
         print('No audio stream found', file=sys.stderr)
         return {}
 
-    webvtt_ov_fullpaths = []
-    subtitles_stream = None
-    subtitles_index = 0 
     for stream in probe['streams']:
         if stream['codec_type'] == 'subtitle':
             print('Found Subtitles in the input stream')
@@ -160,21 +162,25 @@ def prepare_video(video_full_path,
             except:
                 print("Something went wrong with subtitle extraction, skipping track {}".format(subtitles_index))
             subtitles_index += 1
-
-    audio_codec_type = audio_stream['codec_name']
-    audio_elementary_stream_path = "{}.m4a".format(
-        os.path.splitext(video_full_path)[0])
+        elif stream['codec_type'] == 'audio':
+            audio_codec_type = stream['codec_name']
+            audio_elementary_stream_path = "{}_{}.m4a".format(
+                os.path.splitext(video_full_path)[0], audio_index)
+            if "aac" in audio_codec_type:
+                extract_audio(video_full_path, audio_elementary_stream_path, audio_index)
+            else:
+                aac_encoder(video_full_path, audio_elementary_stream_path, audio_index)
+            lang = "und"
+            if "language" in stream["tags"]:
+                lang = stream["tags"]["language"]
+            audio_tracks.append((audio_elementary_stream_path, lang))
+            audio_index += 1
 
     video_elementary_stream_path_high_layer = "{}_{}.264".format(
         os.path.splitext(video_full_path)[0], video_height)
 
     dash_output_directory = os.path.splitext(video_full_path)[0]
     temp_mpd = "{}/playlist.mpd".format(dash_output_directory)
-
-    if "aac" in audio_codec_type:
-        extract_audio(video_full_path, audio_elementary_stream_path)
-    else:
-        aac_encoder(video_full_path, audio_elementary_stream_path)
     
     #https://stackoverflow.com/questions/5024114/suggested-compression-ratio-with-h-264
     high_layer_compression_ratio = int(
@@ -195,6 +201,8 @@ def prepare_video(video_full_path,
         video_full_path,
         video_elementary_stream_path_high_layer, video_height, high_layer_bitrate)
 
+    video_tracks.append((video_elementary_stream_path_high_layer, video_height, high_layer_bitrate))
+
     if (low_layer_bitrate > 0 and low_layer_height > 0):
         try:
             h264_encoder(
@@ -204,6 +212,8 @@ def prepare_video(video_full_path,
             print("An exception occured during low layer encoding, skip this layer")
             low_layer_bitrate = 0
             low_layer_height = 0
+
+        video_tracks.append((video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate))
 
 
     relative_path = os.path.relpath(video_full_path, video_path)
@@ -219,8 +229,7 @@ def prepare_video(video_full_path,
         generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
     #Dash_packaging
-    dash_packager(video_elementary_stream_path_low_layer, low_layer_bitrate, low_layer_height,
-                  video_elementary_stream_path_high_layer, high_layer_bitrate, video_height, audio_elementary_stream_path,
+    dash_packager(video_tracks, audio_tracks,
                   dash_output_directory)
 
     os.remove(video_elementary_stream_path_high_layer)

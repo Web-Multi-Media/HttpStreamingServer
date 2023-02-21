@@ -14,9 +14,10 @@ def h264_encoder(filename, output, resolutionH, bitrate):
     run_ffmpeg_process(command)
 
 
-def aac_encoder(filename, output):
+def aac_encoder(filename, output, track_number=0):
+
     command = ["ffmpeg", "-y", "-i", filename,
-               "-map", "0:1?", "-filter:a", "loudnorm", "-vn",  "-c:a", "aac",  "-b:a" , "128k",
+               "-map", "0:a:{}".format(track_number), "-filter:a", "loudnorm", "-vn",  "-c:a", "aac",  "-b:a", "128k",
                "-ar",  "48000", "-ac", "2",
                "{}".format(output)]
 
@@ -24,9 +25,9 @@ def aac_encoder(filename, output):
     run_ffmpeg_process(command)
 
 
-def extract_audio(filename, output):
+def extract_audio(filename, output, track_number=0):
     print("Extracting Audio from {}".format(filename))
-    command = ["ffmpeg", "-y", "-i", filename, "-vn", "-acodec", "copy", 
-                output]
+    command = ["ffmpeg", "-y", "-i", filename, "-vn", "-acodec", "copy", "-map", "0:a:{}".format(track_number),
+               output]
     print(command)
     run_ffmpeg_process(command)

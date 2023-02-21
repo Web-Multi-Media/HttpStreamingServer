@@ -30,36 +30,45 @@ class TestDash(TestCase):
     def test_dash_packaging(self):
         input_height = 720
         low_layer_height = int(input_height / 2.0)
+        high_layer_height = 720
+        high_layer_bitrate = 1800000
+        low_layer_bitrate = 800000
+        path_to_highlayer = "/usr/src/app/Videos/lebowsky_720.264"
+        path_to_lowlayer = "/usr/src/app/Videos/lebowsky_low.264"
+
         h264_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            "/usr/src/app/Videos/lebowsky_720.264", 720, 1800000)
+            path_to_highlayer, high_layer_height, high_layer_bitrate)
         h264_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            "/usr/src/app/Videos/lebowsky_low.264", low_layer_height, 800000)
+            path_to_lowlayer, low_layer_height, low_layer_bitrate)
+        
         aac_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            "/usr/src/app/Videos/lebowsky.m4a")
-        dash_packager("/usr/src/app/Videos/lebowsky_low.264",
-                      800000,
-                      low_layer_height,
-                      "/usr/src/app/Videos/lebowsky_720.264",
-                      1800000,
-                      720,
-                      "/usr/src/app/Videos/lebowsky.m4a",
-                      "/usr/src/app/Videos/lebowskydash/")
+            "/usr/src/app/Videos/lebowsky_track1.m4a")
+
+        aac_encoder(
+            "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
+            "/usr/src/app/Videos/lebowsky_track2.m4a")
+
+        video_list = [(path_to_highlayer, high_layer_bitrate, high_layer_height),
+                      (path_to_lowlayer, low_layer_bitrate, low_layer_height),
+                     ]
+        
+        audio_list = [("/usr/src/app/Videos/lebowsky_track1.m4a", "eng"),
+                      ("/usr/src/app/Videos/lebowsky_track2.m4a", "fr")
+                     ]
+
+        dash_packager(video_list, audio_list, "/usr/src/app/Videos/lebowskydash/")
+
+        video_list = [(path_to_highlayer, high_layer_bitrate, high_layer_height)]
 
         self.assertEqual(os.path.isfile(
             "/usr/src/app/Videos/lebowskydash/segment_720p_1.m4s"), True)
         self.assertEqual(os.path.isfile(
             "/usr/src/app/Videos/lebowskydash/segment_{}p_1.m4s".format(low_layer_height)), True)
 
-        dash_packager("/usr/src/app/Videos/lebowsky_480.264",
-                      0,
-                      low_layer_height,
-                      "/usr/src/app/Videos/lebowsky_720.264",
-                      1800000,
-                      720,
-                      "/usr/src/app/Videos/lebowsky.m4a",
+        dash_packager(video_list, audio_list,
                       "/usr/src/app/Videos/lebowskydash2/")
 
         self.assertEqual(os.path.isfile(

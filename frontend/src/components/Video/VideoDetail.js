@@ -5,6 +5,7 @@ import './VideoDetail.css'
 import SubtitleForm from "./SubtitlesForm"
 import dashjs from 'dashjs'
 import ResolutionSelector from './ResolutionSelector';
+import AudioTrackSelector from './AudioTrackSelector'
 
 
 function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }) {
@@ -97,6 +98,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                 <h4 className="ui header">{video.name}</h4>
             </div>
             <ResolutionSelector playerref={player} video={video} playerIsInitialized={playerIsInitialized}/>
+            <AudioTrackSelector playerref={player} video={video} playerIsInitialized={playerIsInitialized}/>
             <div className="ui segment">
                 {video.nextEpisode &&
                     <Button  onClick={() => HandleNextEpisode(handleVideoSelect,video.nextEpisode)} variant="contained" color="primary">
