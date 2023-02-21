@@ -232,9 +232,12 @@ def prepare_video(video_full_path,
     dash_packager(video_tracks, audio_tracks,
                   dash_output_directory)
 
-    os.remove(video_elementary_stream_path_high_layer)
-    if (low_layer_bitrate > 0 and low_layer_height > 0):
-        os.remove(video_elementary_stream_path_low_layer)
+    for video in video_tracks:
+        os.remove(video[0])
+    #We remove all audio tracks except the first one (which will be used for audio/sub resync and deleted 
+    #when Video (ORM) objects is deleted
+    for audio in audio_tracks[1:]:
+        os.remove(audio[0])
 
     if not keep_files:
         os.remove(video_full_path)
@@ -247,7 +250,7 @@ def prepare_video(video_full_path,
         'remote_video_url': remote_video_url,
         'video_codec_type': video_codec_type,
         'audio_codec_type': audio_codec_type,
-        'audio_path': audio_elementary_stream_path,
+        'audio_path': audio_tracks[0][0],
         'video_height': video_height,
         'video_width': video_width,
         'remote_thumbnail_url': remote_thumbnail_url,
