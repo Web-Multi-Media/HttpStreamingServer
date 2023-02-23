@@ -1,30 +1,25 @@
-import React, {useEffect, useState} from 'react';
-import dashjs from 'dashjs'
+import React, { useEffect, useState } from 'react';
 
-export default function AudioTrackSelector({ playerref, video, playerIsInitialized }) {
-    const [audioTracks, setAudioTrack] = useState([]);
-    const [player, setPlayer] = useState();
+export default function AudioTrackSelector({ audioTracks, video, playerref }) {
+
 
     useEffect(() => {
-        if (playerIsInitialized) {
-            let audiotrack = playerref.getTracksFor("audio");
-            console.log(audiotrack);
-            setAudioTrack(audiotrack);
-        }
-    }, [video, playerIsInitialized]);
+        playerref.setCurrentTrack((playerref.getTracksFor('audio'))[0]);
+    }, [video]);
 
     const handleChange = event => {
         playerref.setCurrentTrack((playerref.getTracksFor('audio'))[event.target.value]);
     }
 
     return (
-        <div>
-        Audio track :
-        <select onChange={handleChange}>
-        {audioTracks.map((option) => (
-                <option value={option.index}>{option.index} </option>
-            ))}
-        </select>
+        < div >
+            Audio track:
+            <select onChange={handleChange}>
+                {audioTracks.map((option) => (
+                    <option value={option.index}>{option.index} </option>
+                ))}
+            </select>
         </div>
-    );
+    )
+
 }

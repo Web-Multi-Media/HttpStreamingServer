@@ -15,6 +15,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
     const [player, setPlayer] = useState(dashjs.MediaPlayer().create());
     const [playerIsInitialized, setPlayerIsInitialized] = useState(false);
     const [Subtitles, setSubtitles] = useState();
+    const [audioTracks, setAudioTrack] = useState([]);
     
     async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
         const video = await client.getVideoById(nextEpisodeID);
@@ -40,6 +41,9 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                 player.initialize(document.querySelector("#videoPlayer"), video.videoUrl, true);
                 player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
                     setPlayerIsInitialized(true);
+                    let audiotrack = player.getTracksFor("audio");
+                    console.log(audiotrack);
+                    setAudioTrack(audiotrack);
                 });
                 setSubtitles(video.subtitles);
             } else {
@@ -47,6 +51,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                 player.attachSource(video.videoUrl);
                 setSubtitles(video.subtitles);
             }
+
         }
     }, [video]);
     
@@ -98,7 +103,9 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                 <h4 className="ui header">{video.name}</h4>
             </div>
             <ResolutionSelector playerref={player} video={video} playerIsInitialized={playerIsInitialized}/>
-            <AudioTrackSelector playerref={player} video={video} playerIsInitialized={playerIsInitialized}/>
+            {audioTracks.length > 1 &&
+                <AudioTrackSelector audioTracks={audioTracks} playerref={player} video={video} playerIsInitialized={playerIsInitialized} />
+            }
             <div className="ui segment">
                 {video.nextEpisode &&
                     <Button  onClick={() => HandleNextEpisode(handleVideoSelect,video.nextEpisode)} variant="contained" color="primary">
