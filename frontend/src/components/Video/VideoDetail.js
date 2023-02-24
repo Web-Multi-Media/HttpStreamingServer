@@ -42,7 +42,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                 player.on(dashjs.MediaPlayer.events.STREAM_INITIALIZED, () => {
                     setPlayerIsInitialized(true);
                     let audiotrack = player.getTracksFor("audio");
-                    console.log(audiotrack);
+                    //console.log(audiotrack);
                     setAudioTrack(audiotrack);
                 });
                 setSubtitles(video.subtitles);
@@ -65,7 +65,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                 setHistoryPager(newHistory);
             }, 20000);
             return () => {
-                console.log('clear');
+                //console.log('clear');
                 clearInterval(theThimer);
             }
         }
