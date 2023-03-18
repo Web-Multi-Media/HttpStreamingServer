@@ -37,24 +37,27 @@ class RestUpdate(APIView):
     def get(self, request):
         processing_state = cache.get("processing_state")
         percentage = None
-        if "video" in processing_state:
-            total_nb_frame = int(cache.get("video_frames"))
-            current_num_frame = 0
-            for line in reversed(list(open("/usr/progress/progress-log.txt"))):
-                if "frame=" in line:
-                    current_num_frame = int(line[6:])
-                    break
-            percentage = float(current_num_frame) / float(total_nb_frame)
-            print("video percentage " + str(percentage))
-        elif "audio" in processing_state:
-            audio_total_duration = float(cache.get("audio_total_duration"))
-            for line in reversed(list(open("/usr/progress/progress-log.txt"))):
-                if "out_time=" in line:
-                    current_duration_str = line[9:]
-                    current_duration = float(timecodeToSec(current_duration_str))
-                    percentage = float(current_duration) / audio_total_duration
-                    break
-            print("audio percentage " + str(percentage))
+        try:
+            if "video" in processing_state:
+                total_nb_frame = int(cache.get("video_frames"))
+                current_num_frame = 0
+                for line in reversed(list(open("/usr/progress/progress-log.txt"))):
+                    if "frame=" in line:
+                        current_num_frame = int(line[6:])
+                        break
+                percentage = float(current_num_frame) / float(total_nb_frame)
+                print("video percentage " + str(percentage))
+            elif "audio" in processing_state:
+                audio_total_duration = float(cache.get("audio_total_duration"))
+                for line in reversed(list(open("/usr/progress/progress-log.txt"))):
+                    if "out_time=" in line:
+                        current_duration_str = line[9:]
+                        current_duration = float(timecodeToSec(current_duration_str))
+                        percentage = float(current_duration) / audio_total_duration
+                        break
+                print("audio percentage " + str(percentage))
+        except:
+            percentage = None
 
 
         print("processing_state state = " + processing_state)
