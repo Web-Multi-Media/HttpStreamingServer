@@ -1,0 +1,14 @@
+.box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+.UpdateBar{
+    font-family: 'Balsamiq Sans', cursive;
+    font-size:1.5rem;
+}
+.CloseButton{
+    color:rgb(170, 13, 13);
+    margin-left: 2%;
+}

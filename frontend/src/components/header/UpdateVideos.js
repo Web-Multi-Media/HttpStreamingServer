@@ -1,20 +1,22 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/auth";
 import Button from "@material-ui/core/Button";
 
 
-function UpdateVideo( {client}) {
+function UpdateVideo( {client, updateinfo,  setUpdatedInfo, setCloseUpdateBar }) {
 
   async function updatedb() {
 
     try {
-      const response = await client.updatevideodb();
+      const response = await client.triggerUpdatevideodb();
       if (response.status === 200) {
-        alert("The update was successfly triggered. Please refresh your window in a while \
-(This might take a long time, as we reencode content).");
+        const response = await client.getUpdatevideodbState();
+        console.log(response);
+        setUpdatedInfo(response);
       } else if(response.status === 226) {
-        alert("An update is already running. Please refresh your window in a while");
+        const response = await client.getUpdatevideodbState();
+        setUpdatedInfo(response);
       }
+      setCloseUpdateBar(true);
     } catch (error) {
       console.log(error);
     }

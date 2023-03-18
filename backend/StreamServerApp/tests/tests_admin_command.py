@@ -169,7 +169,8 @@ class RestUpdatedTest(TestCase):
             username='test_user', password='top_secret')
         self.token = Token.objects.create(user=self.user)
         self.token.save()
-        self.client.defaults['HTTP_AUTHORIZATION'] = str(self.token)
+        self.client = Client(HTTP_AUTHORIZATION='Token ' + str(self.token))
+        self.client.defaults['HTTP_AUTHORIZATION'] = "Token " + str(self.token)
 
     def test_updatedb_with_valid_token(self):
         response = self.client.post(
@@ -177,7 +178,6 @@ class RestUpdatedTest(TestCase):
             content_type='application/json',
             data=json.dumps({
                 'headers': {
-                    'Authorization': "Token " + str(self.token),
                     'keep_files': True,
                     'dryrun': True,
                 }

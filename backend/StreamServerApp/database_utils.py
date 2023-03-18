@@ -60,6 +60,8 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False):
 
     old_path_set = set()
 
+    cache.set("processing_state", "cleaning old files", timeout=None)
+
     #We check here if old database files are still present on filesystem, if not, delete from db
     video_ids_to_delete = []
     for old_files_path, old_video_id in database_old_files:
@@ -125,6 +127,11 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False):
                                                         num_video_before))
     print('{} series and {} movies were created'.format(
         count_series, count_movies))
+
+    cache.set("processing_state", "finished", timeout=None)
+    cache.delete("audio_total_duration")
+    cache.delete("video_frames")
+    cache.delete("processing_file")
 
 
 def add_one_video_to_database(full_path,

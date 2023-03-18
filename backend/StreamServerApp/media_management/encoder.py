@@ -2,8 +2,8 @@
 from StreamServerApp.media_management.subprocess_wrapper import run_ffmpeg_process
 
 
-def h264_encoder(filename, output, resolutionH, bitrate):
-    command = ["ffmpeg", "-y", "-i", filename, "-filter:v",  "scale=-2:{}".format(resolutionH),
+def h264_encoder(filename, output, resolutionH, bitrate, progress_log):
+    command = ["ffmpeg", "-progress", progress_log, "-y", "-i", filename, "-filter:v",  "scale=-2:{}".format(resolutionH),
                "-c:v", "libx264",  "-b:v", str(int(bitrate)),
                "-r", "24", "-x264opts", "keyint=48:min-keyint=48:no-scenecut",
                "-movflags", "faststart", "-bufsize", "8600k",
@@ -14,9 +14,9 @@ def h264_encoder(filename, output, resolutionH, bitrate):
     run_ffmpeg_process(command)
 
 
-def aac_encoder(filename, output, track_number=0):
+def aac_encoder(filename, output, progress_log,  track_number=0):
 
-    command = ["ffmpeg", "-y", "-i", filename,
+    command = ["ffmpeg", "-progress", progress_log, "-y", "-i", filename,
                "-map", "0:a:{}".format(track_number), "-filter:a", "loudnorm", "-vn",  "-c:a", "aac",  "-b:a", "128k",
                "-ar",  "48000", "-ac", "2",
                "{}".format(output)]

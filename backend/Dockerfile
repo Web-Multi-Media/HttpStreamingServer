@@ -11,6 +11,12 @@ RUN git clone --depth=1 --branch v2.0.0 https://github.com/gpac/gpac gpac_public
 
 RUN apt-get remove -y build-essential pkg-config git
 
+RUN mkdir /usr/torrent/
+RUN chgrp -R debian-transmission /usr/torrent/
+RUN chmod -R 777 /usr/torrent/
+VOLUME /usr/torrent/
+RUN usermod -a -G debian-transmission root
+
 ENV PYTHONUNBUFFERED 1
 #COPY ./backend/ /usr/src/app/
 #WORKDIR /usr/src/app

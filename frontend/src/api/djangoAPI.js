@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { checkPropTypes } from 'prop-types';
 
 /**
  * initialize the client with the base url
@@ -68,7 +67,7 @@ function Client() {
             let cookies = document.cookie.split(";");
             for (let i = 0; i < cookies.length; i++) {
                 let cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) == (name + "=")) {
+                if (cookie.substring(0, name.length + 1) === (name + "=")) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
                 }
@@ -377,18 +376,29 @@ function Client() {
      *
      * @returns response
      */
-    this.updatevideodb = async () => {
-            const body =
-            {
-                body:{}
-            };
+    this.triggerUpdatevideodb = async () => {
             try{
-                const response = await this.postRequest(UPDATE_ENDPOINT, body , null , {'content-type': 'multipart/form-data' } );
+                const response = await this.postRequest(UPDATE_ENDPOINT, {} , null , {'content-type': 'multipart/form-data' } );
                 return response;
             } catch (error) {
                 console.log("Error caught and rethrown in ():", error.message);
                 throw (error);
             }
+    };
+
+    /**
+     * performs Get request to update video database
+     *
+     * @returns response
+     */
+    this.getUpdatevideodbState = async () => {
+        try{
+            const response = await this.getRequest(`${UPDATE_ENDPOINT}/`);
+            return response.data;
+        } catch (error) {
+            console.log("Error caught and rethrown in ():", error.message);
+            throw (error);
+        }
     };
 
     /**

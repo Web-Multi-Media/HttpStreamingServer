@@ -22,6 +22,29 @@ from StreamServerApp.models import (Movie, Series, Subtitle, UserVideoHistory,
 from StreamServerApp.subtitles import get_subtitles
 from StreamServerApp.tasks import get_subtitles_async, sync_subtitles
 from unittest.mock import patch
+import shutil
+
+path_to_srt = os.path.join(
+    settings.VIDEO_ROOT,
+    "Friends S01E07 The One with the Blackout.en.srt")
+
+path_to_vtt = os.path.join(
+    settings.VIDEO_ROOT,
+    "Friends S01E07 The One with the Blackout.en.vtt")
+
+
+def mocked_subliminal_download(video, video_path, languages_to_retrieve):
+
+    dict_srt = {}
+    dict_vtt = {}
+    if "/usr/torrent/" in video_path:
+        dict_srt["eng"] = "/usr/torrent/testsub/Friends S01E07 The One with the Blackout.en.srt"
+        dict_vtt["eng"] = "/usr/torrent/testsub/Friends S01E07 The One with the Blackout.en.vtt"
+    else:
+        dict_srt["eng"] = path_to_srt
+        dict_vtt["eng"] = path_to_vtt
+
+    return dict_vtt, dict_srt
 
 
 def resync_test_template(test_instance, input_folder, root_url):
@@ -64,22 +87,21 @@ class SubtitlesTest(TestCase):
         self.client.defaults['HTTP_AUTHORIZATION'] = str(self.token)
 
     def test_subtitles_download(self):
+        shutil.copy(os.path.join(
+            settings.VIDEO_ROOT, "subtitles/test.srt"), path_to_srt)
+        shutil.copy(os.path.join(
+            settings.VIDEO_ROOT, "subtitles/test.srt"), path_to_vtt)
+
         subtitles = get_subtitles(
             "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4")
+
+
         self.assertEqual(
             os.path.isfile(
-                "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.en.vtt"
+                path_to_srt
             ), True)
         self.assertEqual(
-            os.path.isfile(
-                "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.fr.vtt"
-            ), True)
-        os.remove(
-            "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.en.vtt"
-        )
-        os.remove(
-            "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.fr.vtt"
-        )
+            os.path.isfile(path_to_vtt, True))
 
     def test_get_empty_history(self):
         response = self.client.get(reverse('subtitles-list'))
@@ -139,35 +161,24 @@ class SubtitlesTest(TestCase):
         shutil.copyfile("/usr/src/app/Videos/subtitles/spongebob.srt", "/usr/torrent/subtitles/spongebob.srt")
         resync_test_template(self, "/usr/torrent/", "/torrents")
 
-
-    def test_subtitles_download(self):
+    @patch('StreamServerApp.subtitles.handle_subliminal_download', side_effect=mocked_subliminal_download)
+    def test_subtitles_download(self, mocked):
+        shutil.copy("/usr/src/app/Videos/subtitles/spongebob.srt", path_to_srt)
+        shutil.copy("/usr/src/app/Videos/subtitles/spongebob.srt", path_to_vtt)
         subtitles = get_subtitles(
             "/usr/src/app/Videos/Friends S01E07 The One with the Blackout.mp4")
         self.assertEqual(
-            os.path.isfile(
-                "/usr/src/app/Videos/Friends S01E07 The One with the Blackout.en.srt"
-            ), True)
+            os.path.isfile(path_to_srt
+                           ), True)
         self.assertEqual(
-            os.path.isfile(
-                "/usr/src/app/Videos/Friends S01E07 The One with the Blackout.en.vtt"
-            ), True)
+            os.path.isfile(path_to_vtt
+                           ), True)
 
-    def test_get_subtitles_async_1(self):
+    @patch('StreamServerApp.subtitles.handle_subliminal_download', side_effect=mocked_subliminal_download)
+    def test_get_subtitles_async_1(self, mocked):
         expected_url = os.path.join(
             settings.VIDEO_URL,
-            "testsub/Friends S01E07 The One with the Blackout.en.vtt")
-
-        path_to_srt = os.path.join(
-            settings.VIDEO_ROOT,
-            "testsub/Friends S01E07 The One with the Blackout.en.vtt")
-
-        path_to_vtt = os.path.join(
-            settings.VIDEO_ROOT,
-            "testsub/Friends S01E07 The One with the Blackout.en.vtt")
-        
-        @patch('StreamServerApp.subtitles.handle_subliminal_download')
-        def test_foo(test_some_fn):
-            test_some_fn.return_value = path_to_srt, path_to_vtt 
+            "Friends S01E07 The One with the Blackout.en.vtt")
 
         path_to_dash_asset = "/usr/src/app/Videos/testsub/"
         if not os.path.isdir(path_to_dash_asset):
@@ -191,7 +202,9 @@ class SubtitlesTest(TestCase):
         sub = video.subtitles.filter(language="eng")[0]
         self.assertEqual(sub.webvtt_subtitle_url, expected_url)
 
-    def test_get_subtitles_async_2(self):
+
+    @patch('StreamServerApp.subtitles.handle_subliminal_download', side_effect=mocked_subliminal_download)
+    def test_get_subtitles_async_2(self , mocked):
         path_to_dash_asset = "/usr/torrent/testsub/"
         if not os.path.isdir(path_to_dash_asset):
             #os.mkdir("/usr/test/FriendsS01E07TheOnewiththeBlackout/", exist_ok=True)

@@ -4,6 +4,7 @@ volumes:
   dbvolume:
   ipython:
   static_volume:
+  progress_volume:
 
 services:
   db:
@@ -28,6 +29,7 @@ services:
     volumes:
       - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
+      - progress_volume:/usr/progress/
       - static_volume:/usr/src/app/staticfiles
       - /static/
       - ipython:/root/.ipython
@@ -69,6 +71,7 @@ services:
     volumes:
         - ./backend/:/usr/src/app/
         - ./Videos/:/usr/src/app/Videos
+        - progress_volume:/usr/progress/
     env_file:
         - .env
     depends_on:

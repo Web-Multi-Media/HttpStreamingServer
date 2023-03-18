@@ -38,18 +38,18 @@ class TestDash(TestCase):
 
         h264_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            path_to_highlayer, high_layer_height, high_layer_bitrate)
+            path_to_highlayer, high_layer_height, high_layer_bitrate, "progress_video1")
         h264_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            path_to_lowlayer, low_layer_height, low_layer_bitrate)
+            path_to_lowlayer, low_layer_height, low_layer_bitrate, "progress_video2")
         
         aac_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            "/usr/src/app/Videos/lebowsky_track1.m4a")
+            "/usr/src/app/Videos/lebowsky_track1.m4a", "progress_audio1")
 
         aac_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            "/usr/src/app/Videos/lebowsky_track2.m4a")
+            "/usr/src/app/Videos/lebowsky_track2.m4a", "progress_audio2")
 
         video_list = [(path_to_highlayer, high_layer_bitrate, high_layer_height),
                       (path_to_lowlayer, low_layer_bitrate, low_layer_height),

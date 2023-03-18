@@ -201,6 +201,7 @@ vtt_sync_path = {} \
          self.webvtt_sync_url,
          self.srt_path, self.srt_sync_path, self.vtt_path, self.vtt_sync_path)
 
+
 def delete_subtitle(sub: Subtitle) -> None:
     if os.path.isfile(sub.srt_path):
         os.remove(sub.srt_path)
