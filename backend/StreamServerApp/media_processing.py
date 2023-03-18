@@ -197,8 +197,10 @@ def prepare_video(video_full_path,
             else:
                 aac_encoder(video_full_path, audio_elementary_stream_path, "/usr/progress/progress-log.txt", audio_index)
             lang = "und"
-            if "language" in stream["tags"]:
+            try:
                 lang = stream["tags"]["language"]
+            except KeyError:
+                lang = "und"
             audio_tracks.append((audio_elementary_stream_path, lang))
             audio_index += 1
 
