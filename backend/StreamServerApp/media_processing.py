@@ -187,7 +187,7 @@ def prepare_video(video_full_path,
             if "duration" in stream:
                 cache.set("audio_total_duration", stream["duration"], timeout=None)
             elif "tags" in stream:
-                if "DURATION" in stream["tags"]["DURATION"]:
+                if "DURATION" in stream["tags"]:
                     total_sec = timecodeToSec(stream["tags"]["DURATION"])
                     cache.set("audio_total_duration", total_sec, timeout=None)
 

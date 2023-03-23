@@ -33,6 +33,10 @@ def copytree(src, dst, symlinks=False, ignore=None):
         else:
             shutil.copy2(s, d)
 
+NUM_EXPECTED_VIDEO = 4
+NUM_EXPECTED_MOVIES = 2
+NUM_EXPECTED_SERIES = 1
+
 
 class PopulateTestCase(TestCase):
     def test_database_populate_command(self):
@@ -51,7 +55,7 @@ class PopulateTestCase(TestCase):
             testdir,
             settings.VIDEO_URL)
         # a bit of a mess here to make sure to count only files in all folders...
-        self.assertEqual(get_num_videos(), 3)
+        self.assertEqual(get_num_videos(), NUM_EXPECTED_VIDEO)
 
     def test_movies_series_added_to_db(self):
         Video.objects.all().delete()
@@ -72,8 +76,8 @@ class PopulateTestCase(TestCase):
             testdir,
             settings.VIDEO_URL)
 
-        self.assertEqual(Series.objects.count(), 1)
-        self.assertEqual(Movie.objects.count(), 1)
+        self.assertEqual(Series.objects.count(), NUM_EXPECTED_SERIES)
+        self.assertEqual(Movie.objects.count(), NUM_EXPECTED_MOVIES)
 
         video = Video.objects.get(
             name='The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4')
@@ -108,9 +112,9 @@ class UpdateTestCase(TestCase):
         update_db_from_local_folder(testdir,
                                     settings.VIDEO_URL,
                                     keep_files=True)
-        self.assertEqual(Video.objects.count(), 3)
-        self.assertEqual(Series.objects.count(), 1)
-        self.assertEqual(Movie.objects.count(), 1)
+        self.assertEqual(Video.objects.count(), NUM_EXPECTED_VIDEO)
+        self.assertEqual(Series.objects.count(), NUM_EXPECTED_SERIES)
+        self.assertEqual(Movie.objects.count(), NUM_EXPECTED_MOVIES)
         shutil.copyfile(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
             "{}Malcolm.in.the Middle.S03E14.Cynthia's.Back.mp4".format(testdir)
@@ -118,8 +122,8 @@ class UpdateTestCase(TestCase):
         #call_command('updatedb')
         update_db_from_local_folder(testdir,
                                     settings.VIDEO_URL)
-        self.assertEqual(Series.objects.count(), 2)
-        self.assertEqual(Movie.objects.count(), 1)
+        self.assertEqual(Series.objects.count(), NUM_EXPECTED_SERIES + 1)
+        self.assertEqual(Movie.objects.count(), NUM_EXPECTED_MOVIES)
         '''os.removedirs("/usr/src/app/Videos/folder1/Malcolm.in.the Middle.S03E14.Cynthia's.Back/")
         #call_command('updatedb')
         update_db_from_local_folder("/usr/src/app/Videos/folder1/", settings.VIDEO_URL)
@@ -145,9 +149,9 @@ class RemoveTestCase(TestCase):
         update_db_from_local_folder(testdir,
                                     settings.VIDEO_URL,
                                     keep_files=True)
-        self.assertEqual(Video.objects.count(), 3)
-        self.assertEqual(Series.objects.count(), 1)
-        self.assertEqual(Movie.objects.count(), 1)
+        self.assertEqual(Video.objects.count(), NUM_EXPECTED_VIDEO)
+        self.assertEqual(Series.objects.count(), NUM_EXPECTED_SERIES)
+        self.assertEqual(Movie.objects.count(), NUM_EXPECTED_MOVIES)
         video = Video.objects.get(
             name='The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4')
         print(video)
