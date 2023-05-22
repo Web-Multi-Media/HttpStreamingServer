@@ -1,27 +1,7 @@
-
-FROM jrottenberg/ffmpeg:4.4-ubuntu2004
-ENV TZ=Europe/Paris
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-RUN apt-get update -y && apt-get install -y transmission-daemon build-essential pkg-config git zlib1g-dev python3-pip
-
-COPY ./backend/openssl.cnf  /etc/ssl/openssl.cnf
-
-RUN git clone --depth=1 --branch v2.0.0 https://github.com/gpac/gpac gpac_public && cd gpac_public && ./configure --static-mp4box && make && make install
-
-RUN apt-get remove -y build-essential pkg-config git
-
-RUN mkdir /usr/torrent/
-RUN chgrp -R debian-transmission /usr/torrent/
-RUN chmod -R 777 /usr/torrent/
-VOLUME /usr/torrent/
-RUN usermod -a -G debian-transmission root
+#See Dockerfile.baseimage to see how the baseimage is build.
+FROM webmultimedia/http-streaming-server-baseimage:1.0.0
 
 ENV PYTHONUNBUFFERED 1
-#COPY ./backend/ /usr/src/app/
-#WORKDIR /usr/src/app
-ADD ./backend/requirements.txt /srv/requirements.txt
-RUN pip3 install -r /srv/requirements.txt
 
 WORKDIR /usr/src/app
 
