@@ -16,5 +16,11 @@ RUN chmod -R 777 /usr/torrent/
 VOLUME /usr/torrent/
 RUN usermod -a -G debian-transmission root
 
+RUN service transmission-daemon stop
+COPY ./backend/transmission.json /etc/transmission-daemon/settings.json
+RUN service transmission-daemon start
+RUN update-rc.d transmission-daemon defaults
+
+
 ADD ./backend/requirements.txt /srv/requirements.txt
 RUN pip3 install -r /srv/requirements.txt

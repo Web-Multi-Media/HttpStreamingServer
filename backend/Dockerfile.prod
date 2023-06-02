@@ -11,7 +11,7 @@ RUN npm run build
 #Build the backend
 
 #See Dockerfile.baseimage to see how the baseimage is build.
-FROM webmultimedia/http-streaming-server-baseimage:1.0.0
+FROM webmultimedia/http-streaming-server-baseimage:1.0.1
 
 ENV PYTHONUNBUFFERED 1
 COPY --from=0 /usr/src/frontend/build/ /usr/src/frontend/build/
