@@ -17,8 +17,8 @@ class CustomPermissionClass(BasePermission):
     def has_permission(self, request, view):
         if request.path.startswith('/internal/'):
             return permissions.AllowAny
-        elif request.method == 'POST':
-            return permissions.isAuthenticated
+        else:
+            return permissions.IsAuthenticated
 
 
 class RestUpdate(APIView):
