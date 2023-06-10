@@ -111,7 +111,7 @@ def prepare_video(video_full_path,
         return: Dictionnary with video infos
     """
     print("processing {}".format(video_full_path))
-    cache.set("processing_state", "Analyzing input", timeout=None)
+    cache.set("ingestion_task_{}".format(video_full_path), "Analyzing input", timeout=None)
     cache.set("processing_file", "{}".format(video_full_path), timeout=None)
     try:
         probe = ffmpeg.probe(video_full_path)
@@ -191,7 +191,7 @@ def prepare_video(video_full_path,
                     total_sec = timecodeToSec(stream["tags"]["DURATION"])
                     cache.set("audio_total_duration", total_sec, timeout=None)
 
-            cache.set("processing_state", "encoding audio", timeout=None)
+            cache.set("ingestion_task_{}".format(video_full_path), "encoding audio", timeout=None)
             if "aac" in audio_codec_type:
                 extract_audio(video_full_path, audio_elementary_stream_path, audio_index)
             else:
@@ -225,7 +225,7 @@ def prepare_video(video_full_path,
     video_elementary_stream_path_low_layer = "{}_low.264".format(
         os.path.splitext(video_full_path)[0])
 
-    cache.set("processing_state", "encoding video layer 1", timeout=None)
+    cache.set("ingestion_task_{}".format(video_full_path), "encoding video layer 1", timeout=None)
 
     h264_encoder(
         video_full_path,
@@ -235,7 +235,7 @@ def prepare_video(video_full_path,
 
     if (low_layer_bitrate > 0 and low_layer_height > 0):
         try:
-            cache.set("processing_state", "encoding video layer 2", timeout=None)
+            cache.set("ingestion_task_{}".format(video_full_path), "encoding video layer 2", timeout=None)
             h264_encoder(
                 video_full_path,
                 video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate, "/usr/progress/progress-log.txt")
@@ -258,7 +258,7 @@ def prepare_video(video_full_path,
     if (os.path.isfile(thumbnail_fullpath) is False):
         generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
-    cache.set("encoding_state", "dashing", timeout=None)
+    cache.set("ingestion_task_{}".format(video_full_path), "dashing", timeout=None)
 
     #Dash_packaging
     dash_packager(video_tracks, audio_tracks,

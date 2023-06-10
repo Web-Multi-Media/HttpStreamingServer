@@ -34,7 +34,7 @@ services:
       - progress_volume:/usr/progress/
       - ipython:/root/.ipython
       - torrent:/usr/torrent/:rw
-    command: bash -c "service transmission-daemon start && python3 /usr/src/app/manage.py collectstatic --no-input &&  gunicorn --workers=${NUM_GUNICORN_WORKER} StreamingServer.wsgi:application --bind 0.0.0.0:8000"
+    command: bash -c "./start_django_server.sh"
     depends_on:
       - db
       - redis
@@ -55,7 +55,7 @@ services:
       context: .
       dockerfile: ./backend/Dockerfile.prod
     image: webmultimedia/http-streaming-server:master
-    command: celery -A StreamingServer worker -l info
+    command: bash -c "./start_celery_workers.sh"
     volumes:
         - ./Videos/:/usr/src/app/Videos
         - torrent:/usr/torrent/:rw

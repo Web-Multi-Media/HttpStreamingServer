@@ -8,7 +8,7 @@ COPY ./backend/openssl.cnf  /etc/ssl/openssl.cnf
 
 RUN git clone --depth=1 --branch v2.0.0 https://github.com/gpac/gpac gpac_public && cd gpac_public && ./configure --static-mp4box && make && make install
 
-RUN apt-get remove -y build-essential pkg-config git
+RUN apt-get remove -y build-essential pkg-config git 
 
 RUN mkdir /usr/torrent/
 RUN chgrp -R debian-transmission /usr/torrent/
@@ -18,6 +18,9 @@ RUN usermod -a -G debian-transmission root
 
 RUN service transmission-daemon stop
 COPY ./backend/transmission.json /etc/transmission-daemon/settings.json
+RUN mkdir -p /var/log/transmission/
+RUN chmod -R 777 /var/log/transmission/
+COPY ./backend/transmission-daemon /etc/default/transmission-daemon
 RUN service transmission-daemon start
 RUN update-rc.d transmission-daemon defaults
 

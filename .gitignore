@@ -141,6 +141,7 @@ db.sqlite3
 .DS_Store
 
 backend/cachefile.*
+Videos/*
 
 
 

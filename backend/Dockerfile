@@ -1,5 +1,5 @@
 #See Dockerfile.baseimage to see how the baseimage is build.
-FROM webmultimedia/http-streaming-server-baseimage:1.0.1
+FROM webmultimedia/http-streaming-server-baseimage:1.0.2
 
 ENV PYTHONUNBUFFERED 1
 

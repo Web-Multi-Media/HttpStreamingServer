@@ -23,5 +23,12 @@ class Command(BaseCommand):
         keep_files = False
         if kwargs['keepfiles']:
             keep_files = True
-        update_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL, keep_files)
-        update_db_from_local_folder("/usr/torrent/", "/torrents/", keep_files)
+        is_updateing = cache.get("is_updating")
+        if not is_updateing:
+            update_db_from_local_folder(
+                settings.VIDEO_ROOT, settings.VIDEO_URL, keep_files, async_update=True)
+            update_db_from_local_folder(
+                "/usr/torrent/", "/torrents/", keep_files, async_update=True)
+            cache.set("is_updating", "false", timeout=None)
+        else:
+            print("an update is already running")

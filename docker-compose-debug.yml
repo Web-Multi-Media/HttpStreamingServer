@@ -5,6 +5,7 @@ volumes:
   ipython:
   static_volume:
   progress_volume:
+  torrent:
 
 services:
   db:
@@ -15,6 +16,7 @@ services:
       - .env
     volumes:
       - dbvolume:/var/lib/postgresql/data/
+      
   web:
     build:
       context: .
@@ -22,6 +24,8 @@ services:
     restart: always
     ports:
       - 8000:8000
+      - 9091:9091
+      - 51413:51413
     env_file:
       - .env
     environment:
@@ -33,7 +37,8 @@ services:
       - static_volume:/usr/src/app/staticfiles
       - /static/
       - ipython:/root/.ipython
-    command: bash -c "./wait-for-it.sh db:5432 -- python3 /usr/src/app/manage.py runserver 0.0.0.0:8000"
+      - torrent:/usr/torrent/:rw
+    command: bash -c "service transmission-daemon start && ./wait-for-it.sh db:5432 -- python3 /usr/src/app/manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
       - redis
@@ -44,6 +49,7 @@ services:
       - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
       - static_volume:/usr/src/app/staticfiles
+      - torrent:/usr/torrent/:rw
     ports:
       - 1337:80
     depends_on:
@@ -66,12 +72,12 @@ services:
     build:
       context: .
       dockerfile: ./backend/Dockerfile
-
-    command: celery -A StreamingServer worker -l info
+    command: bash -c "./start_celery_workers.sh"
     volumes:
         - ./backend/:/usr/src/app/
         - ./Videos/:/usr/src/app/Videos
         - progress_volume:/usr/progress/
+        - torrent:/usr/torrent/:rw
     env_file:
         - .env
     depends_on:

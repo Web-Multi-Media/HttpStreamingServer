@@ -11,7 +11,7 @@ import Button from "@material-ui/core/Button";
 
 export default function Header({ handleFormSubmit, displayModal, client, userinfos, setUserInfos }) {
     const { authTokens } = useAuth();
-    const [updateInfo, setUpdatedInfo] = useState({});
+    const [updateInfo, setUpdatedInfo] = useState(null);
     const [closeUpdateBar, setCloseUpdateBar] = useState(true);
     return (
         <div>
@@ -74,7 +74,7 @@ export default function Header({ handleFormSubmit, displayModal, client, userinf
                 </div>
             </header>
             <header>
-                {authTokens && Object.keys(updateInfo).length > 0 && closeUpdateBar &&
+                {authTokens && updateInfo && closeUpdateBar &&
                     <UpdateBar client={client} updateInfo={updateInfo}
                         setUpdatedInfo={setUpdatedInfo} setCloseUpdateBar={setCloseUpdateBar} />}
             </header>

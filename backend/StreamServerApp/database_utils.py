@@ -40,14 +40,13 @@ def get_num_videos():
     return Video.objects.count()
 
 
-def update_db_from_local_folder(base_path, remote_url, keep_files=False):
+def update_db_from_local_folder(base_path, remote_url, keep_files=False, async_update=False):
     """ #  Update  the videos infos in the database
         Args:
         remote_url: baseurl for video access on the server
         base_path: Local Folder where the videos are stored
-
-        this functions will only add videos to the database if
-        they are encoded with h264 codec
+        keep_files: If True, original files are kept
+        async_update: if True, individual video update function are sent in a waiting queue and will be processed asynchronously.
     """
 
     init_cache()
@@ -91,14 +90,25 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False):
                                       or full_path.endswith(".avi")):
                 try:
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
-                    with transaction.atomic():
-                        created = add_one_video_to_database(
-                            full_path, video_path, root, remote_url, filename,
-                            keep_files)
-                        if created == 1:
-                            count_movies += 1
-                        elif created == 2:
-                            count_series += 1
+                    
+                    if async_update:
+                        ingestion_state = cache.get("ingestion_task_{}".format(full_path), None)
+                        print(ingestion_state)
+                        if not ingestion_state:
+                            transaction.on_commit(lambda: add_one_video_to_database.apply_async(
+                                    args=[
+                                    full_path, video_path, root, remote_url, filename,
+                                    keep_files], queue='cpu_extensive'))
+                            cache.set("ingestion_task_{}".format(full_path), "waiting", timeout=None)
+                    else:
+                        with transaction.atomic():
+                            created = add_one_video_to_database(
+                                full_path, video_path, root, remote_url, filename,
+                                keep_files)
+                            if created == 1:
+                                count_movies += 1
+                            elif created == 2:
+                                count_series += 1
 
                 except Exception as ex:
                     print("An error occured")
@@ -129,11 +139,10 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False):
         count_series, count_movies))
 
     cache.set("processing_state", "finished", timeout=None)
-    cache.delete("audio_total_duration")
-    cache.delete("video_frames")
     cache.delete("processing_file")
 
 
+@shared_task
 def add_one_video_to_database(full_path,
                               video_path,
                               root,
@@ -154,9 +163,16 @@ def add_one_video_to_database(full_path,
     """
     # Print current working directory
     print("Current working dir : %s" % root)
-    video_infos = prepare_video(full_path, video_path, root, remote_url,
-                                keep_files)
+    try:
+        video_infos = prepare_video(full_path, video_path, root, remote_url,
+                                    keep_files)
+    except Exception as e:
+        print(e)
+        cache.delete("ingestion_task_{}".format(full_path))
+        raise(e)
+
     if not video_infos:
+        cache.delete("ingestion_task_{}".format(full_path))
         print("video infos are empty, don't add to database")
         return 0
 
@@ -207,6 +223,8 @@ def add_one_video_to_database(full_path,
             ov_sub.language = Subtitle.OV
             ov_sub.video_id = v
             ov_sub.save()
+        
+        cache.delete("ingestion_task_{}".format(full_path))
 
         #we use oncommit because autocommit is not enabled.
         transaction.on_commit(lambda: get_subtitles_async.delay(
@@ -301,10 +319,9 @@ def populate_db_from_remote_server(remotePath, ListOfVideos):
     """
 
 
-
 @shared_task
 def update_db_from_local_folder_async(keep_files):
-    update_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL, keep_files)
-    update_db_from_local_folder("/usr/torrent/", "/torrents/", keep_files)
+    update_db_from_local_folder(settings.VIDEO_ROOT, settings.VIDEO_URL, keep_files, async_update=True)
+    update_db_from_local_folder("/usr/torrent/", "/torrents/", keep_files, async_update=True)
     cache.set("is_updating", "false", timeout=None)
     return 0

@@ -16,5 +16,7 @@
     "rpc-host-whitelist-enabled": 0,
     "rpc-enabled":1,
     "upload-limit": 100,
-    "upload-limit-enabled": 0
+    "upload-limit-enabled": 0,
+    "script-torrent-done-enabled": true,
+    "script-torrent-done-filename": "/usr/src/app/post_download.sh"
 }

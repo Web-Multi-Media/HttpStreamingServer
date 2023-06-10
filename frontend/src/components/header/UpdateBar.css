@@ -1,8 +1,11 @@
+
+
 .box {
     display: flex;
-    align-items: center;
     justify-content: center;
+    flex-wrap: nowrap;
   }
+
 
 .UpdateBar{
     font-family: 'Balsamiq Sans', cursive;
@@ -10,5 +13,5 @@
 }
 .CloseButton{
     color:rgb(170, 13, 13);
-    margin-left: 2%;
 }
+
