@@ -85,21 +85,20 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False, async_u
                 print(full_path + " is already in db, skip it")
                 continue
 
-            if isfile(full_path) and (full_path.endswith(".mp4")
-                                      or full_path.endswith(".mkv")
-                                      or full_path.endswith(".avi")):
+            if isfile(full_path) and (full_path.endswith((".mp4",".mkv", ".avi"))):
                 try:
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
-                    
+
                     if async_update:
                         ingestion_state = cache.get("ingestion_task_{}".format(full_path), None)
-                        print(ingestion_state)
                         if not ingestion_state:
+                            cache.set("ingestion_task_{}".format(
+                                full_path), "waiting", timeout=None)
                             transaction.on_commit(lambda: add_one_video_to_database.apply_async(
-                                    args=[
+                                args=[
                                     full_path, video_path, root, remote_url, filename,
                                     keep_files], queue='cpu_extensive'))
-                            cache.set("ingestion_task_{}".format(full_path), "waiting", timeout=None)
+
                     else:
                         with transaction.atomic():
                             created = add_one_video_to_database(
