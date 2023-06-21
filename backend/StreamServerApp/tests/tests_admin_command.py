@@ -80,7 +80,7 @@ class PopulateTestCase(TestCase):
         self.assertEqual(Movie.objects.count(), NUM_EXPECTED_MOVIES)
 
         video = Video.objects.get(
-            name='The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4')
+            name='The Big Bang Theory S5 E19')
         series = Series.objects.first()
         self.assertEqual(video.episode, 19)
         self.assertEqual(video.season, 5)
@@ -153,7 +153,7 @@ class RemoveTestCase(TestCase):
         self.assertEqual(Series.objects.count(), NUM_EXPECTED_SERIES)
         self.assertEqual(Movie.objects.count(), NUM_EXPECTED_MOVIES)
         video = Video.objects.get(
-            name='The.Big.Bang.Theory.S05E19.HDTV.x264-LOL.mp4')
+            name='The Big Bang Theory S5 E19')
         print(video)
         self.assertEqual(os.path.isfile(video.audio_path), True)
         self.assertEqual(os.path.isfile(video.video_folder), True)

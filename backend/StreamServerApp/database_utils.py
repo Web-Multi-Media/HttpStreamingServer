@@ -175,6 +175,15 @@ def add_one_video_to_database(full_path,
         print("video infos are empty, don't add to database")
         return 0
 
+
+    # parse movie or series, episode & season
+    return_value = 0
+    video_type_and_info = get_video_type_and_info(filename)
+
+    if video_type_and_info:
+        if video_type_and_info['type'] == 'Series':
+            filename = "{} S{} E{}".format(video_type_and_info['title'], video_type_and_info['season'], video_type_and_info['episode'])
+
     v = Video(
         name=filename,
         video_folder=video_infos['mpd_path'],
@@ -187,9 +196,7 @@ def add_one_video_to_database(full_path,
         thumbnail=video_infos['remote_thumbnail_url'],
     )
 
-    # parse movie or series, episode & season
-    return_value = 0
-    video_type_and_info = get_video_type_and_info(filename)
+
 
     if video_type_and_info:
         if video_type_and_info['type'] == 'Series':
