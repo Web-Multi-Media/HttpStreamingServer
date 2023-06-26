@@ -1,11 +1,15 @@
 
 FROM node:8
 
-#Build the frontend
 
+#Build the frontend
 COPY ./frontend/ /usr/src/frontend
 WORKDIR /usr/src/frontend
 RUN npm install
+COPY .git /usr/src/git/
+RUN cd /usr/src/git/ && export GIT_SHA=$(git rev-parse HEAD) && echo $GIT_SHA >> /etc/git_revision
+RUN rm -rf /usr/src/git/
+
 RUN npm run build
 
 #Build the backend

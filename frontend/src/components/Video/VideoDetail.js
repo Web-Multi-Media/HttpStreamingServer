@@ -91,9 +91,9 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                         {!Subtitles ? null : Subtitles.map((sub, index) =>
                             <>
                                 {sub.webvtt_sync_url.length > 0 &&
-                                    <track mode="showing" key={sub.webvtt_sync_url} label={`Sync ${sub.language}`} kind="subtitles" srcLang={sub.language} src={sub.webvtt_sync_url} />
+                                    <track key={sub.webvtt_sync_url} label={`Sync ${sub.language}`} kind="subtitles" default={index === 0 && true} srcLang={sub.language} src={sub.webvtt_sync_url} />
                                 }
-                                <track mode="showing" key={sub.webvtt_subtitle_url} label={sub.language} default={index === 0} kind="subtitles" srcLang={sub.language} src={sub.webvtt_subtitle_url} />
+                                <track key={sub.webvtt_subtitle_url} label={sub.language} default={index === 0 && true} kind="subtitles" srcLang={sub.language} src={sub.webvtt_subtitle_url} />
                             </>
                         )}
                     </video>
