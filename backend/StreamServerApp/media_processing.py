@@ -8,8 +8,10 @@ import ffmpeg
 import sys
 import string
 from django.core.cache import cache
-from StreamServerApp.media_management.encoder import h264_encoder, aac_encoder, extract_audio
+from StreamServerApp.media_management.encoder import h264_encoder, aac_encoder, extract_audio, extract_video
 from StreamServerApp.media_management.dash_packager import dash_packager
+from StreamServerApp.media_management.frame_analyzer import keyframe_analysis
+from StreamServerApp.media_management.media_analyzer import get_video_stream_info, get_audio_stream_info
 from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
 from StreamServerApp.media_management.subprocess_wrapper import run_ffmpeg_process
 from StreamServerApp.media_management.timecode import timecodeToSec
@@ -136,28 +138,8 @@ def prepare_video(video_full_path,
         print('No video stream found', file=sys.stderr)
         return {}
 
-    video_codec_type = video_stream['codec_name']
-    video_width = video_stream['width']
-    video_height = video_stream['height']
-    num_video_frame = None
-    if "nb_frames" in video_stream:
-        num_video_frame = video_stream['nb_frames']
-    elif "tags" in video_stream:
-        #MKV doens't signal number of frames, lets compute it
-        if "DURATION" in video_stream["tags"]:
-            total_sec = timecodeToSec(video_stream["tags"]["DURATION"])
-            if '/' in video_stream["avg_frame_rate"]:
-                num, denum = video_stream["avg_frame_rate"].split('/')
-                num_video_frame = int((float(total_sec) * float(num))/float(denum))
-            else:
-                num_video_frame = int(float(total_sec) * float(video_stream["avg_frame_rate"]))
-
-    cache.set("video_frames", num_video_frame , timeout=None)
-
-    if 'duration' in video_stream:
-        duration = float(video_stream['duration'])
-    elif 'duration' in probe['format']:
-        duration = float(probe['format']['duration'])
+    (video_codec_type, video_width, video_height, video_framerate_num,
+     video_framerate_denum, num_video_frame, duration) = get_video_stream_info(video_stream, probe)
 
     audio_stream = next(
         (stream
@@ -172,8 +154,6 @@ def prepare_video(video_full_path,
         if stream['codec_type'] == 'subtitle':
             print('Found Subtitles in the input stream')
             webvtt_ov_fullpath_tmp = os.path.splitext(video_full_path)[0]+'_ov_{}.vtt'.format(subtitles_index)
-            print(video_full_path)
-            print(webvtt_ov_fullpath_tmp)
             try:
                 extract_subtitle(video_full_path, webvtt_ov_fullpath_tmp, subtitles_index)
                 webvtt_ov_fullpaths.append(webvtt_ov_fullpath_tmp)
@@ -181,28 +161,34 @@ def prepare_video(video_full_path,
                 print("Something went wrong with subtitle extraction, skipping track {}".format(subtitles_index))
             subtitles_index += 1
         elif stream['codec_type'] == 'audio':
-            audio_codec_type = stream['codec_name']
+            (audio_codec_type, audio_duration, lang) = get_audio_stream_info(stream, probe)
             audio_elementary_stream_path = "{}_{}.m4a".format(
                 os.path.splitext(video_full_path)[0], audio_index)
-            if "duration" in stream:
-                cache.set("audio_total_duration", stream["duration"], timeout=None)
-            elif "tags" in stream:
-                if "DURATION" in stream["tags"]:
-                    total_sec = timecodeToSec(stream["tags"]["DURATION"])
-                    cache.set("audio_total_duration", total_sec, timeout=None)
 
             cache.set("ingestion_task_{}".format(video_full_path), "encoding audio", timeout=None)
             if "aac" in audio_codec_type:
                 extract_audio(video_full_path, audio_elementary_stream_path, audio_index)
             else:
                 aac_encoder(video_full_path, audio_elementary_stream_path, "/usr/progress/progress-log.txt", audio_index)
-            lang = "und"
-            try:
-                lang = stream["tags"]["language"]
-            except KeyError:
-                lang = "und"
+            cache.set("audio_total_duration", audio_duration, timeout=None)
+            cache.set("ingestion_task_{}".format(video_full_path), "encoding audio", timeout=None)
             audio_tracks.append((audio_elementary_stream_path, lang))
             audio_index += 1
+
+    dash_fragment_duration = 4000
+    output_fps_num = 24
+    output_fps_denum = 1
+    skip_high_layer_encoding = False
+
+    if "h264" in video_codec_type:
+        analysis_result = keyframe_analysis(video_full_path)
+        if analysis_result[0]:
+            skip_high_layer_encoding = True
+            dash_fragment_duration = float(analysis_result[1]) * (float(video_framerate_num)/float(video_framerate_denum))
+            output_fps_num = video_framerate_num
+            output_fps_denum = video_framerate_denum
+            print("dash_fragment_duration = {}".format(str(dash_fragment_duration)))
+
 
     video_elementary_stream_path_high_layer = "{}_{}.264".format(
         os.path.splitext(video_full_path)[0], video_height)
@@ -227,9 +213,13 @@ def prepare_video(video_full_path,
 
     cache.set("ingestion_task_{}".format(video_full_path), "encoding video layer 1", timeout=None)
 
-    h264_encoder(
-        video_full_path,
-        video_elementary_stream_path_high_layer, video_height, high_layer_bitrate , "/usr/progress/progress-log.txt")
+
+    if skip_high_layer_encoding:
+        extract_video(video_full_path, video_elementary_stream_path_high_layer)
+    else:
+        h264_encoder(
+            video_full_path,
+            video_elementary_stream_path_high_layer, video_height, high_layer_bitrate , "/usr/progress/progress-log.txt", output_fps_num, output_fps_denum)
 
     video_tracks.append((video_elementary_stream_path_high_layer, video_height, high_layer_bitrate))
 
@@ -238,7 +228,7 @@ def prepare_video(video_full_path,
             cache.set("ingestion_task_{}".format(video_full_path), "encoding video layer 2", timeout=None)
             h264_encoder(
                 video_full_path,
-                video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate, "/usr/progress/progress-log.txt")
+                video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate, "/usr/progress/progress-log.txt", output_fps_num, output_fps_denum)
             video_tracks.append((video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate))
         except:
             print("An exception occured during low layer encoding, skip this layer")
@@ -262,7 +252,7 @@ def prepare_video(video_full_path,
 
     #Dash_packaging
     dash_packager(video_tracks, audio_tracks,
-                  dash_output_directory)
+                  dash_output_directory, dash_fragment_duration, output_fps_num, output_fps_denum)
 
     for video in video_tracks:
         os.remove(video[0])

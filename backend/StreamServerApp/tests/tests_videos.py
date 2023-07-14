@@ -319,4 +319,4 @@ class EncodingTest(TestCase):
 
         shutil.copy2("/usr/src/app/Videos/10bitsmovie.mkv", input_test_file)
 
-        h264_encoder(input_test_file, output_test_file, 720, 400000, "progress.log")
+        h264_encoder(input_test_file, output_test_file, 720, 400000, "progress.log", 24, 1)

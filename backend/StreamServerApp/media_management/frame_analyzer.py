@@ -2,6 +2,8 @@ import os
 import subprocess
 import json
 
+from StreamServerApp.media_management.subprocess_wrapper import run_ffmpeg_process
+
 
 class BFrame(object):
     def __repr__(self, *args, **kwargs):
@@ -56,16 +58,28 @@ class GOP(object):
                                                       count=len(self.frames),
                                                       gtype=gtype)
 
+"""
+check keyframe structure. Return value is a tuple whose first value is a boolean indicates if keyframe structure is regular
+and second value is the keyframe structure period in frames (valid only if structure is regular).
+The following asumption is made: If the gop Structure is regular for the first 40 sec (hence the "%+40"), we assume it is for the rest of the video.
+:rtype: (Bool, int)
+"""
+
 
 def keyframe_analysis(filename):
-    command = 'ffprobe -show_frames -print_format json "{filename}"'\
-                    .format(filename=filename)
 
-    response_json = subprocess.check_output(command, shell=True, stderr=None)
+    command = ["ffprobe", "-select_streams", "v:0", "-read_intervals", "%+40", "-show_entries", "stream=nb_frames",
+               "-show_frames", "-print_format", "json",  "{}".format(filename)]
+    with open('frame_analysis.log', "w") as outfile:
+        subprocess.run(command, stdout=outfile)
+    # Opening JSON file
+    f = open('frame_analysis.log')
 
-    frames = json.loads(response_json)["frames"]
+    # returns JSON object as
+    # a dictionary
+    frames = json.load(f)["frames"]
 
-    gop_count = 0
+    gops_duration_in_frames = []
     gops = []
     gop = GOP()
     gops.append(gop)
@@ -77,9 +91,11 @@ def keyframe_analysis(filename):
 
             if jframe["pict_type"] == 'I':
                 if len(gop.frames):
+                    gops_duration_in_frames.append(len(gop.frames))
                     # GOP open and new iframe. Time to close GOP
                     gop = GOP()
                     gops.append(gop)
+
                 frame = IFrame()
                 if jframe["key_frame"] == 1:
                     frame.key_frame = True
@@ -91,5 +107,14 @@ def keyframe_analysis(filename):
             frame.json = jframe
             gop.add_frame(frame)
 
-    for gop in gops:
-        print(gop)
+    gops_duration_in_frames.append(len(gop.frames))
+
+    regular_duration = False
+
+    if gops_duration_in_frames.count(gops_duration_in_frames[0]) == len(gops_duration_in_frames) - 1:
+        regular_duration = True
+
+    #for gop in gops:
+    #    print(gop)
+
+    return (regular_duration, gops_duration_in_frames[0])

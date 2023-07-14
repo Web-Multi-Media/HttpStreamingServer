@@ -25,7 +25,29 @@ def download_file(url, folder_name):
 
 class TestDash(TestCase):
     def setUp(self):
-        print("Init keyframe_analysis test ")
+        print("Init  test ")
+
+    def test_keyframe_analysis(self):
+        analysis_result = keyframe_analysis(
+            "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4")
+        print(analysis_result)
+        self.assertEqual(analysis_result, (False, 997))
+        analysis_result = keyframe_analysis(
+            "/usr/src/app/Videos/folder1/Best_Movie_Ever.avi")
+        print(analysis_result)
+        analysis_result = keyframe_analysis(
+            "/usr/src/app/Videos/folder1/Matrix.mp4")
+        print(analysis_result)
+        analysis_result = keyframe_analysis(
+            "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S04E18.HDTV.x264-LOL.mp4")
+        print(analysis_result)
+        self.assertEqual(analysis_result, (True, 18))
+        analysis_result = keyframe_analysis(
+            "/usr/src/app/Videos/folder2/The.Blues.Brothers.1980.1080p.BrRip.x264.bitloks.YIFY.mkv")
+        print(analysis_result)
+        # analysis_result = keyframe_analysis("/usr/src/app/Videos/The.Last.of.Us.S01E08.720p.WEB.h264-KOGi.mkv")
+        # print(analysis_result)
+
 
     def test_dash_packaging(self):
         input_height = 720
@@ -38,10 +60,10 @@ class TestDash(TestCase):
 
         h264_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            path_to_highlayer, high_layer_height, high_layer_bitrate, "progress_video1")
+            path_to_highlayer, high_layer_height, high_layer_bitrate, "progress_video1", 24, 1)
         h264_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
-            path_to_lowlayer, low_layer_height, low_layer_bitrate, "progress_video2")
+            path_to_lowlayer, low_layer_height, low_layer_bitrate, "progress_video2", 24, 1)
         
         aac_encoder(
             "/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
@@ -59,7 +81,7 @@ class TestDash(TestCase):
                       ("/usr/src/app/Videos/lebowsky_track2.m4a", "fr")
                      ]
 
-        dash_packager(video_list, audio_list, "/usr/src/app/Videos/lebowskydash/")
+        dash_packager(video_list, audio_list, "/usr/src/app/Videos/lebowskydash/", 4000, 24, 1)
 
         video_list = [(path_to_highlayer, high_layer_bitrate, high_layer_height)]
 
@@ -69,7 +91,7 @@ class TestDash(TestCase):
             "/usr/src/app/Videos/lebowskydash/segment_{}p_1.m4s".format(low_layer_height)), True)
 
         dash_packager(video_list, audio_list,
-                      "/usr/src/app/Videos/lebowskydash2/")
+                      "/usr/src/app/Videos/lebowskydash2/", 4000, 24, 1)
 
         self.assertEqual(os.path.isfile(
             "/usr/src/app/Videos/lebowskydash2/segment_720p_1.m4s"), True)

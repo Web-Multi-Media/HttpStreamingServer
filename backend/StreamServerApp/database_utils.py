@@ -85,7 +85,7 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False, async_u
                 print(full_path + " is already in db, skip it")
                 continue
 
-            if isfile(full_path) and (full_path.endswith((".mp4",".mkv", ".avi"))):
+            if isfile(full_path) and (full_path.endswith((".mp4", ".mkv", ".avi"))):
                 try:
                     # Atomic transaction in order to make all occur or nothing occurs in case of exception raised
 

@@ -3,9 +3,11 @@ import subprocess
 import json
 
 
-def dash_packager(videolist, audiolist,   outputdirectory):
-    command = 'MP4Box -dash 4000 -frag 4000 -rap \
--segment-name \'segment_$RepresentationID$_\' -init-segment-ext null -fps 24 '
+def dash_packager(videolist, audiolist, outputdirectory, segment_duration, fpsnum, fpsdenum):
+    command = 'MP4Box -dash {segment_duration} -frag {segment_duration} -rap \
+-segment-name \'segment_$RepresentationID$_\' -init-segment-ext null -fps {fpsnum}/{fpsdenum} '.format(
+            segment_duration=segment_duration, fpsnum=fpsnum, fpsdenum=fpsdenum)
+
 
     for video in videolist:
         command += '"{video_layer}"#video:id={height}p:#Bitrate={bitrate} '.format(
