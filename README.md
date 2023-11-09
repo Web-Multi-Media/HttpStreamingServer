@@ -40,7 +40,7 @@ The second option option is to use the built in torrent client. Configure the to
 
     docker-compose -f docker-compose-prod.yml run --rm nginx htpasswd -c /usr/torrent/.htpasswd admin
 
-Then click on the Add Torrent button on the application. Once your download is finished, click on the update Videos button.
+Then click on the Add Torrent button on the application and use the provided GUI.
 
 
 #### CONFIGURATION
@@ -63,7 +63,7 @@ The following variables can be configured in .env file:
     HTTPSTREAMING_HOST=www.foo.com
     SENTRY_DSN=https://foo.ingest.sentry.io/bar
     REACT_APP_SENTRY_DSN=https://foo.ingest.sentry.io/bar
-    HIGH_LAYER_COMPRESSION_RATIO_IN_PERCENTAGE=7
+    HIGH_LAYER_QUALITY=3
     480P_LAYER_BITRATE=400000
 
 

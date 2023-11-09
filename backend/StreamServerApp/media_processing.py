@@ -198,7 +198,7 @@ def prepare_video(video_full_path,
     
     #https://stackoverflow.com/questions/5024114/suggested-compression-ratio-with-h-264
     high_layer_compression_ratio = int(
-        os.getenv('HIGH_LAYER_COMPRESSION_RATIO_IN_PERCENTAGE', 7))
+        os.getenv('HIGH_LAYER_QUALITY', 3))
     high_layer_bitrate = video_width * video_height * \
         24 * 4 * (high_layer_compression_ratio/100.0)
     print("high_layer_bitrate = {}".format(high_layer_bitrate))
