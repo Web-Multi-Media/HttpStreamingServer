@@ -38,7 +38,7 @@ You have two options to add videos. The first one is to use the provided Videos 
 
 The second option option is to use the built in torrent client. Configure the torrent admin password with the following command:
 
-    docker-compose -f docker-compose-prod.yml run --rm nginx htpasswd -c /usr/torrent/.htpasswd admin
+    docker-compose -f docker-compose-prod.yml run --rm nginx htpasswd -c /secrets/.htpasswd admin
 
 Then click on the Add Torrent button on the application and use the provided GUI.
 
@@ -47,7 +47,7 @@ Then click on the Add Torrent button on the application and use the provided GUI
 
 Change torrent admin password:
 
-    docker-compose -f docker-compose-prod.yml run --rm nginx htpasswd -c /usr/torrent/.htpasswd admin
+    docker-compose -f docker-compose-prod.yml run --rm nginx htpasswd -c /secrets/.htpasswd admin
 
 If you want to manually modify the data, you can access the admin page with a superuser account. For that, create one with the following command.
 

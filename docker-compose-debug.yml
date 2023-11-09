@@ -5,6 +5,7 @@ volumes:
   ipython:
   static_volume:
   progress_volume:
+  secrets_volume:
   torrent:
 
 services:
@@ -50,6 +51,7 @@ services:
       - ./Videos/:/usr/src/app/Videos
       - static_volume:/usr/src/app/staticfiles
       - torrent:/usr/torrent/:rw
+      - secrets_volume:/secrets/
     ports:
       - 1337:80
     depends_on:

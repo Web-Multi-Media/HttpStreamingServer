@@ -6,6 +6,7 @@ volumes:
   static_volume:
   torrent:
   progress_volume:
+  secrets_volume:
 
 services:
   db:
@@ -45,6 +46,7 @@ services:
       - ./Videos/:/usr/src/app/Videos
       - static_volume:/usr/static/
       - torrent:/usr/torrent/:rw
+      - secrets_volume:/secrets/
     ports:
       - 1337:80
     depends_on:
