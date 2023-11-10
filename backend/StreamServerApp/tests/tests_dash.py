@@ -1,11 +1,13 @@
 from django.test import Client, TestCase
 from StreamServerApp.media_management.frame_analyzer import keyframe_analysis
+from StreamServerApp.media_management.media_analyzer import get_video_stream_info
 from StreamServerApp.media_management.encoder import h264_encoder, aac_encoder
 from StreamServerApp.media_management.dash_packager import dash_packager
 from clint.textui import progress
 import os
 import shutil
 import requests
+import ffmpeg
 
 
 def download_file(url, folder_name):
@@ -48,6 +50,27 @@ class TestDash(TestCase):
         # analysis_result = keyframe_analysis("/usr/src/app/Videos/The.Last.of.Us.S01E08.720p.WEB.h264-KOGi.mkv")
         # print(analysis_result)
 
+    def test_video_analysis_1(self):
+        test_files = ["/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",
+                      "/usr/src/app/Videos/folder2/The.Blues.Brothers.1980.1080p.BrRip.x264.bitloks.YIFY.mkv",
+                      "/usr/src/app/Videos/folder1/The.Big.Bang.Theory.S04E18.HDTV.x264-LOL.mp4",
+                      "/usr/src/app/Videos/folder2/Fantastic.Beasts.The.Crimes.Of.Grindelwald.2018.1080p.WEBRip.mp4",
+                      ]
+        for file in test_files:
+            probe = ffmpeg.probe(file)
+
+            video_stream = next(
+                (stream
+                 for stream in probe['streams'] if stream['codec_type'] == 'video'),
+                None)
+
+            (video_codec_type, video_width, video_height, video_framerate_num,
+             video_framerate_denum, num_video_frame, duration) = get_video_stream_info(video_stream, probe)
+
+            print(num_video_frame)
+            print(duration)
+            self.assertNotEqual(num_video_frame, None)
+            self.assertNotEqual(duration, None)
 
     def test_dash_packaging(self):
         input_height = 720

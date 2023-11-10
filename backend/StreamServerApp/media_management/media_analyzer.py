@@ -26,6 +26,7 @@ def get_video_stream_info(video_stream, general_streams_props):
         '/')
 
     num_video_frame = None
+    duration = None
     if "nb_frames" in video_stream:
         num_video_frame = video_stream['nb_frames']
     elif "tags" in video_stream:

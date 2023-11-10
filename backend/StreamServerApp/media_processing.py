@@ -211,6 +211,7 @@ def prepare_video(video_full_path,
     video_elementary_stream_path_low_layer = "{}_low.264".format(
         os.path.splitext(video_full_path)[0])
 
+    cache.set("video_frames_{}".format(video_full_path), num_video_frame, timeout=None)
     cache.set("ingestion_task_{}".format(video_full_path), "encoding video layer 1", timeout=None)
 
 
@@ -249,6 +250,7 @@ def prepare_video(video_full_path,
         generate_thumbnail(video_full_path, duration, thumbnail_fullpath)
 
     cache.set("ingestion_task_{}".format(video_full_path), "dashing", timeout=None)
+    cache.delete("video_frames_{}".format(video_full_path))
 
     #Dash_packaging
     dash_packager(video_tracks, audio_tracks,

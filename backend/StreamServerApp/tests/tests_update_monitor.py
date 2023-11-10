@@ -22,10 +22,10 @@ class UpdateMonitoringTest(TestCase):
         self.client.defaults['HTTP_AUTHORIZATION'] = "Token " + str(self.token)
 
     def test1(self):
-        cache.set("ingestion_task_/usr/src/torrent/toto.mp4", "encoding video1", timeout=None)
         shutil.copy("/usr/src/app/Videos/progress/progress_video1",
                     "/usr/progress/progress-log.txt")
-        cache.set("video_frames", "1204", timeout=None)
+        cache.set("video_frames_/usr/src/torrent/toto.mp4", "1204", timeout=None)
+        cache.set("ingestion_task_/usr/src/torrent/toto.mp4", "encoding video1", timeout=None)
         response = self.client.get(
             reverse('updatedb'),
         )
@@ -47,5 +47,5 @@ class UpdateMonitoringTest(TestCase):
         self.assertEqual(response.status_code, 200)
         decoded_content = json.loads(str(response.content, encoding='utf8'))
         #print(decoded_content["percentage"])
-        print(decoded_content)
+        #print(decoded_content)
         self.assertEqual(decoded_content["toto.mp4"]["percentage"], 0.03156146179401993)
