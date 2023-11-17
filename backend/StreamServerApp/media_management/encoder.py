@@ -1,5 +1,5 @@
 
-from StreamServerApp.media_management.subprocess_wrapper import run_ffmpeg_process
+from StreamServerApp.media_management.subprocess_wrapper import run_subprocess
 
 
 def h264_encoder(filename, output, resolutionH, bitrate, progress_log, frameratenum, frameratedenum):
@@ -10,8 +10,7 @@ def h264_encoder(filename, output, resolutionH, bitrate, progress_log, framerate
                "-pix_fmt", "yuv420p", "-profile:v", "main", "-preset", "veryfast",
                "-an", "{}".format(output)]
 
-    print(command)
-    run_ffmpeg_process(command)
+    run_subprocess(command)
 
 
 def aac_encoder(filename, output, progress_log,  track_number=0):
@@ -21,20 +20,16 @@ def aac_encoder(filename, output, progress_log,  track_number=0):
                "-ar",  "48000", "-ac", "2",
                "{}".format(output)]
 
-    print(command)
-    run_ffmpeg_process(command)
+    run_subprocess(command)
 
 
 def extract_audio(filename, output, track_number=0):
-    print("Extracting Audio from {}".format(filename))
     command = ["ffmpeg", "-y", "-i", filename, "-vn", "-acodec", "copy", "-map", "0:a:{}".format(track_number),
                output]
-    print(command)
-    run_ffmpeg_process(command)
+    run_subprocess(command)
+
 
 def extract_video(filename, output, track_number=0):
-    print("Extracting video from {}".format(filename))
     command = ["ffmpeg", "-y", "-i", filename, "-an", "-vcodec", "copy", "-map", "0:v:{}".format(track_number),
                output]
-    print(command)
-    run_ffmpeg_process(command)
+    run_subprocess(command)

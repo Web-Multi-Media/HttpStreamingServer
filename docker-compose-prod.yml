@@ -10,7 +10,7 @@ volumes:
 
 services:
   db:
-    image: postgres:9.6.17
+    image: postgres:12.15
     env_file:
       - .env
     ports:
@@ -65,7 +65,7 @@ services:
     env_file:
         - .env
     environment:
-      - DEPLOY_ENV=production
+        - DEPLOY_ENV=production
     depends_on:
         - db
         - redis

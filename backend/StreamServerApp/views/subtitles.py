@@ -34,6 +34,8 @@ class SubtitleViewSet(viewsets.ModelViewSet):
             newsub = serializer.save(uploaded_data=self.request.data.get('datafile'),
                                      vtt_path=vtt_path, webvtt_subtitle_url=vtt_remote_path, srt_path=srt_path
                                      )
+            
+            assert(os.path.isfile(str(newsub.uploaded_data)))
 
             convert_subtitles_to_webvtt(str(newsub.uploaded_data), vtt_path)
 

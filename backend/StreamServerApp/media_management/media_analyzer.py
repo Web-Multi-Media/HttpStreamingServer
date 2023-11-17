@@ -1,4 +1,28 @@
 from StreamServerApp.media_management.timecode import timecodeToSec
+from StreamServerApp.media_management.subprocess_wrapper import run_subprocess
+import json
+
+
+def get_media_file_info(input_file):
+    """ # Uses ffmpeg subprocess to retrieve all streams info  in file as json
+    
+    Args:
+    input_file: full path to the input file (eg: /Videos/folder1/test.mp4)
+
+    Returns: json data info
+
+    Throw an exception if the return value of the subprocess is different than 0
+
+    """
+    cmd = ["ffprobe",
+                     "-v", "quiet",
+                     "-print_format", "json",
+                     "-show_format",
+                     "-show_streams",
+                     input_file]
+    stdout = run_subprocess(cmd)
+    d = json.loads(stdout)
+    return d
 
 
 def get_audio_stream_info(stream, general_streams_props):
@@ -17,6 +41,7 @@ def get_audio_stream_info(stream, general_streams_props):
     except KeyError:
         lang = "und"
     return (audio_codec_type, duration, lang)
+
 
 def get_video_stream_info(video_stream, general_streams_props):
     video_codec_type = video_stream['codec_name']

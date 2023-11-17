@@ -4,7 +4,7 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from StreamServerApp.subtitles import get_subtitles
-from StreamServerApp.media_processing import convert_subtitles_to_webvtt
+from StreamServerApp.media_processing import convert_subtitles_to_webvtt, resync_subtitle
 from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
 import os
 import subprocess
@@ -107,7 +107,6 @@ class Video(models.Model):
             print("{} is not a file ".format(fileinfos_path))
             return 0
 
-        print("get sub for {}".format(video_infos["video_full_path"]))
         subtitles_list = get_subtitles(video_infos["video_full_path"])
 
         webvtt_subtitles_full_path = subtitles_list[0]
@@ -175,7 +174,7 @@ class Subtitle(models.Model):
         subtitle_path = self.srt_path
         webvtt_path = self.vtt_path.replace('.vtt', '_sync.vtt')
         sync_subtitle_path = subtitle_path.replace('.srt', '_sync.srt')
-        subprocess.run(["ffs", video_path, "-i", subtitle_path, "-o", sync_subtitle_path])
+        resync_subtitle(video_path, subtitle_path, sync_subtitle_path)
         convert_subtitles_to_webvtt(sync_subtitle_path, webvtt_path)
         self.srt_sync_path = sync_subtitle_path
         self.vtt_sync_path = webvtt_path

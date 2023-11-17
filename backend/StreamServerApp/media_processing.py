@@ -4,18 +4,16 @@ import json
 
 import re
 import subliminal
-import ffmpeg
 import sys
 import string
 from django.core.cache import cache
 from StreamServerApp.media_management.encoder import h264_encoder, aac_encoder, extract_audio, extract_video
 from StreamServerApp.media_management.dash_packager import dash_packager
 from StreamServerApp.media_management.frame_analyzer import keyframe_analysis
-from StreamServerApp.media_management.media_analyzer import get_video_stream_info, get_audio_stream_info
+from StreamServerApp.media_management.media_analyzer import get_media_file_info, get_video_stream_info, get_audio_stream_info
 from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
-from StreamServerApp.media_management.subprocess_wrapper import run_ffmpeg_process
+from StreamServerApp.media_management.subprocess_wrapper import run_subprocess
 from StreamServerApp.media_management.timecode import timecodeToSec
-
 
 
 def convert_subtitles_to_webvtt(input_file, output_file):
@@ -32,7 +30,7 @@ def convert_subtitles_to_webvtt(input_file, output_file):
     """
     cmd = ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", input_file, output_file]
     if not os.path.isfile(output_file):
-        run_ffmpeg_process(cmd)
+        run_subprocess(cmd)
 
 
 def extract_subtitle(input_file, output_file, subtitle_index = 0):
@@ -50,7 +48,7 @@ def extract_subtitle(input_file, output_file, subtitle_index = 0):
     """
     cmd = ["ffmpeg", "-n", "-sub_charenc", "UTF-8", "-i", input_file, "-map", "0:s:{}".format(subtitle_index), output_file]
     if not os.path.isfile(output_file):
-        run_ffmpeg_process(cmd)
+        run_subprocess(cmd)
 
 
 def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
@@ -75,7 +73,7 @@ def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
                 "-codec", "copy", "-movflags", "+faststart", output_file]
 
     if not os.path.isfile(output_file):
-        run_ffmpeg_process(cmd)
+        run_subprocess(cmd)
 
 
 def generate_thumbnail(input_file, duration, output_file):
@@ -95,7 +93,22 @@ def generate_thumbnail(input_file, duration, output_file):
     cmd = ["ffmpeg", "-ss", str(duration/2.0), "-i", input_file, "-an", "-vf", "scale=320:-1",
                             "-vframes", "1", output_file]
     if not os.path.isfile(output_file):
-        run_ffmpeg_process(cmd)
+        run_subprocess(cmd)
+
+
+def resync_subtitle(video_path, subtitle_path, sync_subtitle_path):
+    """ # Uses ffs to resync sub
+    
+    Args:
+
+    Returns: void
+
+    Throw an exception if the return value of the subprocess is different than 0
+
+    """
+    cmd = ["ffs", video_path, "-i", subtitle_path, "-o", sync_subtitle_path]
+    if not os.path.isfile(sync_subtitle_path):
+        run_subprocess(cmd)
 
 
 def prepare_video(video_full_path,
@@ -115,11 +128,7 @@ def prepare_video(video_full_path,
     print("processing {}".format(video_full_path))
     cache.set("ingestion_task_{}".format(video_full_path), "Analyzing input", timeout=None)
     cache.set("processing_file", "{}".format(video_full_path), timeout=None)
-    try:
-        probe = ffmpeg.probe(video_full_path)
-    except ffmpeg.Error as e:
-        print(e.stderr, file=sys.stderr)
-        raise
+    probe = get_media_file_info(video_full_path)
 
     video_tracks = []
     audio_tracks = []

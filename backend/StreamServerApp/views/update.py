@@ -51,8 +51,6 @@ class RestUpdate(APIView):
             percentage = None
             try:
                 asset_name = ingestion_key[15:]
-                print("coucou "+asset_name)
-                print(ingestion_key, ingestion_value)
                 if "video" in ingestion_value:
                     total_nb_frame = int(cache.get("video_frames_{}".format(asset_name)))
                     current_num_frame = 0
@@ -61,7 +59,6 @@ class RestUpdate(APIView):
                             current_num_frame = int(line[6:])
                             break
                     percentage = float(current_num_frame) / float(total_nb_frame)
-                    print("video percentage " + str(percentage))
                 elif "audio" in ingestion_value:
                     audio_total_duration = float(cache.get("audio_total_duration"))
                     for line in reversed(list(open("/usr/progress/progress-log.txt"))):
@@ -70,7 +67,6 @@ class RestUpdate(APIView):
                             current_duration = float(timecodeToSec(current_duration_str))
                             percentage = float(current_duration) / audio_total_duration
                             break
-                    #print("audio percentage " + str(percentage))
             except:
                 percentage = None
             name = os.path.basename(ingestion_key)

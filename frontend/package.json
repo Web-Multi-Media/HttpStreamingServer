@@ -20,7 +20,7 @@
     "pure-react-carousel": "^1.23.3",
     "query-string": "^6.8.3",
     "react": "^16.8.6",
-    "react-bootstrap": "latest",
+    "react-bootstrap": "1.6.1",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",
@@ -28,7 +28,7 @@
     "reactstrap": "^8.4.1",
     "dashjs": "4.4.1",
     "srt-webvtt": "1.0.1",
-    "styled-components": "latest"
+    "styled-components": "5.3.0"
   },
   "scripts": {
     "prestart": "if [ ! -d node_modules ]; then npm install; fi",

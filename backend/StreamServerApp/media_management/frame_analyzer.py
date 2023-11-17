@@ -1,8 +1,8 @@
 import os
 import subprocess
 import json
+from StreamServerApp.media_management.subprocess_wrapper import run_subprocess
 
-from StreamServerApp.media_management.subprocess_wrapper import run_ffmpeg_process
 
 
 class BFrame(object):
@@ -67,11 +67,13 @@ The following asumption is made: If the gop Structure is regular for the first 4
 
 
 def keyframe_analysis(filename):
-
-    command = ["ffprobe", "-select_streams", "v:0", "-read_intervals", "%+40", "-show_entries", "stream=nb_frames",
+    command = ["ffprobe",  "-v", "quiet", "-select_streams", "v:0", "-read_intervals", "%+40", "-show_entries", "stream=nb_frames",
                "-show_frames", "-print_format", "json",  "{}".format(filename)]
     with open('frame_analysis.log', "w") as outfile:
-        subprocess.run(command, stdout=outfile)
+        stdout = run_subprocess(command)
+        d = json.loads(stdout.decode('utf-8'))
+        json.dump(d, outfile)
+
     # Opening JSON file
     f = open('frame_analysis.log')
 

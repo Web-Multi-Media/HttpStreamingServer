@@ -50,8 +50,11 @@ def mocked_subliminal_download(video, video_path, languages_to_retrieve):
 def resync_test_template(test_instance, input_folder, root_url):
     data = {}
     fake_url = os.path.join(root_url, "folder2/spongebob2.mp4")
-
-    os.mkdir("{}/testresync/".format(input_folder))
+    test_folder = "{}/testresync/".format(input_folder)
+    try: 
+        os.mkdir(test_folder)
+    except:
+        print("{} exist".format(test_folder))
 
     extract_audio("/usr/src/app/Videos/folder2/spongebob2.mp4",
                   "{}/testresync/spongebob2.m4a".format(input_folder)
@@ -153,11 +156,14 @@ class SubtitlesTest(TestCase):
         expected_url = os.path.join(settings.VIDEO_URL, "unicode_fr.vtt")
         self.assertEqual(sub.webvtt_subtitle_url, expected_url)
 
-    def test_resync_subtitle_1(self):
+    def test_resync_subtitle_in_video_folder(self):
         resync_test_template(self, "/usr/src/app/Videos", "/Videos")
 
-    def test_resync_subtitle_2(self):
-        os.mkdir("/usr/torrent/subtitles/")
+    def test_resync_subtitle_in_torrent_folder(self):
+        try:
+            os.mkdir("/usr/torrent/subtitles/")
+        except:
+            print("torrent subtitle folder already exists")
         shutil.copyfile("/usr/src/app/Videos/subtitles/spongebob.srt", "/usr/torrent/subtitles/spongebob.srt")
         resync_test_template(self, "/usr/torrent/", "/torrents")
 

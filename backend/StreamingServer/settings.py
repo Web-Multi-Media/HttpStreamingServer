@@ -15,6 +15,7 @@ import dj_database_url
 import subprocess
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from filebrowser.sites import site
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -49,7 +50,7 @@ else:
         'debug_toolbar.panels.settings.SettingsPanel',
         'debug_toolbar.panels.headers.HeadersPanel',
         'debug_toolbar.panels.request.RequestPanel',
-        'debug_toolbar.panels.sql.SQLPanel',
+        #'debug_toolbar.panels.sql.SQLPanel',
         'debug_toolbar.panels.staticfiles.StaticFilesPanel',
         'debug_toolbar.panels.templates.TemplatesPanel',
         'debug_toolbar.panels.cache.CachePanel',
@@ -79,6 +80,8 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
+    'grappelli',
+    'filebrowser',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -95,7 +98,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'rest_auth.registration',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
     'debug_toolbar',
 ]
 
@@ -111,6 +115,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #'StreamingServer.middleware.UserAuthMiddleware',
 ]
+
+SITE_ID = 1
 
 ROOT_URLCONF = 'StreamingServer.urls'
 
@@ -185,6 +191,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'SESSION_LOGIN': False
 }
 
 # https://django-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional
@@ -227,3 +234,8 @@ if os.getenv('DEPLOY_BEHIND_PROXY') == 'true':
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+#site.storage.location = "/usr/torrent/"
+#site.directory = "/"
