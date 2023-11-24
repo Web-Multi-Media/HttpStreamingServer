@@ -11,11 +11,11 @@ def dash_packager(videolist, audiolist, outputdirectory, segment_duration, fpsnu
 
 
     for video in videolist:
-        command.append('{video_layer}#video:id={height}p:#Bitrate={bitrate} '.format(
+        command.append('{video_layer}#video:id={height}p:#Bitrate={bitrate}'.format(
             video_layer=video[0], bitrate=video[1], height=video[2]))
 
     for i, audio in enumerate(audiolist):
-        command.append('{audio_layer}#audio:id=audio{id}":role={role}" '.format(
+        command.append('{audio_layer}#audio:id=audio{id}:role={role}'.format(
             audio_layer=audio[0], id=i, role="main" if i == 0 else "alternate"))
 
     command.extend(["-out", "{outputdirectory}/playlist.mpd".format(
