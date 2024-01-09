@@ -185,19 +185,17 @@ def prepare_video(video_full_path,
             audio_index += 1
 
     dash_fragment_duration = 4000
-    output_fps_num = 24
-    output_fps_denum = 1
     skip_high_layer_encoding = False
+    
+    output_fps_num = video_framerate_num
+    output_fps_denum = video_framerate_denum
+    print("dash_fragment_duration = {}".format(str(dash_fragment_duration)))
 
     if "h264" in video_codec_type:
         analysis_result = keyframe_analysis(video_full_path)
         if analysis_result[0]:
             skip_high_layer_encoding = True
             dash_fragment_duration = float(analysis_result[1]) * (float(video_framerate_num)/float(video_framerate_denum))
-            output_fps_num = video_framerate_num
-            output_fps_denum = video_framerate_denum
-            print("dash_fragment_duration = {}".format(str(dash_fragment_duration)))
-
 
     video_elementary_stream_path_high_layer = "{}_{}.264".format(
         os.path.splitext(video_full_path)[0], video_height)
