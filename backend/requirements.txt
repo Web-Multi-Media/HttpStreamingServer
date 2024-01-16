@@ -18,3 +18,4 @@ ffsubsync==0.4.3
 requests==2.31.0
 django-filebrowser==4.0.3
 django-grappelli==3.0.3
+coverage==7.4.0
