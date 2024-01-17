@@ -1,0 +1,77 @@
+version: "2"
+
+volumes:
+  dbvolume:
+  ipython:
+  static_volume:
+  torrent:
+  progress_volume:
+  secrets_volume:
+
+services:
+  db:
+    image: postgres:12.15
+    env_file:
+      - .env
+    ports:
+      - 5543:5432
+    volumes:
+      - dbvolume:/var/lib/postgresql/data/
+  web:
+    image: webmultimedia/http-streaming-server:master
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile.prod
+    restart: always
+    ports:
+      - 51413:51413
+    env_file:
+      - .env
+    environment:
+      - DEPLOY_ENV=production
+    volumes:
+      - ./Videos/:/usr/src/app/Videos
+      - static_volume:/usr/static/
+      - progress_volume:/usr/progress/
+      - ipython:/root/.ipython
+      - torrent:/usr/torrent/:rw
+      - ./backend/:/usr/src/app/
+    command: bash -c "./start_django_server.sh"
+    depends_on:
+      - db
+      - redis
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./Videos/:/usr/src/app/Videos
+      - static_volume:/usr/static/
+      - torrent:/usr/torrent/:rw
+      - secrets_volume:/secrets/
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+
+  celery:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile.prod
+    image: webmultimedia/http-streaming-server:master
+    command: bash -c "./start_celery_workers.sh"
+    volumes:
+        - ./Videos/:/usr/src/app/Videos
+        - torrent:/usr/torrent/:rw
+        - progress_volume:/usr/progress/
+        - ./backend/:/usr/src/app/
+    env_file:
+        - .env
+    environment:
+        - DEPLOY_ENV=production
+    depends_on:
+        - db
+        - redis
+
+  redis:
+    image: redis:alpine
+    command: redis-server --port 6380
