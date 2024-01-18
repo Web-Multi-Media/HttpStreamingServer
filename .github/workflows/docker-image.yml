@@ -44,6 +44,8 @@ jobs:
           docker-compose -f docker-compose-test.yml run --rm web bash -c "coverage report"
       - name: Coveralls
         uses: coverallsapp/github-action@v2
+        with:
+          base-path: ./backend/
       -
         name: Build and push
         uses: docker/build-push-action@v3
