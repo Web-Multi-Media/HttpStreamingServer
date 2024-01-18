@@ -39,10 +39,11 @@ jobs:
           cp -r tests/* Videos/ 
           docker-compose -f docker-compose-test.yml run --rm web bash -c "./wait-for-it.sh db:5432 -- coverage run --source='.' manage.py test"
       -
-        name: Test
+        name: Coverage
         run: |
-          cp -r tests/* Videos/ 
           docker-compose -f docker-compose-test.yml run --rm web bash -c "coverage report"
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
       -
         name: Build and push
         uses: docker/build-push-action@v3
