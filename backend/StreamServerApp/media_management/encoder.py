@@ -1,5 +1,6 @@
 
 from StreamServerApp.media_management.subprocess_wrapper import run_subprocess
+from StreamingServer.settings import X264_PROFILE
 
 
 def h264_encoder(filename, output, resolutionH, bitrate, progress_log, frameratenum, frameratedenum):
@@ -7,7 +8,7 @@ def h264_encoder(filename, output, resolutionH, bitrate, progress_log, framerate
                "-c:v", "libx264",  "-b:v", str(int(bitrate)),
                "-r", "{}/{}".format(frameratenum, frameratedenum), "-x264opts", "keyint=48:min-keyint=48:no-scenecut",
                "-movflags", "faststart", "-bufsize", "8600k",
-               "-pix_fmt", "yuv420p", "-profile:v", "main", "-preset", "veryfast",
+               "-pix_fmt", "yuv420p", "-profile:v", "main", "-preset", X264_PROFILE,
                "-an", "{}".format(output)]
 
     run_subprocess(command)

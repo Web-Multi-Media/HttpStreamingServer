@@ -209,7 +209,7 @@ def prepare_video(video_full_path,
     high_layer_bitrate = video_width * video_height * \
         24 * 4 * (high_layer_compression_ratio/100.0)
     print("high_layer_bitrate = {}".format(high_layer_bitrate))
-    low_layer_bitrate = int(os.getenv('480P_LAYER_BITRATE', 400000))
+    low_layer_bitrate = int(os.getenv('LOW_QUALITY_LAYER_BITRATE', 400000))
     low_layer_height = 0
     if ((video_height % 2.0) == 0):
         #We only encode low layer if lower resolution has the same aspect ratio as input
