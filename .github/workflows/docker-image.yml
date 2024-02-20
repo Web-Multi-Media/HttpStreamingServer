@@ -2,7 +2,7 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master" , "x264_profile"]
   pull_request:
     branches: [ "master" ]
 
