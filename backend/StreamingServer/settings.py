@@ -239,3 +239,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 #site.storage.location = "/usr/torrent/"
 #site.directory = "/"
+
+if os.getenv('X264_SETTINGS', 'medium') in ["ultrafast",
+"superfast",
+"veryfast",
+"faster",
+"fast",
+"medium",
+"slow",
+"slower",
+"veryslow",
+"placebo",
+]:
+    X264_PROFILE = os.getenv('X264_SETTINGS', 'medium') 
+else:
+    X264_PROFILE = "medium"
