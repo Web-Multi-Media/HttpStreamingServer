@@ -1,7 +1,7 @@
 import React from 'react';
 import VideoDetail from '../Video/VideoDetail';
-import VideoCarrouselSlick from '../VideoCarrouselSlick';
-import SeriesCarousel from '../SeriesCarousel';
+import VideoCarrouselSlick from './VideoCarrouselSlick';
+import SeriesCarousel from './SeriesCarousel';
 import './Carousels.css';
 import CircularProgress from '@material-ui/core/CircularProgress';
 

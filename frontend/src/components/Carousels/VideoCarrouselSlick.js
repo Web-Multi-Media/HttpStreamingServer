@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Slider from "react-slick";
 import SampleNextArrow from "./SampleNextArrow";
 import SamplePrevArrow from "./SamplePrevArrow";
-import '../style/style.scss';
+import '../../style/style.scss';
 
 
 export default  class VideoCarrouselSlick extends Component {
