@@ -1,116 +1,93 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../style/style.scss';
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
 import SelectBar from "./SelectBar";
 
 
-class SeriesCarousel extends Component {
+//class SeriesCarousel extends Component {
+const SeriesCarousel = ({ pager, videos, handleVideoSelect }) => {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            pager:  this.props.pager,
-            videos: this.props.videos,
-            series: '',
-            seriesPager: this.props.pager,
-            seasons: [],
-            episode: '',
-            seriesId: 0
-        };
-    };
+    const [series, setSeries] = useState('');
+    const [seriesPager, setSeriesPager] = useState(pager);
+    const [seasons, setSeasons] = useState([]);
+    const [episode, setEpisode] = useState('');
+    const [seriesId, setSeriesId] = useState(0);
+    const [reset, setReset] = useState(false);
+    const [Seriesvideos, setVideos] = useState(videos);
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.videos !== this.props.videos) {
-            this.setState({
-                pager: nextProps.pager,
-                videos: nextProps.videos,
-                reset: false
-            });
-        }
-    };
 
-    getSeriesSeason = async (serie) => {
+    const getSeriesSeason = async (serie) => {
         try {
             await serie.getSeason();
             await serie.getEpisodes(serie.seasons[0]);
-            this.setState({
-                pager: serie,
-                videos: serie.videos,
-                series: serie.name,
-                seasons: serie.seasons,
-                seriesId: serie,
-                reset: false
-            })
+            setSeriesPager(serie);
+            setSeries(serie.name);
+            setSeasons(serie.seasons);
+            setSeriesId(serie);
+            setReset(false);
+            setVideos(serie.videos);
+
         } catch(error) {
             console.log(error);
         }
     };
 
-    handleSeasonSelect = async (e) => {
-        const serie = this.state.pager;
+    const handleSeasonSelect = async (e) => {
+        const serie = seriesPager;
         await serie.getEpisodes(e.target.value);
-        this.setState({
-             pager: serie,
-             videos: serie.videos,
-             reset: false
-         });
+        setSeriesPager(serie);
+        setVideos(serie.videos);
+        setReset(false);
     };
 
-    handleSeriesSelect = async (video) => {
-        if (this.state.series === '') {
-            await this.getSeriesSeason(video);
+    const handleSeriesSelect = async (video) => {
+        if (series === '') {
+            await getSeriesSeason(video);
         }
         else{
-            this.props.handleVideoSelect(video);
-            this.setState({
-                episode: video.name
-            });
+            handleVideoSelect(video);
+            setEpisode(video.name);
         }
         // change tab title with the name of the selected video
         document.title = video.name;
     };
 
-    resetSeries = () => {
-        this.setState({
-            pager: this.state.seriesPager,
-            videos: this.state.seriesPager.series,
-            series: '',
-            season: '',
-            episode: '',
-            reset: true
-        })
-
+    const resetSeries = () => {
+        setSeriesPager(pager);
+        setSeries('');
+        setSeasons('');
+        setEpisode('')
+        setReset(true);
+        setVideos(pager.series);
     };
 
 
-    render() {
         return (
             <div>
                 <div className="seriesDisplay">
-                <h4 className="centerVer hover-hilight" onClick={()=>this.resetSeries()}>SERIES</h4>
-                {this.state.series.length > 0 &&
+                <h4 className="centerVer hover-hilight" onClick={()=>resetSeries()}>SERIES</h4>
+                {series.length > 0 &&
                     <React.Fragment>
-                    <span className="centerVer"> > {this.state.series} > </span>
+                    <span className="centerVer"> > {series} > </span>
                     <SelectBar
-                    seasons = {this.state.seasons}
-                    handleSeason= {this.handleSeasonSelect}
+                    seasons = {seasons}
+                    handleSeason= {handleSeasonSelect}
                     />
                     </React.Fragment>
                 }
-                {this.state.episode !== '' &&  <span className="centerVer"> > {this.state.episode}</span>}
+                {episode !== '' &&  <span className="centerVer"> > {episode}</span>}
                 </div>
-                {this.state.videos.length > 0 &&
+                {Seriesvideos.length > 0 &&
                 <div>
                     <VideoCarrouselSlick
-                        pager={this.state.pager}
-                        videos={this.state.videos}
-                        handleVideoSelect={this.handleSeriesSelect}
-                        reset={this.state.reset}
+                        pager={seriesPager}
+                        videos={Seriesvideos}
+                        handleVideoSelect={handleSeriesSelect}
+                        reset={reset}
                     />
                 </div>
                 }
             </div>
         );
-    }
 }
 export default SeriesCarousel;

@@ -36,7 +36,6 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
             try {
                 let updatedPager = { ...pager };
                 await updatedPager.getNextPage();
-                let updatedVideos = [...videos, ...updatedPager.videos];
                 setIndex(index);
             } catch (error) {
                 console.log(error);
