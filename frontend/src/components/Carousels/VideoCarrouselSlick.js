@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, reset }) {
 
     const [index, setIndex] = useState(0);
+    const [carrouselVideos, setCarrouselVideos] = useState(videos);
     const SLIDES_OF_CAROUSEL = 5;
 
     const chooseIndex = (reset) => {
@@ -34,8 +35,9 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
         if (isLastPage && pager.nextPageUrl) {
             // API call to retrieve more videos when navigating through carousel
             try {
-                let updatedPager = { ...pager };
-                await updatedPager.getNextPage();
+                await pager.getNextPage();
+                let updatedVideos = [...videos, ...pager.videos];
+                setCarrouselVideos(updatedVideos);
                 setIndex(index);
             } catch (error) {
                 console.log(error);
@@ -61,7 +63,7 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
 
     return (
       <Slider {...settings}>
-            {videos.map((video) => (
+            {carrouselVideos.map((video) => (
                         <div className="video-element" key={video.id}>
                         <div className="video-element2"
                             onClick={() => handleVideoSelect(video)}>

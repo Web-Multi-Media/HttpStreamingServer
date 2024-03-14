@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../../style/style.scss';
 import VideoCarrouselSlick from "./VideoCarrouselSlick";
 import SelectBar from "./SelectBar";
