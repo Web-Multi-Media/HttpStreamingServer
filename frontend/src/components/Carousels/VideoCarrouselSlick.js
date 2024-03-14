@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 
 
 
-export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, reset }) {
+export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, reset, refresh }) {
 
     const [index, setIndex] = useState(0);
     const [carrouselVideos, setCarrouselVideos] = useState(videos);
@@ -49,6 +49,13 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
         const index = chooseIndex(reset);
         setIndex(index);
     }, [reset]);
+
+    useEffect(() => {
+        console.log("refresh")
+        if(refresh){
+            setCarrouselVideos(videos)
+        }
+    }, [refresh]);
 
     var settings = {
         dots: true,

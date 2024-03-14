@@ -14,6 +14,7 @@ const SeriesCarousel = ({ pager, videos, handleVideoSelect }) => {
     const [seriesId, setSeriesId] = useState(0);
     const [reset, setReset] = useState(false);
     const [Seriesvideos, setVideos] = useState(videos);
+    const [refresh, setRefresh] = useState(false);
 
 
     const getSeriesSeason = async (serie) => {
@@ -43,6 +44,7 @@ const SeriesCarousel = ({ pager, videos, handleVideoSelect }) => {
     const handleSeriesSelect = async (video) => {
         if (series === '') {
             await getSeriesSeason(video);
+            setRefresh(true);
         }
         else{
             handleVideoSelect(video);
@@ -53,12 +55,14 @@ const SeriesCarousel = ({ pager, videos, handleVideoSelect }) => {
     };
 
     const resetSeries = () => {
+        console.log(pager.series);
         setSeriesPager(pager);
         setSeries('');
         setSeasons('');
         setEpisode('')
         setReset(true);
-        setVideos(pager.series);
+        setVideos(videos);
+        setRefresh(true);
     };
 
 
@@ -84,6 +88,7 @@ const SeriesCarousel = ({ pager, videos, handleVideoSelect }) => {
                         videos={Seriesvideos}
                         handleVideoSelect={handleSeriesSelect}
                         reset={reset}
+                        refresh={refresh}
                     />
                 </div>
                 }
