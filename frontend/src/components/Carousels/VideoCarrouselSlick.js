@@ -60,11 +60,11 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
     }, [refresh]);
 
     var settings = {
-        dots: true,
+        dots: false,
         infinite: false,
         speed: 500,
         slidesToShow: SLIDES_OF_CAROUSEL,
-        slidesToScroll: 1,
+        slidesToScroll: SLIDES_OF_CAROUSEL,
         afterChange: afterChangeMethod,
         nextArrow: <SampleNextArrow />,
         prevArrow: <SamplePrevArrow />,
