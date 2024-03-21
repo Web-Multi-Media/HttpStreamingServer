@@ -6,15 +6,15 @@ const SampleNextArrow = (props) => {
     const { className, style, onClick } = props;
     const isLoading = props.isloading;
 
-    if (isLoading) {
-        return (
-            <label >› <CircularProgress /></label>
-        )
-    } else {
+    return (
+        <label className="">
+            <div className={isLoading ? "next-spinner-wheel" : "next-spinner-hidden"}>
+                <CircularProgress/>
+            </div>
+            <div className="arrow back" onClick={onClick}>› </div>
+        </label>
+      );
 
-        return (
-            <label className="arrow back" onClick={onClick}>› </label>
-        );
-    }
+    
 };
 export default SampleNextArrow;
