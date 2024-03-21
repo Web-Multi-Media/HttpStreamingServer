@@ -11,6 +11,7 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
 
     const [index, setIndex] = useState(0);
     const [carrouselVideos, setCarrouselVideos] = useState(videos);
+    const [isnextpageloading, setIsNextPageLoading] = useState(false);
     const SLIDES_OF_CAROUSEL = 5;
 
     const chooseIndex = (reset) => {
@@ -33,6 +34,7 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
         setSeriePagerIndex(index);
         
         if (isLastPage && pager.nextPageUrl) {
+            setIsNextPageLoading(true);
             // API call to retrieve more videos when navigating through carousel
             try {
                 let updatedPager = pager ;
@@ -43,6 +45,7 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
             } catch (error) {
                 console.log(error);
             }
+            setIsNextPageLoading(false);
         }
     };
 
@@ -65,8 +68,10 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
         speed: 500,
         slidesToShow: SLIDES_OF_CAROUSEL,
         slidesToScroll: SLIDES_OF_CAROUSEL,
+        swipeToSlide: true,
+        touchMove:true,
         afterChange: afterChangeMethod,
-        nextArrow: <SampleNextArrow />,
+        nextArrow: <SampleNextArrow isloading={isnextpageloading}/>,
         prevArrow: <SamplePrevArrow />,
       };
 
