@@ -4,7 +4,7 @@ import SampleNextArrow from "./SampleNextArrow";
 import SamplePrevArrow from "./SamplePrevArrow";
 import '../../style/style.scss';
 import { useState, useEffect } from 'react';
-
+import CustomSlider from "./CustomSlider"
 
 
 export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, reset, refresh, setRefresh}) {
@@ -68,15 +68,14 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
         speed: 500,
         slidesToShow: SLIDES_OF_CAROUSEL,
         slidesToScroll: SLIDES_OF_CAROUSEL,
-        swipeToSlide: true,
-        touchMove:true,
+        //swipeToSlide: true,
         afterChange: afterChangeMethod,
         nextArrow: <SampleNextArrow isloading={isnextpageloading}/>,
         prevArrow: <SamplePrevArrow />,
       };
 
     return (
-      <Slider {...settings}>
+      <CustomSlider {...settings}>
             {carrouselVideos.map((video) => (
                         <div className="video-element" key={video.id}>
                         <div className="video-element2"
@@ -93,6 +92,6 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
                             </div>
                         </div>
                     ))}
-      </Slider>
+      </CustomSlider>
     );
   }
