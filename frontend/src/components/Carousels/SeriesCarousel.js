@@ -37,6 +37,7 @@ const SeriesCarousel = ({ pager, videos, handleVideoSelect }) => {
         await serie.getEpisodes(e.target.value);
         setSeriesPager(serie);
         setVideos(serie.videos);
+        setRefresh(true);
         setReset(false);
     };
 
