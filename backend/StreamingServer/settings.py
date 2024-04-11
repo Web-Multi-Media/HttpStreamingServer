@@ -101,6 +101,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'debug_toolbar',
+    'revproxy'
 ]
 
 MIDDLEWARE = [
@@ -254,3 +255,4 @@ if os.getenv('X264_SETTINGS', 'medium') in ["ultrafast",
     X264_PROFILE = os.getenv('X264_SETTINGS', 'medium') 
 else:
     X264_PROFILE = "medium"
+
