@@ -21,6 +21,7 @@ urlpatterns = [
     re_path(r'^tasks/(?P<task_id>.+)/$', tasks.Task.as_view(), name='task'),
     re_path(r'^rest-auth/', include('dj_rest_auth.urls')),
     re_path(r'^rest-auth/registration/', include('dj_rest_auth.registration.urls')),
+    re_path(r'^sync_subtitles/(?P<video_id>.+)/(?P<subtitle_id>.+)/$', videos.request_sync_subtitles)
 ]
 
 urlpatterns_internal = [

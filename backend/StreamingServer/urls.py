@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from filebrowser.sites import site
+from StreamingServer.view import TorrentsView, TorrentsRPCView,TorrentsUploadView
 
 urlpatterns = [
     path('streaming/', include('StreamServerApp.urls.public')),
@@ -24,6 +25,9 @@ urlpatterns = [
     path('admin/filebrowser/', site.urls),
     path('grappelli/', include('grappelli.urls')),
     path('admin/', admin.site.urls),
+    re_path(r'transmission/web/(?P<path>.*)', TorrentsView.as_view()),
+    re_path(r'transmission/rpc/(?P<path>.*)', TorrentsRPCView.as_view()),
+    re_path(r'transmission/upload/(?P<path>.*)', TorrentsUploadView.as_view()),
 ]
 
 if settings.DEBUG:
