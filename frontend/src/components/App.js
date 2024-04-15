@@ -8,6 +8,7 @@ import Header from "./header/Header";
 import './App.css'
 import Carousels from "./Carousels/Carousels";
 import AccessDenied from "./AccessDenied";
+import TransmissionClient from './torrents.js'
 const utils = require ("./../utils/utils");
 
 function App(props) {
@@ -50,6 +51,7 @@ function App(props) {
     const [seriesVideos, setSeriesVideos] = useState([]);
     const [isInitialVideoDone, setInitialVideoDone] = useState(false);
     const [videos, setVideos] = useState([]);
+    const [displayTorrent, setDisplayTorrent] = useState(false);
     const location = useLocation();
     const history = useHistory();
 
@@ -142,6 +144,8 @@ function App(props) {
                 client={client}
                 userinfos={userInfos}
                 setUserInfos={setUserInfos}
+                displaytorrent={displayTorrent}
+                setDisplayTorrent={setDisplayTorrent}
             />
             {authTokens ?
                 <Carousels
@@ -158,7 +162,10 @@ function App(props) {
                 />
                 :
                 <AccessDenied/>
+
             }
+            {displayTorrent ?
+                <TransmissionClient/>:null}
             
             {(displayModal && toggleModal) &&
             <Login

@@ -9,10 +9,11 @@ import {useAuth } from '../context/auth';
 import Button from "@material-ui/core/Button";
 
 
-export default function Header({ handleFormSubmit, displayModal, client, userinfos, setUserInfos }) {
+export default function Header({ handleFormSubmit, displayModal, client, userinfos, setUserInfos, displayTorrent,SetDisplayTorrent }) {
     const { authTokens } = useAuth();
     const [updateInfo, setUpdatedInfo] = useState(null);
     const [closeUpdateBar, setCloseUpdateBar] = useState(true);
+
     return (
         <div>
             <header className="headerBar">
@@ -52,10 +53,8 @@ export default function Header({ handleFormSubmit, displayModal, client, userinf
 
                     <div className="headerButton hideifmobile">
                         {authTokens &&
-                            <Button variant="contained" color="primary" className="headerButton">
-                                <a href="/transmission/web/">
+                            <Button variant="contained" color="primary" className="headerButton" onClick={() => SetDisplayTorrent(true)} >
                                     Add Torrent
-                                </a>
                             </Button>
                         }
                     </div>
