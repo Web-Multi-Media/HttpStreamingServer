@@ -30,7 +30,7 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
     const afterChangeMethod = async (index) => {
          // Assuming this constant value, adjust as needed
 
-        const isLastPage = (index + SLIDES_OF_CAROUSEL) === videos.length;
+        const isLastPage = ((index % (2 * SLIDES_OF_CAROUSEL )) + SLIDES_OF_CAROUSEL) === videos.length;
         setSeriePagerIndex(index);
         
         if (isLastPage && pager.nextPageUrl) {
@@ -39,7 +39,7 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
             try {
                 let updatedPager = pager ;
                 await updatedPager.getNextPage();
-                let updatedVideos = [...videos, ...pager.videos];
+                let updatedVideos = [...carrouselVideos, ...pager.videos];
                 setCarrouselVideos(updatedVideos);
                 setIndex(index);
             } catch (error) {
