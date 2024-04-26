@@ -12,7 +12,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
 
     const [timer, setTimer] = useState(false);
     const [count, setCount] = useState(0);
-    const [player, setPlayer] = useState(dashjs.MediaPlayer().create());
+    const [player, ] = useState(dashjs.MediaPlayer().create());
     const [playerIsInitialized, setPlayerIsInitialized] = useState(false);
     const [Subtitles, setSubtitles] = useState();
     const [audioTracks, setAudioTrack] = useState([]);
@@ -47,7 +47,6 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                 });
                 setSubtitles(video.subtitles);
             } else {
-                let videoElement = document.querySelector("#videoPlayer");
                 player.attachSource(video.videoUrl);
                 setSubtitles(video.subtitles);
             }
@@ -93,7 +92,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                                 {sub.webvtt_sync_url.length > 0 &&
                                     <track key={sub.webvtt_sync_url} label={`Sync ${sub.language}`} kind="subtitles" default={index === 0 && true} srcLang={sub.language} src={sub.webvtt_sync_url} />
                                 }
-                                <track key={sub.webvtt_subtitle_url} label={sub.language} default={index === 0 && true} kind="subtitles" srcLang={sub.language} src={sub.webvtt_subtitle_url} />
+                                <track key={sub.webvtt_subtitle_url} label={`${sub.language} ${index}`} default={index === 0 && true} kind="subtitles" srcLang={`${sub.language} ${index}`} src={sub.webvtt_subtitle_url} />
                             </>
                         )}
                     </video>
