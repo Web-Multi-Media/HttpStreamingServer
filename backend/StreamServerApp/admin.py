@@ -3,6 +3,7 @@ from StreamServerApp.models import Video, Movie, Series, Subtitle, delete_video_
 from django.conf import settings
 import os
 import shutil
+from django.contrib.auth.admin import UserAdmin
 
 
 
@@ -60,3 +61,5 @@ admin.site.register(Video, VideoAdmin)
 admin.site.register(Movie, MovieAdmin)
 admin.site.register(Series, SeriesAdmin)
 admin.site.register(Subtitle)
+
+UserAdmin.list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'last_login')
