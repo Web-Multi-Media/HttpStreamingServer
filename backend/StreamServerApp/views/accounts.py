@@ -11,8 +11,7 @@ from StreamServerApp.serializers.videos import VideoListSerializer
 from StreamServerApp.models import Video, UserVideoHistory
 from rest_framework import permissions
 import logging 
-
-logger = logging.getLogger("django")
+logger = logging.getLogger("root")
 
 
 class History(APIView, LimitOffsetPagination):

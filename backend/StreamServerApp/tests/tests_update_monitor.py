@@ -29,7 +29,7 @@ class UpdateMonitoringTest(TestCase):
         response = self.client.get(
             reverse('updatedb'),
         )
-        #print(response)
+
         self.assertEqual(response.status_code, 200)
         decoded_content = json.loads(str(response.content, encoding='utf8'))
         self.assertEqual(decoded_content["toto.mp4"]["percentage"], 0.5016611295681063)
@@ -42,9 +42,7 @@ class UpdateMonitoringTest(TestCase):
         response = self.client.get(
             reverse('updatedb'),
         )
-        #print(response)
+
         self.assertEqual(response.status_code, 200)
         decoded_content = json.loads(str(response.content, encoding='utf8'))
-        #print(decoded_content["percentage"])
-        #print(decoded_content)
         self.assertEqual(decoded_content["toto.mp4"]["percentage"], 0.03156146179401993)

@@ -9,7 +9,7 @@ from django.conf import settings
 
 import logging 
 
-logger = logging.getLogger("django")
+logger = logging.getLogger("root")
 
 
 class SubtitleViewSet(viewsets.ModelViewSet):

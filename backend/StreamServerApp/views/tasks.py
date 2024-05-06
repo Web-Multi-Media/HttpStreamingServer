@@ -9,7 +9,7 @@ from celery import result
 
 import logging 
 
-logger = logging.getLogger("django")
+logger = logging.getLogger("root")
 
 class Task(APIView):
 

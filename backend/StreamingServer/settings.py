@@ -259,15 +259,25 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "handlers": {
-        "file": {
+        "db": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
-            "filename": "/debug/debug.log",
+            "filename": "/debug/debug-db.log",
+        },
+        "root": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": "/debug/debug-generic.log",
         },
     },
     "loggers": {
-        "django": {
-            "handlers": ["file"],
+        "django-db": {
+            "handlers": ["db"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "root": {
+            "handlers": ["root"],
             "level": "DEBUG",
             "propagate": True,
         },

@@ -4,6 +4,10 @@ import subprocess
 import os
 from django.conf import settings
 
+import logging
+
+logger = logging.getLogger("root")
+
 
 @shared_task
 def sync_subtitles(subtitle_id):
@@ -15,5 +19,8 @@ def sync_subtitles(subtitle_id):
 @shared_task
 def get_subtitles_async(video_id, video_path, remote_url):
     video = Video.objects.get(id=video_id)
-    video.get_subtitles(video_path, remote_url)
+    try:
+        video.get_subtitles(video_path, remote_url)
+    except Exception as e:
+        logger.exception(e)
     return 0

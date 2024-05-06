@@ -4,6 +4,9 @@ from subliminal import Video, subtitle, region, download_best_subtitles, save_su
 import io
 
 from StreamServerApp.media_processing import extract_subtitle, convert_subtitles_to_webvtt
+import logging 
+
+logger = logging.getLogger("root")
 
 #https://subliminal.readthedocs.io/en/latest/user/usage.html
 
@@ -86,8 +89,10 @@ def get_subtitles(video_path):
         except:
             webvtt_fullpath = {}
             srt_fullpath = {}
+            pass
     except ValueError:
         #This usually happens when there is not enough data for subliminal to guess
         pass
+
 
     return [webvtt_fullpath, srt_fullpath]
