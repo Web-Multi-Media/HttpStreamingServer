@@ -25,6 +25,10 @@ from StreamServerApp.media_processing import prepare_video, get_video_type_and_i
 from StreamServerApp.tasks import get_subtitles_async
 from StreamingServer import settings
 
+import logging 
+
+logger = logging.getLogger("django")
+
 
 def delete_DB_Infos():
     """ delete all videos, movies and series in the db
@@ -82,7 +86,7 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False, async_u
         for filename in filenames:
             full_path = os.path.join(root, filename)
             if full_path in old_path_set:
-                print(full_path + " is already in db, skip it")
+                logger.debug(full_path + " is already in db, skip it")
                 continue
 
             if isfile(full_path) and (full_path.endswith((".mp4", ".mkv", ".avi"))):

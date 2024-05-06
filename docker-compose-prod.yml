@@ -35,6 +35,7 @@ services:
       - progress_volume:/usr/progress/
       - ipython:/root/.ipython
       - torrent:/usr/torrent/:rw
+      - ./log/:/debug/
     command: bash -c "./start_django_server.sh"
     depends_on:
       - db
@@ -62,6 +63,7 @@ services:
         - ./Videos/:/usr/src/app/Videos
         - torrent:/usr/torrent/:rw
         - progress_volume:/usr/progress/
+        - ./log/:/debug/
     env_file:
         - .env
     environment:

@@ -7,6 +7,10 @@ from django.http import Http404
 import os
 from django.conf import settings
 
+import logging 
+
+logger = logging.getLogger("django")
+
 
 class SubtitleViewSet(viewsets.ModelViewSet):
     """
@@ -42,10 +46,9 @@ class SubtitleViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
        sub_pk = kwargs["pk"]
        try:
-           print(sub_pk)
            sub = Subtitle.objects.get(pk=sub_pk)
            delete_subtitle(sub)
        except Subtitle.DoesNotExist:
-           print("No MyModel matches the given query.")
+           logger.error("No MyModel matches the given query.")
            raise Http404("No MyModel matches the given query.")
        return super(SubtitleViewSet, self).destroy(request, *args, **kwargs)
