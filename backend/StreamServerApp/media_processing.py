@@ -15,6 +15,10 @@ from StreamServerApp.media_management.fileinfo import createfileinfo, readfilein
 from StreamServerApp.media_management.subprocess_wrapper import run_subprocess
 from StreamServerApp.media_management.timecode import timecodeToSec
 
+import logging 
+
+logger = logging.getLogger("root")
+
 
 def convert_subtitles_to_webvtt(input_file, output_file):
     """ # Uses ffmpeg subprocess to convert subtitles to webvtt
@@ -64,7 +68,7 @@ def transmux_to_mp4(input_file, output_file, with_audio_reencode=False):
 
     """
     if with_audio_reencode:
-        print(
+        logger.debug(
             "Audio codec is not aac, audio reencoding is necessary (This might take a long time)")
         cmd = ["ffmpeg", "-i", input_file,
                 "-acodec", "aac", "-vcodec", "copy", "-movflags", "+faststart", output_file]
@@ -125,7 +129,6 @@ def prepare_video(video_full_path,
 
         return: Dictionnary with video infos
     """
-    print("processing {}".format(video_full_path))
     cache.set("ingestion_task_{}".format(video_full_path), "Analyzing input", timeout=None)
     cache.set("processing_file", "{}".format(video_full_path), timeout=None)
     probe = get_media_file_info(video_full_path)
@@ -144,7 +147,7 @@ def prepare_video(video_full_path,
          for stream in probe['streams'] if stream['codec_type'] == 'video'),
         None)
     if video_stream is None:
-        print('No video stream found', file=sys.stderr)
+        logger.error('No video stream found')
         return {}
 
     (video_codec_type, video_width, video_height, video_framerate_num,
@@ -156,18 +159,18 @@ def prepare_video(video_full_path,
         None)
     if audio_stream is None:
         #At the moment, if the input video has no audio, it's not added to the database.
-        print('No audio stream found', file=sys.stderr)
+        logger.error('No audio stream found')
         return {}
 
     for stream in probe['streams']:
         if stream['codec_type'] == 'subtitle':
-            print('Found Subtitles in the input stream')
+            logger.debug('Found Subtitles in the input stream')
             webvtt_ov_fullpath_tmp = os.path.splitext(video_full_path)[0]+'_ov_{}.vtt'.format(subtitles_index)
             try:
                 extract_subtitle(video_full_path, webvtt_ov_fullpath_tmp, subtitles_index)
                 webvtt_ov_fullpaths.append(webvtt_ov_fullpath_tmp)
             except:
-                print("Something went wrong with subtitle extraction, skipping track {}".format(subtitles_index))
+                logger.error("Something went wrong with subtitle extraction, skipping track {}".format(subtitles_index))
             subtitles_index += 1
         elif stream['codec_type'] == 'audio':
             (audio_codec_type, audio_duration, lang) = get_audio_stream_info(stream, probe)
@@ -189,13 +192,15 @@ def prepare_video(video_full_path,
     
     output_fps_num = video_framerate_num
     output_fps_denum = video_framerate_denum
-    print("dash_fragment_duration = {}".format(str(dash_fragment_duration)))
+    logger.debug("dash_fragment_duration = {}".format(str(dash_fragment_duration)))
 
     if "h264" in video_codec_type:
         analysis_result = keyframe_analysis(video_full_path)
         if analysis_result[0]:
+            logger.debug("Regular GoP Structure was detected, we are going to use the input without reecoding it")
             skip_high_layer_encoding = True
             dash_fragment_duration = float(analysis_result[1]) * (float(video_framerate_num)/float(video_framerate_denum))
+            logger.debug("Gop Duration = {}".format(dash_fragment_duration))
 
     video_elementary_stream_path_high_layer = "{}_{}.264".format(
         os.path.splitext(video_full_path)[0], video_height)
@@ -208,7 +213,8 @@ def prepare_video(video_full_path,
         os.getenv('HIGH_LAYER_QUALITY', 3))
     high_layer_bitrate = video_width * video_height * \
         24 * 4 * (high_layer_compression_ratio/100.0)
-    print("high_layer_bitrate = {}".format(high_layer_bitrate))
+    logger.debug("high_layer_bitrate = {}".format(high_layer_bitrate))
+
     low_layer_bitrate = int(os.getenv('LOW_QUALITY_LAYER_BITRATE', 400000))
     low_layer_height = 0
     if ((video_height % 2.0) == 0):
@@ -239,7 +245,7 @@ def prepare_video(video_full_path,
                 video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate, "/usr/progress/progress-log.txt", output_fps_num, output_fps_denum)
             video_tracks.append((video_elementary_stream_path_low_layer, low_layer_height, low_layer_bitrate))
         except:
-            print("An exception occured during low layer encoding, skip this layer")
+            logger.error("An exception occured during low layer encoding, skip this layer")
             low_layer_bitrate = 0
             low_layer_height = 0
 

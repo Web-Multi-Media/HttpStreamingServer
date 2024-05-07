@@ -29,7 +29,6 @@ class RestUpdate(APIView):
 
         keep_files = False
         try:
-            print(request.data["headers"]["keep_files"])
             if (request.data["headers"]["keep_files"]):
                 keep_files = True
         except Exception as ex:
@@ -44,7 +43,6 @@ class RestUpdate(APIView):
             return Response({}, status=status.HTTP_226_IM_USED)
 
     def get(self, request):
-        processing_state = cache.get("processing_state")
         keys = cache.get_many(cache.keys("ingestion_task_*"))
         data = {}
         for ingestion_key, ingestion_value in keys.items():

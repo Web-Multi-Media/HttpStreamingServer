@@ -25,6 +25,10 @@ from StreamServerApp.media_processing import prepare_video, get_video_type_and_i
 from StreamServerApp.tasks import get_subtitles_async
 from StreamingServer import settings
 
+import logging 
+
+logger = logging.getLogger("root")
+
 
 def delete_DB_Infos():
     """ delete all videos, movies and series in the db
@@ -65,7 +69,7 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False, async_u
     video_ids_to_delete = []
     for old_files_path, old_video_id in database_old_files:
         if os.path.isfile(old_files_path) is False:
-            print(old_files_path + "will be deleted")
+            logger.debug("{} will be deleted".format(old_files_path))
             video_ids_to_delete.append(old_video_id)
         else:
             old_path_set.add(old_files_path)
@@ -82,7 +86,7 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False, async_u
         for filename in filenames:
             full_path = os.path.join(root, filename)
             if full_path in old_path_set:
-                print(full_path + " is already in db, skip it")
+                logger.debug(" {} is already in db, skip it".format(full_path))
                 continue
 
             if isfile(full_path) and (full_path.endswith((".mp4", ".mkv", ".avi"))):
@@ -110,8 +114,8 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False, async_u
                                 count_series += 1
 
                 except Exception as ex:
-                    print("An error occured")
-                    traceback.print_exception(type(ex), ex, ex.__traceback__)
+                    logger.error("An exception occured")
+                    logger.error(ex)
                     continue
             elif isfile(full_path) and (full_path.endswith(".mpd")):
                 try:
@@ -126,15 +130,15 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False, async_u
                             count_series += 1
 
                 except Exception as ex:
-                    print("An error occured")
-                    traceback.print_exception(type(ex), ex, ex.__traceback__)
+                    logger.error("An exception occured")
+                    logger.error(ex)
                     continue
 
     num_video_after = get_num_videos()
 
-    print("{} videos were added to the database".format(num_video_after -
+    logger.debug("{} videos were added to the database".format(num_video_after -
                                                         num_video_before))
-    print('{} series and {} movies were created'.format(
+    logger.debug('{} series and {} movies were created'.format(
         count_series, count_movies))
 
     cache.set("processing_state", "finished", timeout=None)
@@ -160,19 +164,18 @@ def add_one_video_to_database(full_path,
         return 0 if noseries/movies was created, 1 if a movies was created, 2 if a series was created
 
     """
-    # Print current working directory
-    print("Current working dir : %s" % root)
+    logger.debug("Current working file : %s" % full_path)
     try:
         video_infos = prepare_video(full_path, video_path, root, remote_url,
                                     keep_files)
     except Exception as e:
-        print(e)
+        logger.exception(e)
         cache.delete("ingestion_task_{}".format(full_path))
         raise(e)
 
     if not video_infos:
         cache.delete("ingestion_task_{}".format(full_path))
-        print("video infos are empty, don't add to database")
+        logger.error("video infos are empty, don't add to database")
         return 0
 
 
@@ -258,7 +261,7 @@ def add_one_manifest_to_database(full_path,
 
     """
     # Print current working directory
-    print("Current working dir : %s" % root)
+    logger.debug("Current working dir : %s" % root)
     video_infos = []
     fileinfos_path = "{}/fileinfo.json".format(os.path.split(full_path)[0])
     if os.path.isfile(fileinfos_path):

@@ -3,6 +3,9 @@ import subprocess
 import json
 from StreamServerApp.media_management.subprocess_wrapper import run_subprocess
 
+import logging 
+
+logger = logging.getLogger("root")
 
 
 class BFrame(object):
@@ -115,8 +118,9 @@ def keyframe_analysis(filename):
 
     if gops_duration_in_frames.count(gops_duration_in_frames[0]) == len(gops_duration_in_frames) - 1:
         regular_duration = True
-
-    #for gop in gops:
-    #    print(gop)
+    
+    if regular_duration:
+        for gop in gops:
+            logger.debug(gop)
 
     return (regular_duration, gops_duration_in_frames[0])

@@ -10,6 +10,8 @@ from rest_framework.pagination import LimitOffsetPagination
 from StreamServerApp.serializers.videos import VideoListSerializer
 from StreamServerApp.models import Video, UserVideoHistory
 from rest_framework import permissions
+import logging 
+logger = logging.getLogger("root")
 
 
 class History(APIView, LimitOffsetPagination):
@@ -31,7 +33,7 @@ class History(APIView, LimitOffsetPagination):
             return self.get_history(request, user)
 
         except Exception as ex:
-            traceback.print_exception(type(ex), ex, ex.__traceback__)
+            logger.exception(ex)
             return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def post(self, request):
@@ -61,5 +63,5 @@ class History(APIView, LimitOffsetPagination):
             return self.get_history(request, user)
 
         except Exception as ex:
-            traceback.print_exception(type(ex), ex, ex.__traceback__)
+            logger.exception(ex)
             return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

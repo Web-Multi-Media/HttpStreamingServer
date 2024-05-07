@@ -254,3 +254,32 @@ if os.getenv('X264_SETTINGS', 'medium') in ["ultrafast",
     X264_PROFILE = os.getenv('X264_SETTINGS', 'medium') 
 else:
     X264_PROFILE = "medium"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "db": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": "/debug/debug-db.log",
+        },
+        "root": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": "/debug/debug-generic.log",
+        },
+    },
+    "loggers": {
+        "django-db": {
+            "handlers": ["db"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "root": {
+            "handlers": ["root"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}

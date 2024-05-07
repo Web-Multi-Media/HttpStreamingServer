@@ -10,6 +10,10 @@ import os
 import subprocess
 import shutil
 
+import logging 
+
+logger = logging.getLogger("root")
+
 
 class SearchManager(models.Manager):
     def search_trigramm(self, model_field, query):
@@ -101,10 +105,10 @@ class Video(models.Model):
         if os.path.isfile(fileinfos_path):
             video_infos = readfileinfo(fileinfos_path)
             if not video_infos:
-                print("video infos are empty, don't add subs")
+                logger.debug("video infos are empty, don't add subs")
                 return 0
         else:
-            print("{} is not a file ".format(fileinfos_path))
+            logger.debug("{} is not a file ".format(fileinfos_path))
             return 0
 
         subtitles_list = get_subtitles(video_infos["video_full_path"])
@@ -185,7 +189,7 @@ class Subtitle(models.Model):
             self.webvtt_sync_url = os.path.join("/torrents", webvtt_path.split("/usr/torrent/")[1])
             self.save()
         else:
-            print("Something went wrong during resync")
+            logger.error("Something went wrong during resync")
 
     def __str__(self):
         return 'lang = {},\
@@ -214,15 +218,14 @@ def delete_subtitle(sub: Subtitle) -> None:
 
 #This function should be called before Video instance deletion
 def delete_video_related_assets(Video_input: Video) -> None:
-    print(Video_input.video_folder)
     playlistdir = os.path.split(Video_input.video_folder)[0]
     if os.path.isdir(playlistdir):
-        print("removing directory: {}".format(playlistdir))
+        logger.debug("removing directory: {}".format(playlistdir))
         shutil.rmtree(playlistdir, ignore_errors=True)
-    print("removing audio ", Video_input.audio_path)
+    logger.debug("removing audio {}".format(Video_input.audio_path))
     if os.path.isfile(Video_input.audio_path):
         os.remove(Video_input.audio_path)
-    print("removing subtitles")
+    logger.debug("removing subtitles")
     subs = Subtitle.objects.filter(video_id=Video_input)
     for sub in subs:
         delete_subtitle(sub)

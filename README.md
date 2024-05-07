@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/Web-Multi-Media/HttpStreamingServer/actions/workflows/docker-image.yml/badge.svg)](https://github.com/Web-Multi-Media/HttpStreamingServer/actions/workflows/docker-image.yml)
+[![Build Status](https://github.com/Web-Multi-Media/HttpStreamingServer/actions/workflows/master.yml/badge.svg)](https://github.com/Web-Multi-Media/HttpStreamingServer/actions/workflows/master.yml)
 
 Intro
 -------------------

@@ -33,6 +33,7 @@ services:
       - DEBUG=1
     volumes:
       - ./backend/:/usr/src/app/
+      - ./log/:/debug/
       - ./Videos/:/usr/src/app/Videos
       - progress_volume:/usr/progress/
       - static_volume:/usr/src/app/staticfiles
@@ -80,6 +81,7 @@ services:
         - ./Videos/:/usr/src/app/Videos
         - progress_volume:/usr/progress/
         - torrent:/usr/torrent/:rw
+        - ./log/:/debug/
     env_file:
         - .env
     depends_on:

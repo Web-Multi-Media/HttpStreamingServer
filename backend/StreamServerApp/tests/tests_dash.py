@@ -39,8 +39,6 @@ class TestDash(TestCase):
         self.assertEqual(analysis_result, (True, 18))
         analysis_result = keyframe_analysis(
             "/usr/src/app/Videos/folder2/The.Blues.Brothers.1980.1080p.BrRip.x264.bitloks.YIFY.mkv")
-        # analysis_result = keyframe_analysis("/usr/src/app/Videos/The.Last.of.Us.S01E08.720p.WEB.h264-KOGi.mkv")
-        # print(analysis_result)
 
     def test_video_analysis_1(self):
         test_files = ["/usr/src/app/Videos/The.Big.Lebowski.1998.720p.BrRip.x264.YIFY.mp4",

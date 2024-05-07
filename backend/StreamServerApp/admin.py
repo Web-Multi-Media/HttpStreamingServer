@@ -13,9 +13,6 @@ class VideoAdmin(admin.ModelAdmin):
     model = Video
 
     def delete_queryset(self, request, queryset):
-        print(
-            '========================delete_queryset========================')
-        print(queryset)
         for video in queryset:
             delete_video_related_assets(video)
         queryset.delete()
@@ -26,10 +23,6 @@ class SeriesAdmin(admin.ModelAdmin):
     model = Series
 
     def delete_queryset(self, request, queryset):
-        print(
-            '========================delete_queryset========================')
-        print(queryset)
-        #queryset.delete()
         for series in queryset:
             video_queryset = Video.objects.filter(series=series.id)
             for video in video_queryset:
@@ -44,10 +37,6 @@ class MovieAdmin(admin.ModelAdmin):
     model = Movie
 
     def delete_queryset(self, request, queryset):
-        print(
-            '========================delete_queryset========================')
-        print(queryset)
-        #queryset.delete()
         for movies in queryset:
             video_queryset = Video.objects.filter(movie=movies.id)
             for video in video_queryset:
