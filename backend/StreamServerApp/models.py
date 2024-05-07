@@ -222,7 +222,7 @@ def delete_video_related_assets(Video_input: Video) -> None:
     if os.path.isdir(playlistdir):
         logger.debug("removing directory: {}".format(playlistdir))
         shutil.rmtree(playlistdir, ignore_errors=True)
-    logger.debug("removing audio ", Video_input.audio_path)
+    logger.debug("removing audio {}".format(Video_input.audio_path))
     if os.path.isfile(Video_input.audio_path):
         os.remove(Video_input.audio_path)
     logger.debug("removing subtitles")
