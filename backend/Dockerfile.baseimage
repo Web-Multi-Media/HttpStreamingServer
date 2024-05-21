@@ -27,3 +27,7 @@ RUN update-rc.d transmission-daemon defaults
 
 ADD ./backend/requirements.txt /srv/requirements.txt
 RUN pip3 install -r /srv/requirements.txt
+
+RUN apt-get install git
+
+RUN pip3 install git+https://github.com/Diaoul/subliminal.git@develop
