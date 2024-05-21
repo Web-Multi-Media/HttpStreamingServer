@@ -12,7 +12,7 @@ dj-rest-auth[with_social]==4.0.1
 django-redis==4.12.1 
 pycodestyle==2.6.0
 sentry-sdk==0.14.4
-celery==4.4.6
+celery==5.2.2
 redis==3.4.1
 ffsubsync==0.4.3
 requests==2.31.0
