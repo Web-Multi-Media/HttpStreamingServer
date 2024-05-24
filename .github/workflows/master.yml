@@ -26,6 +26,10 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       -
+        name: Test Frontend
+        run: |
+          docker-compose -f docker-compose-debug.yml run --rm frontend npm run test
+      -
         name: Build and export to Docker
         uses: docker/build-push-action@v3
         with:
@@ -34,7 +38,7 @@ jobs:
           load: true
           tags: webmultimedia/http-streaming-server:master
       -
-        name: Test
+        name: Test Backend
         run: |
           cp -r tests/* Videos/ 
           docker-compose -f docker-compose-prod.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py test

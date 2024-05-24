@@ -34,7 +34,7 @@
     "prestart": "if [ ! -d node_modules ]; then npm install; fi",
     "start": "react-scripts start",
     "build": "export REACT_APP_GIT_SHA=$(cat /etc/git_revision) && react-scripts build",
-    "test": "react-scripts test",
+    "test": "CI=True react-scripts test",
     "lint": "eslint",
     "eject": "react-scripts eject"
   },
