@@ -16,7 +16,7 @@ export default function Searchbar(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        props.handleFormSubmit(this.state.term);
+        props.handleFormSubmit(event.target.value);
     };
 
 

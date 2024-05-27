@@ -62,6 +62,12 @@ export default function VideoCarrouselSlick({ pager, videos, handleVideoSelect, 
         }
     }, [refresh]);
 
+    useEffect(() => {
+        //This is used to update carrousels video from search results.
+        if(pager.videos)
+            setCarrouselVideos(pager.videos)
+    }, [pager]);
+
     var settings = {
         dots: false,
         infinite: false,
