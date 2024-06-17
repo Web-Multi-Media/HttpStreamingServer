@@ -22,7 +22,7 @@ from StreamServerApp.subtitles import init_cache
 
 from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
 from StreamServerApp.media_processing import prepare_video, get_video_type_and_info
-from StreamServerApp.tasks import get_subtitles_async
+from StreamServerApp.tasks import get_subtitles_async, download_cover_async
 from StreamingServer import settings
 
 import logging 
@@ -222,6 +222,7 @@ def add_one_video_to_database(full_path,
                 return_value = 1
 
         v.save()
+        download_cover_async.delay(v.id, video_type_and_info['title'], True if video_type_and_info['type'] == 'Series' else False)
         for ov_subtitle_path in video_infos["ov_subtitles"]:
             ov_sub = Subtitle()
             webvtt_subtitles_relative_path = os.path.relpath(
