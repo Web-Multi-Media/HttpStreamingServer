@@ -216,7 +216,7 @@ def add_one_video_to_database(full_path,
             v.episode = video_type_and_info['episode']
 
             if created:
-                return_value = Add_video_return_value.SERIES_CREATED
+                return_value = Add_video_return_value.SERIES_CREATED.value
 
         elif video_type_and_info['type'] == 'Movie':
             movie, created = Movie.objects.get_or_create(
@@ -224,11 +224,11 @@ def add_one_video_to_database(full_path,
             v.movie = movie
 
             if created:
-                return_value = Add_video_return_value.MOVIE_CREATED
+                return_value = Add_video_return_value.MOVIE_CREATED.value
 
         v.save()
         if os.getenv('TMBD_KEY'):
-            if return_value in [Add_video_return_value.SERIES_CREATED, Add_video_return_value.MOVIE_CREATED]:
+            if return_value in [Add_video_return_value.SERIES_CREATED.value, Add_video_return_value.MOVIE_CREATED.value]:
                 download_cover_async.delay(
                     v.id, video_type_and_info['title'], True if video_type_and_info['type'] == 'Series' else False)
         

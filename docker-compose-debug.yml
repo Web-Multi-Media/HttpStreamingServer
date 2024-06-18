@@ -36,7 +36,7 @@ services:
       - ./log/:/debug/
       - ./Videos/:/usr/src/app/Videos
       - progress_volume:/usr/progress/
-      - static_volume:/usr/src/app/staticfiles
+      - static_volume:/usr/static/
       - /static/
       - ipython:/root/.ipython
       - torrent:/usr/torrent/:rw
@@ -50,7 +50,7 @@ services:
     volumes:
       - ./backend/:/usr/src/app/
       - ./Videos/:/usr/src/app/Videos
-      - static_volume:/usr/src/app/staticfiles
+      - static_volume:/usr/static/
       - torrent:/usr/torrent/:rw
       - secrets_volume:/secrets/
     ports:
