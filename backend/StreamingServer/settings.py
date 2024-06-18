@@ -23,6 +23,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/usr/static/'
+if os.getenv('DEPLOY_ENV', 'dev') == 'development':
+    STATIC_URL = 'http://localhost:1337/static/'
 
 ALLOWED_HOSTS = ['web', 'localhost']
 

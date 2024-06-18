@@ -31,6 +31,7 @@ services:
       - .env
     environment:
       - DEBUG=1
+      - DEPLOY_ENV=development
     volumes:
       - ./backend/:/usr/src/app/
       - ./log/:/debug/
@@ -40,7 +41,7 @@ services:
       - /static/
       - ipython:/root/.ipython
       - torrent:/usr/torrent/:rw
-    command: bash -c "service transmission-daemon start && ./wait-for-it.sh db:5432 -- python3 /usr/src/app/manage.py runserver 0.0.0.0:8000"
+    command: bash -c "./start_django_server.sh"
     depends_on:
       - db
       - redis
@@ -85,6 +86,8 @@ services:
         - ./log/:/debug/
     env_file:
         - .env
+    environment:
+        - DEPLOY_ENV=development
     depends_on:
         - db
         - redis

@@ -1,5 +1,6 @@
 from celery import shared_task
 from StreamServerApp.models import Video, Series, Movie, Subtitle
+from StreamingServer.settings import STATIC_URL
 from django.conf import settings
 from StreamServerApp.media_management.cover_downloader import cover_downloader
 
@@ -34,10 +35,10 @@ def download_cover_async(id, name, is_tv_show=False):
         video = Video.objects.get(id=id)
         if is_tv_show:
             serie = Series.objects.get(id=video.series_id)
-            serie.thumbnail = "/static/{}.jpeg".format(name)
+            serie.thumbnail = "{}{}.jpeg".format(STATIC_URL, name)
             serie.save()
         else:
-            video.thumbnail = "/static/{}.jpeg".format(name)
+            video.thumbnail = "{}{}.jpeg".format(STATIC_URL, name)
             video.save()
 
     return 0
