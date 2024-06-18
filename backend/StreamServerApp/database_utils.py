@@ -31,6 +31,7 @@ from enum import Enum
 logger = logging.getLogger("root")
 
 
+
 def delete_DB_Infos():
     """ delete all videos, movies and series in the db
     """

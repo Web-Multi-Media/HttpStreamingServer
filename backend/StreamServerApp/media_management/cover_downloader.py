@@ -8,10 +8,10 @@ logger = logging.getLogger("root")
 class cover_downloader:
 
     def __init__(self):
-
+        self.auth_key = ""
         env_auth_key = os.getenv('TMBD_KEY')
-        if not auth_key:
-            logger("cover downloader: no auth key")
+        if not env_auth_key:
+            logger.error("cover downloader: no auth key")
             return
         self.auth_key = env_auth_key
 
@@ -20,7 +20,7 @@ class cover_downloader:
 
         response = requests.get(configuration_url)
         if response.status_code != 200:
-            logger("cover downloader: Failed to get configuration")
+            logger.error("cover downloader: Failed to get configuration")
             return
         value = response.json()
 
@@ -39,7 +39,7 @@ class cover_downloader:
                     name.replace(" ", "+"), self.auth_key)
             response = requests.get(api_url)
             if response.status_code != 200:
-                logger("cover downloader: Failed to search movie")
+                logger.error("cover downloader: Failed to search movie")
                 return -1
             value = response.json()
 
@@ -47,7 +47,7 @@ class cover_downloader:
                                         value["results"][0]["poster_path"])
             response = requests.get(poster_url)
             if response.status_code != 200:
-                logger("cover downloader: Failed to download cover")
+                logger.error("cover downloader: Failed to download cover")
                 return -1
 
             with open(outputfile, mode="wb") as file:
@@ -55,5 +55,5 @@ class cover_downloader:
             
             return 1
         else:
-            logger("cover downloader: No properly initialized")
+            logger.error("cover downloader: No properly initialized")
             return -1

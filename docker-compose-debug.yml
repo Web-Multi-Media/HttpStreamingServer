@@ -79,6 +79,7 @@ services:
     volumes:
         - ./backend/:/usr/src/app/
         - ./Videos/:/usr/src/app/Videos
+        - static_volume:/usr/static/
         - progress_volume:/usr/progress/
         - torrent:/usr/torrent/:rw
         - ./log/:/debug/
