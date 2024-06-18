@@ -63,6 +63,7 @@ services:
         - ./Videos/:/usr/src/app/Videos
         - torrent:/usr/torrent/:rw
         - progress_volume:/usr/progress/
+        - static_volume:/usr/static/
         - ./log/:/debug/
     env_file:
         - .env

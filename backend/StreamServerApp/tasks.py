@@ -1,12 +1,13 @@
 from celery import shared_task
 from StreamServerApp.models import Video, Series, Movie, Subtitle
-import subprocess
-import os
+from StreamingServer.settings import STATIC_URL
 from django.conf import settings
+from StreamServerApp.media_management.cover_downloader import cover_downloader
 
 import logging
 
 logger = logging.getLogger("root")
+cvdwnld = cover_downloader()
 
 
 @shared_task
@@ -23,4 +24,21 @@ def get_subtitles_async(video_id, video_path, remote_url):
         video.get_subtitles(video_path, remote_url)
     except Exception as e:
         logger.exception(e)
+    return 0
+
+
+@shared_task
+def download_cover_async(id, name, is_tv_show=False):
+    output_file = "/usr/static/{}.jpeg".format(name)
+    ret = cvdwnld.download_cover(name, output_file, is_tv_show)
+    if ret > 0:
+        video = Video.objects.get(id=id)
+        if is_tv_show:
+            serie = Series.objects.get(id=video.series_id)
+            serie.thumbnail = "{}{}.jpeg".format(STATIC_URL, name)
+            serie.save()
+        else:
+            video.thumbnail = "{}{}.jpeg".format(STATIC_URL, name)
+            video.save()
+
     return 0
