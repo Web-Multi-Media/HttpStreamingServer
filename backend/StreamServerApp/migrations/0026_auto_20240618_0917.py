@@ -5,22 +5,29 @@ from StreamServerApp.models import Video, Series, Movie, Subtitle
 from StreamServerApp.media_management.cover_downloader import cover_downloader
 import os
 
+cvdwnld = cover_downloader()
+
 def get_cover(apps, schema_editor):
 
     if os.getenv('TMBD_KEY'):
 
         movies = Movie.objects.all()
         for movie in movies:
-            movie.video_set
-            output_file = "/usr/src/static/{}.jpeg".format(movie.title)
-            cover_downloader.download_cover(serie.title, output_file, True)
-            
+            output_file = "/usr/static/{}.jpeg".format(movie.title)
+            ret = cvdwnld.download_cover(movie.title, output_file, True)
+            if ret > 0:
+                videos = movie.video_set.all()
+                for video in videos:
+                    video.thumbnail = "/static/{}.jpeg".format(movie.title)
+                    video.save()
+
+
         series = Series.objects.all()
         for serie in series:
-            output_file = "/usr/src/static/{}.jpeg".format(serie.title)
-            ret = cover_downloader.download_cover(serie.title, output_file, True)
-            if ret:
-                serie.thumbnail = output_file
+            output_file = "/usr/static/{}.jpeg".format(serie.title)
+            ret = cvdwnld.download_cover(serie.title, output_file, True)
+            if ret > 0:
+                serie.thumbnail = "/static/{}.jpeg".format(serie.title)
                 serie.save()
 
 
