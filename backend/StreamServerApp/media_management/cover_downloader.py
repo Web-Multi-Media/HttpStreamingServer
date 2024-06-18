@@ -25,7 +25,7 @@ class cover_downloader:
         value = response.json()
 
         self.base_url = value["images"]["base_url"]
-        self.poster_size = value["images"]["poster_sizes"][0]
+        self.poster_size = value["images"]["poster_sizes"][3]
 
     def download_cover(self, name, outputfile, is_tv_show=False):
 
@@ -43,17 +43,21 @@ class cover_downloader:
                 return -1
             value = response.json()
 
-            poster_url = "{}/{}{}".format(self.base_url, self.poster_size,
-                                        value["results"][0]["poster_path"])
-            response = requests.get(poster_url)
-            if response.status_code != 200:
-                logger.error("cover downloader: Failed to download cover")
-                return -1
+            if len(value["results"]) > 0:
 
-            with open(outputfile, mode="wb") as file:
-                file.write(response.content)
-            
-            return 1
+                poster_url = "{}/{}{}".format(self.base_url, self.poster_size,
+                                              value["results"][0]["poster_path"])
+                response = requests.get(poster_url)
+                if response.status_code != 200:
+                    logger.error("cover downloader: Failed to download cover")
+                    return -1
+
+                with open(outputfile, mode="wb") as file:
+                    file.write(response.content)
+
+                return 1
+            else:
+                return -1
         else:
             logger.error("cover downloader: No properly initialized")
             return -1

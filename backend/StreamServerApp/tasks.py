@@ -30,7 +30,7 @@ def get_subtitles_async(video_id, video_path, remote_url):
 def download_cover_async(id, name, is_tv_show=False):
     output_file = "/usr/static/{}.jpeg".format(name)
     ret = cvdwnld.download_cover(name, output_file, is_tv_show)
-    if ret:
+    if ret > 0:
         video = Video.objects.get(id=id)
         if is_tv_show:
             serie = Series.objects.get(id=video.series_id)
