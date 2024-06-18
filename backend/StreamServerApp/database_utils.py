@@ -26,6 +26,7 @@ from StreamServerApp.tasks import get_subtitles_async, download_cover_async
 from StreamingServer import settings
 
 import logging 
+from enum import Enum
 
 logger = logging.getLogger("root")
 
@@ -144,6 +145,10 @@ def update_db_from_local_folder(base_path, remote_url, keep_files=False, async_u
     cache.set("processing_state", "finished", timeout=None)
     cache.delete("processing_file")
 
+class Add_video_return_value(Enum):
+    NO_SERIES_MOVIES_CREATED = 0
+    MOVIE_CREATED = 1
+    SERIES_CREATED = 2
 
 @shared_task
 def add_one_video_to_database(full_path,
@@ -211,7 +216,7 @@ def add_one_video_to_database(full_path,
             v.episode = video_type_and_info['episode']
 
             if created:
-                return_value = 2
+                return_value = Add_video_return_value.SERIES_CREATED
 
         elif video_type_and_info['type'] == 'Movie':
             movie, created = Movie.objects.get_or_create(
@@ -219,10 +224,14 @@ def add_one_video_to_database(full_path,
             v.movie = movie
 
             if created:
-                return_value = 1
+                return_value = Add_video_return_value.MOVIE_CREATED
 
         v.save()
-        download_cover_async.delay(v.id, video_type_and_info['title'], True if video_type_and_info['type'] == 'Series' else False)
+        if os.getenv('TMBD_KEY'):
+            if return_value in [Add_video_return_value.SERIES_CREATED, Add_video_return_value.MOVIE_CREATED]:
+                download_cover_async.delay(
+                    v.id, video_type_and_info['title'], True if video_type_and_info['type'] == 'Series' else False)
+        
         for ov_subtitle_path in video_infos["ov_subtitles"]:
             ov_sub = Subtitle()
             webvtt_subtitles_relative_path = os.path.relpath(

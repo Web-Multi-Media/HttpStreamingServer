@@ -1,7 +1,7 @@
 from celery import shared_task
 from StreamServerApp.models import Video, Series, Movie, Subtitle
 from django.conf import settings
-from media_management.cover_downloader import download_cover
+from StreamServerApp.media_management.cover_downloader import download_cover
 
 import logging
 
