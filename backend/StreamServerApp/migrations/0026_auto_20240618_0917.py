@@ -14,7 +14,7 @@ def get_cover(apps, schema_editor):
         movies = Movie.objects.all()
         for movie in movies:
             output_file = "/usr/static/{}.jpeg".format(movie.title)
-            ret = cvdwnld.download_cover(movie.title, output_file, True)
+            ret = cvdwnld.download_cover(movie.title, output_file, False)
             if ret > 0:
                 videos = movie.video_set.all()
                 for video in videos:
@@ -29,10 +29,6 @@ def get_cover(apps, schema_editor):
             if ret > 0:
                 serie.thumbnail = "/static/{}.jpeg".format(serie.title)
                 serie.save()
-
-
-
-
 
 
 class Migration(migrations.Migration):

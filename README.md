@@ -65,6 +65,7 @@ The following variables can be configured in .env file:
     REACT_APP_SENTRY_DSN=https://foo.ingest.sentry.io/bar
     HIGH_LAYER_QUALITY=3
     LOW_QUALITY_LAYER_BITRATE=400000
+    TMBD_KEY=
 
 
 #### Contributing
