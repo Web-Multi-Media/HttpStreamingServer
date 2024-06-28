@@ -194,13 +194,13 @@ def prepare_video(video_full_path,
     output_fps_denum = video_framerate_denum
     logger.debug("dash_fragment_duration = {}".format(str(dash_fragment_duration)))
 
-    if "h264" in video_codec_type:
+    '''if "h264" in video_codec_type:
         analysis_result = keyframe_analysis(video_full_path)
         if analysis_result[0]:
             logger.debug("Regular GoP Structure was detected, we are going to use the input without reecoding it")
             skip_high_layer_encoding = True
             dash_fragment_duration = float(analysis_result[1]) * (float(video_framerate_num)/float(video_framerate_denum))
-            logger.debug("Gop Duration = {}".format(dash_fragment_duration))
+            logger.debug("Gop Duration = {}".format(dash_fragment_duration))'''
 
     video_elementary_stream_path_high_layer = "{}_{}.264".format(
         os.path.splitext(video_full_path)[0], video_height)
