@@ -54,6 +54,7 @@ services:
       - static_volume:/usr/static/
       - torrent:/usr/torrent/:rw
       - secrets_volume:/secrets/
+      - ./log/:/debug/
     ports:
       - 1337:80
     depends_on:

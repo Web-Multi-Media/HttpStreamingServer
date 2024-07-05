@@ -15,6 +15,5 @@ logger = logging.getLogger("root")
 class Task(APIView):
 
     def get(self, request, task_id):
-        logger.debug("task id = {} ".format(task_id))
         state = result.AsyncResult(task_id).state
         return JsonResponse(status=200, data={'state': str(state)})
