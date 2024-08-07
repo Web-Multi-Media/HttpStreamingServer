@@ -32,7 +32,7 @@ export default function ResolutionSelector({ playerref, video, playerIsInitializ
         Quality :
         <select onChange={handleChange}>
             {resolution.map((option) => (
-                <option value={option.qualityIndex}>{option.height} </option>
+                <option key={option.height} value={option.qualityIndex}>{option.height} </option>
             ))}
         </select>
         </div>

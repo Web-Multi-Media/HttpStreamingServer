@@ -16,6 +16,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
     const [playerIsInitialized, setPlayerIsInitialized] = useState(false);
     const [Subtitles, setSubtitles] = useState();
     const [audioTracks, setAudioTrack] = useState([]);
+    const [nextEpisodeTimeout, setNextEpisodeTimeout] = useState(5);
     
     async function HandleNextEpisode(handleVideoSelect, nextEpisodeID) {
         const video = await client.getVideoById(nextEpisodeID);
@@ -34,6 +35,31 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
         }
     }
 
+    function delay(milliseconds){
+        return new Promise(resolve => {
+            setTimeout(resolve, milliseconds);
+        });
+    }
+
+    async function onEnd(e) {
+        console.log("Episode ended");
+        console.log(video);
+        if (video.nextEpisode) {
+            let element = document.querySelector("#nextEpisodeWarning");
+            element.style.display = "block";
+            let i = nextEpisodeTimeout;
+            while (i > 0) {
+                console.log(i);
+                await delay(1000);
+                i -= 1;
+                setNextEpisodeTimeout(i);
+            }
+            HandleNextEpisode(handleVideoSelect,video.nextEpisode);
+            element.style.display = "none";
+            setNextEpisodeTimeout(5);
+        }
+    }
+
     useEffect(() => {
         console.log('Video has changed.');
         if (video) {
@@ -45,11 +71,12 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                     //console.log(audiotrack);
                     setAudioTrack(audiotrack);
                 });
+                document.querySelector("#videoPlayer").addEventListener('ended', onEnd)
                 setSubtitles(video.subtitles);
             } else {
                 player.attachSource(video.videoUrl);
                 setSubtitles(video.subtitles);
-            }
+            }    
 
         }
     }, [video]);
@@ -80,7 +107,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
         
         <div>
             <div className="ui embed">
-                <div>
+                <div >
                     <video id="videoPlayer" controls
                         onLoadedData={() => { 
                             canPlay(video) }} onPlay={() => { startVideo() 
@@ -96,6 +123,7 @@ function VideoDetail  ({ video, handleVideoSelect, authTokens, setHistoryPager }
                             </>
                         )}
                     </video>
+                    <div className="nextEpisodeWarning" id="nextEpisodeWarning">Playing next Episode in {nextEpisodeTimeout}</div>
                 </div>
             </div>
             <div className="ui segment">

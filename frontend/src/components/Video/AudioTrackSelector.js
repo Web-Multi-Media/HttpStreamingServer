@@ -18,7 +18,7 @@ export default function AudioTrackSelector({ audioTracks, video, playerref }) {
             Audio track:
             <select onChange={handleChange} value={selectedValue}>
                 {audioTracks.map((option) => (
-                    <option value={option.index}>{option.index} </option>
+                    <option key={option.index} value={option.index}>{option.index} </option>
                 ))}
             </select>
         </div>
