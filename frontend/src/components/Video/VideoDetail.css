@@ -31,3 +31,7 @@
 .active{
     display: block!important;
 }
+
+.nextEpisodeWarning{
+    display: none;
+}

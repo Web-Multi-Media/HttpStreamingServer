@@ -28,7 +28,7 @@ jobs:
       -
         name: Test Frontend
         run: |
-          docker-compose -f docker-compose-debug.yml run --rm frontend npm run test
+          docker compose -f docker-compose-debug.yml run --rm frontend npm run test
       -
         name: Build and export to Docker
         uses: docker/build-push-action@v3
@@ -41,7 +41,7 @@ jobs:
         name: Test Backend
         run: |
           cp -r tests/* Videos/ 
-          docker-compose -f docker-compose-prod.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py test
+          docker compose -f docker-compose-prod.yml run --rm web ./wait-for-it.sh db:5432 -- python3 manage.py test
       -
         name: Build and push
         uses: docker/build-push-action@v3

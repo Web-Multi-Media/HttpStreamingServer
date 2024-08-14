@@ -8,7 +8,6 @@ export default function ResolutionSelector({ playerref, video, playerIsInitializ
     useEffect(() => {
         if (playerIsInitialized) {
             let resolution = playerref.getBitrateInfoListFor("video");
-            console.log(resolution);
             resolution.unshift({ mediaType: "video", bitrate: "auto", width: "auto", height: "auto", qualityIndex: null})
             setResolution(resolution);
         }
@@ -16,12 +15,10 @@ export default function ResolutionSelector({ playerref, video, playerIsInitializ
 
     const handleChange = event => {
         if(event.target.value === "auto"){
-            console.log("Set auto quality ");
             playerref.updateSettings({ 'streaming': { 'abr': { 'autoSwitchBitrate': { 'video': true } } } });
 
         }else{
             playerref.updateSettings({ 'streaming': { 'abr': { 'autoSwitchBitrate': { 'video': false } } } });
-            console.log("Set quality " + event.target.value);
             playerref.setQualityFor("video", event.target.value)
         }
 
@@ -32,7 +29,7 @@ export default function ResolutionSelector({ playerref, video, playerIsInitializ
         Quality :
         <select onChange={handleChange}>
             {resolution.map((option) => (
-                <option value={option.qualityIndex}>{option.height} </option>
+                <option key={option.height} value={option.qualityIndex}>{option.height} </option>
             ))}
         </select>
         </div>
