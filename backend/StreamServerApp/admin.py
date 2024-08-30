@@ -11,6 +11,7 @@ from django.contrib.auth.admin import UserAdmin
 class VideoAdmin(admin.ModelAdmin):
     search_fields = ['name']
     model = Video
+    list_display = ["name", "video_folder_size_in_MB"]
 
     def delete_queryset(self, request, queryset):
         for video in queryset:

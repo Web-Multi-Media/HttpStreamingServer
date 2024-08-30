@@ -81,6 +81,7 @@ class PopulateTestCase(TestCase):
 
         video = Video.objects.get(
             name='The Big Bang Theory S5 E19')
+        self.assertEqual(video.video_folder_size_in_MB, 2)
         series = Series.objects.first()
         self.assertEqual(video.episode, 19)
         self.assertEqual(video.season, 5)

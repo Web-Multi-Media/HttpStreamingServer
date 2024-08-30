@@ -14,10 +14,22 @@ from StreamServerApp.media_management.media_analyzer import get_media_file_info,
 from StreamServerApp.media_management.fileinfo import createfileinfo, readfileinfo
 from StreamServerApp.media_management.subprocess_wrapper import run_subprocess
 from StreamServerApp.media_management.timecode import timecodeToSec
+import math
 
 import logging 
 
 logger = logging.getLogger("root")
+
+def get_size(start_path):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+
+    return total_size
 
 
 def convert_subtitles_to_webvtt(input_file, output_file):
@@ -280,6 +292,8 @@ def prepare_video(video_full_path,
         os.remove(video_full_path)
 
     relative_path = os.path.relpath(temp_mpd, video_path)
+    size_in_bytes = get_size(video_dir)
+    size_in_megabytes = math.ceil(float(size_in_bytes) * 0.000001)
 
     remote_video_url = os.path.join(remote_url, relative_path)
     remote_thumbnail_url = os.path.join(remote_url, thumbnail_relativepath)
@@ -290,6 +304,7 @@ def prepare_video(video_full_path,
         'audio_path': audio_tracks[0][0],
         'video_height': video_height,
         'video_width': video_width,
+        'size_in_megabytes' : size_in_megabytes,
         'remote_thumbnail_url': remote_thumbnail_url,
         'ov_subtitles': webvtt_ov_fullpaths,
         'video_full_path': video_full_path,
