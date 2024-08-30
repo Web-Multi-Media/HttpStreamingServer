@@ -60,6 +60,7 @@ class Video(models.Model):
     metadata = models.CharField(max_length=100, blank=True, default="")
     video_url = models.CharField(max_length=300, default="")
     video_folder = models.CharField(max_length=300, default="")
+    video_folder_size_in_MB = models.PositiveSmallIntegerField(default=None, blank=True,  null=True, db_index=True)
     audio_path = models.CharField(max_length=300, default="")
     thumbnail = models.CharField(max_length=300, default="")
 
