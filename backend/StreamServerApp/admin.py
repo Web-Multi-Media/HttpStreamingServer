@@ -20,8 +20,9 @@ class VideoAdmin(admin.ModelAdmin):
 
 
 class SeriesAdmin(admin.ModelAdmin):
-    search_fields = ['name']
+    search_fields = ['title']
     model = Series
+    list_display = ["title", "size_in_mb"]
 
     def delete_queryset(self, request, queryset):
         for series in queryset:

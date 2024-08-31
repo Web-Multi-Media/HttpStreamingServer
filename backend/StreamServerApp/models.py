@@ -48,6 +48,10 @@ class Series(CommonInfo):
 
     def return_season_episodes(self, season):
         return self.video_set.filter(season=season).order_by('episode')
+ 
+    @property
+    def size_in_mb(self):
+        return sum(self.video_set.values_list('video_folder_size_in_MB', flat=True))
 
 
 class Video(models.Model):
