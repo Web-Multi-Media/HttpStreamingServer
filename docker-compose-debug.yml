@@ -35,7 +35,7 @@ services:
     volumes:
       - ./backend/:/usr/src/app/
       - ./log/:/debug/
-      - ./Videos/:/usr/src/app/Videos
+      - "${HOST_VIDEOS_DIR}:/usr/src/app/Videos"
       - progress_volume:/usr/progress/
       - static_volume:/usr/static/
       - /static/
@@ -50,7 +50,7 @@ services:
     build: ./nginx
     volumes:
       - ./backend/:/usr/src/app/
-      - ./Videos/:/usr/src/app/Videos
+      - "${HOST_VIDEOS_DIR}:/usr/src/app/Videos"
       - static_volume:/usr/static/
       - torrent:/usr/torrent/:rw
       - secrets_volume:/secrets/
@@ -80,7 +80,7 @@ services:
     command: bash -c "./start_celery_workers.sh"
     volumes:
         - ./backend/:/usr/src/app/
-        - ./Videos/:/usr/src/app/Videos
+        - "${HOST_VIDEOS_DIR}:/usr/src/app/Videos"
         - static_volume:/usr/static/
         - progress_volume:/usr/progress/
         - torrent:/usr/torrent/:rw
