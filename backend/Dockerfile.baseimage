@@ -1,14 +1,51 @@
-FROM jrottenberg/ffmpeg:4.4-ubuntu2004
+# Use Ubuntu 20.04 as the base image
+FROM ubuntu:20.04
+
+# Set environment variables to disable interactive prompts during package install
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update package lists and install dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3.8 \
+    python3-pip \
+    python3-dev\
+    curl \
+    ca-certificates \
+    build-essential \
+    transmission-daemon\ 
+    pkg-config\
+    git\ 
+    texinfo \
+    wget \
+    zlib1g-dev \
+    libssl-dev \
+    libx264-dev \
+    libmp3lame-dev \
+    libopus-dev \
+    libvpx-dev \
+    libx265-dev \
+    autoconf \
+    automake \
+    cmake \
+    ffmpeg \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set default Python and pip to python3 versions
+RUN ln -s /usr/bin/python3 /usr/bin/python 
 ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get update -y && apt-get install -y transmission-daemon build-essential pkg-config git zlib1g-dev python3-pip
 
 COPY ./backend/openssl.cnf  /etc/ssl/openssl.cnf
 
+# Test ffmpeg
+RUN ffmpeg -version
+
 RUN git clone --depth=1 --branch v2.0.0 https://github.com/gpac/gpac gpac_public && cd gpac_public && ./configure --static-mp4box && make && make install
 
-RUN apt-get remove -y build-essential pkg-config git 
+RUN apt-get remove -y build-essential pkg-config git automake autoconf cmake 
 
 RUN mkdir /usr/torrent/
 RUN chgrp -R debian-transmission /usr/torrent/
@@ -28,6 +65,3 @@ RUN update-rc.d transmission-daemon defaults
 ADD ./backend/requirements.txt /srv/requirements.txt
 RUN pip3 install -r /srv/requirements.txt
 
-RUN apt-get install git
-
-RUN pip3 install git+https://github.com/Diaoul/subliminal.git@develop
