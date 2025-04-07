@@ -4,7 +4,7 @@ Be aware that the file coming from the frontend build are copied to backend/stat
 
 To build base image for amd64 and arm64:
 
-    docker buildx build --platform linux/amd64 -t webmultimedia/http-streaming-server-baseimage:1.0.4 -f backend/Dockerfile.baseimage .
+    docker buildx build --push --platform linux/amd64,linux/arm64 -t webmultimedia/http-streaming-server-baseimage:1.0.5 -f backend/Dockerfile.baseimage .
 
 DEBUG BUILD
 -------------------
